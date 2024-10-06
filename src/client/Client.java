@@ -1,0 +1,1 @@
+//Lớp chính của client, xử lý kết nối với server
