@@ -18,7 +18,7 @@ public class RegisterForm extends JFrame {
         add(titleLabel, BorderLayout.NORTH);
 
         // Thêm logo
-        ImageIcon logiIcon = new ImageIcon("resources/logo1.png");
+        ImageIcon logoIcon = new ImageIcon("resources/logo1.png");
         JLabel logoLabel = new JLabel(logoIcon, SwingConstants.CENTER);
         add(logoLabel, BorderLayout.CENTER);
 
