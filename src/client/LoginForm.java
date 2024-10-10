@@ -2,70 +2,99 @@ package client;
 
 import javax.swing.*;
 import java.awt.*;
+
 public class LoginForm extends JFrame {
 
     public LoginForm() {
         setTitle("Login - ALPHABET FIGHTING GAME");
-        setSize(500, 500);  // Tăng kích thước cửa sổ để giao diện hiển thị tốt hơn
+        setSize(500, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);  // Căn giữa màn hình
-        setLayout(new BorderLayout());
+        setLocationRelativeTo(null);
+        setLayout(new GridBagLayout());
 
-        // Thêm tiêu đề và logo
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(20, 20, 20, 20);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        // Thêm tiêu đề
         JLabel titleLabel = new JLabel("ALPHABET FIGHTING GAME", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 32));
-        add(titleLabel, BorderLayout.NORTH);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.weighty = 0.2;
+        add(titleLabel, gbc);
 
         // Thêm logo
         ImageIcon logoIcon = new ImageIcon("resources/logo1.png");
-        JLabel logoLabel = new JLabel(logoIcon, SwingConstants.CENTER);
-        add(logoLabel, BorderLayout.CENTER);
+        JLabel logoLabel = new JLabel(logoIcon);
+        gbc.gridy = 1;
+        gbc.weighty = 0.3;
+        add(logoLabel, gbc);
 
         // Tạo form đăng nhập
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new GridBagLayout());  // Sử dụng GridBagLayout để căn giữa form
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);  // Thiết lập khoảng cách giữa các thành phần
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setOpaque(false);
+        GridBagConstraints formGbc = new GridBagConstraints();
+        formGbc.insets = new Insets(10, 0, 10, 0);
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.anchor = GridBagConstraints.CENTER;
 
         // Ô nhập Username
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        formPanel.add(new JLabel("Username:"), gbc);
-        gbc.gridx = 1;
-        formPanel.add(new JTextField(15), gbc);
+        JLabel usernameLabel = new JLabel("Username:");
+        formGbc.gridx = 0;
+        formGbc.gridy = 0;
+        formPanel.add(usernameLabel, formGbc);
+
+        JTextField usernameField = new JTextField(15);
+        usernameField.setPreferredSize(new Dimension(250, 40));
+        formGbc.gridy = 1;
+        formPanel.add(usernameField, formGbc);
 
         // Ô nhập Password
-        gbc.gridy = 1;
-        gbc.gridx = 0;
-        formPanel.add(new JLabel("Password:"), gbc);
-        gbc.gridx = 1;
-        formPanel.add(new JPasswordField(15), gbc);
+        JLabel passwordLabel = new JLabel("Password:");
+        formGbc.gridy = 2;
+        formPanel.add(passwordLabel, formGbc);
+
+        JPasswordField passwordField = new JPasswordField(15);
+        passwordField.setPreferredSize(new Dimension(250, 40));
+        formGbc.gridy = 3;
+        formPanel.add(passwordField, formGbc);
 
         // Nút Login
-        gbc.gridy = 2;
-        gbc.gridx = 0;
-        gbc.gridwidth = 2;
         JButton loginButton = new JButton("Login");
-        formPanel.add(loginButton, gbc);
+        loginButton.setPreferredSize(new Dimension(250, 50));
+        formGbc.gridy = 4;
+        formGbc.insets = new Insets(20, 0, 10, 0);
+        formPanel.add(loginButton, formGbc);
 
-        // Nút "Register Here"
-        gbc.gridy = 3;
-        gbc.gridx = 0;
-        gbc.gridwidth = 2;
-        JButton swapButton = new JButton("Register Here");
-        swapButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        swapButton.setForeground(Color.BLUE);  // Màu xanh để làm nổi bật
-        swapButton.setBorderPainted(false);  // Loại bỏ viền nút
-        swapButton.setContentAreaFilled(false);  // Không tô nền nút
-        formPanel.add(swapButton, gbc);
+        // Nút "Don't have an account? Register here"
+        JButton registerButton = new JButton("Don't have an account? Register here");
+        registerButton.setPreferredSize(new Dimension(250, 50));
+        formGbc.gridy = 5;
+        formGbc.insets = new Insets(10, 0, 10, 0);
+        formPanel.add(registerButton, formGbc);
 
-        add(formPanel, BorderLayout.SOUTH);
+        // Nút "Back to Main Menu"
+        JButton backButton = new JButton("Back to Main Menu");
+        backButton.setPreferredSize(new Dimension(250, 50));
+        formGbc.gridy = 6;
+        formPanel.add(backButton, formGbc);
 
-        // Sự kiện khi nhấn nút "Register Here"
-        swapButton.addActionListener(e -> {
+        gbc.gridy = 2;
+        gbc.weighty = 0.5;
+        add(formPanel, gbc);
+
+        // Sự kiện khi nhấn nút "Don't have an account? Register here"
+        registerButton.addActionListener(e -> {
             new RegisterForm();
+            dispose();
+        });
+
+        // Sự kiện khi nhấn nút "Back to Main Menu"
+        backButton.addActionListener(e -> {
+            new SplashScreen();
             dispose();
         });
 
@@ -73,6 +102,6 @@ public class LoginForm extends JFrame {
     }
 
     public static void main(String[] args) {
-        new LoginForm();
+        SwingUtilities.invokeLater(LoginForm::new);
     }
 }
