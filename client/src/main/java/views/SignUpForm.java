@@ -2,10 +2,14 @@ package views;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
-public class RegisterForm extends JFrame {
-
-    public RegisterForm() {
+public class SignUpForm extends JFrame {
+    private JTextField txtUsername;
+    private  JPasswordField txtPassword,txtConfirmPassword;
+    private JButton swapButton;
+    private JButton registerButton;
+    public SignUpForm() {
         setTitle("Register - ALPHABET FIGHTING GAME");
         setSize(500, 500);  // Tăng kích thước cửa sổ để logo và form hiển thị đẹp hơn
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,34 +39,37 @@ public class RegisterForm extends JFrame {
         gbc.gridy = 0;
         formPanel.add(new JLabel("Username:"), gbc);
         gbc.gridx = 1;
-        formPanel.add(new JTextField(15), gbc);
+        txtUsername = new JTextField(15);
+        formPanel.add(txtUsername, gbc);
 
         // Ô nhập Password
         gbc.gridy = 1;
         gbc.gridx = 0;
         formPanel.add(new JLabel("Password:"), gbc);
         gbc.gridx = 1;
-        formPanel.add(new JPasswordField(15), gbc);
+        txtPassword = new JPasswordField(15);
+        formPanel.add(txtPassword, gbc);
 
         // Ô nhập Confirm Password
         gbc.gridy = 2;
         gbc.gridx = 0;
         formPanel.add(new JLabel("Confirm Password:"), gbc);
         gbc.gridx = 1;
-        formPanel.add(new JPasswordField(15), gbc);
+        txtConfirmPassword = new JPasswordField(15);
+        formPanel.add(txtConfirmPassword, gbc);
 
         // Nút Register
         gbc.gridy = 3;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
-        JButton registerButton = new JButton("Register");
+        registerButton = new JButton("Register");
         formPanel.add(registerButton, gbc);
 
         // Nút "Already have an account? Login here"
         gbc.gridy = 4;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
-        JButton swapButton = new JButton("Already have an account? Login here");
+        swapButton = new JButton("Already have an account? Login here");
         swapButton.setFont(new Font("Arial", Font.PLAIN, 12));
         swapButton.setForeground(Color.BLUE);  // Màu xanh để làm nổi bật
         swapButton.setBorderPainted(false);
@@ -71,16 +78,52 @@ public class RegisterForm extends JFrame {
 
         add(formPanel, BorderLayout.SOUTH);
 
-        // Sự kiện nút "Already have an account? Login here"
-        swapButton.addActionListener(e -> {
-            new LoginForm();
-            dispose();
-        });
+//        // Sự kiện nút "Already have an account? Login here"
+//        swapButton.addActionListener(e -> {
+//            new LoginForm();
+//            dispose();
+//        });
 
         setVisible(true);
     }
 
+    public JTextField getTxtUsername() {
+        return txtUsername;
+    }
+
+    public void setTxtUsername(JTextField txtUsername) {
+        this.txtUsername = txtUsername;
+    }
+
+    public JPasswordField getTxtPassword() {
+        return txtPassword;
+    }
+
+    public void setTxtPassword(JPasswordField txtPassword) {
+        this.txtPassword = txtPassword;
+    }
+
+    public JPasswordField getTxtConfirmPassword() {
+        return txtConfirmPassword;
+    }
+
+    public void setTxtConfirmPassword(JPasswordField txtConfirmPassword) {
+        this.txtConfirmPassword = txtConfirmPassword;
+    }
+    public void addActionListener(ActionListener act){
+        registerButton.addActionListener(act);
+        swapButton.addActionListener(act);
+    }
+
+    public JButton getSwapButton() {
+        return swapButton;
+    }
+
+    public JButton getRegisterButton() {
+        return registerButton;
+    }
+
     public static void main(String[] args) {
-        new RegisterForm();
+        new SignUpForm();
     }
 }

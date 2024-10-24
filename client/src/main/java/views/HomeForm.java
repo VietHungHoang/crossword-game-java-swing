@@ -37,7 +37,7 @@ public class HomeForm extends JFrame {
 
         // User label
         String playerName = "Binh dang";
-        userLabel = new JLabel("Xin chào " + playerName);
+        userLabel = new JLabel();
         userLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
         // Placeholder for avatar image
@@ -52,7 +52,7 @@ public class HomeForm extends JFrame {
         String Score = "0";
         // Create a panel for the score label
         JPanel scorePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));  // Align score label to the right
-        scoreLabel = new JLabel("Điểm: " + Score);
+        scoreLabel = new JLabel();
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 14));
         scoreLabel.setPreferredSize(new Dimension(150, 30));  // Set height equal to avatar
         scoreLabel.setBorder(new RoundedBorder(15, Color.RED));  // Set radius to 15 for rounded border

@@ -38,4 +38,8 @@ public class SocketHandlers {
     public SendMessages getSendMessages() {
         return sendMessages;
     }
+
+    public ReceiveMessages getReceiveMessages() {
+        return receiveMessages;
+    }
 }

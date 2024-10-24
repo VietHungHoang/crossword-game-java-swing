@@ -70,11 +70,6 @@ public class LoginForm extends JFrame {
         formPanel.add(btnSwap, gbc);
 
         add(formPanel, BorderLayout.SOUTH);
-        // Sự kiện khi nhấn nút "Register Here"
-        this.btnSwap.addActionListener(e -> {
-            new RegisterForm();
-            this.dispose();
-        });
 
     }
 

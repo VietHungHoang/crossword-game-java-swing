@@ -1,8 +1,10 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import dao.impl.IUserDAO;
+import models.Player;
 import models.User;
 
 public class UserDAO extends DAO implements IUserDAO{
@@ -37,6 +39,19 @@ public class UserDAO extends DAO implements IUserDAO{
         return null;
     }
 
+    @Override
+    public void insert(User user) {
+        String sql = "INSERT INTO user (user_name, password) VALUES (?,?)";
+        try {
+            this.preStatement = this.conn.prepareStatement(sql);
+            this.preStatement.setString(1, user.getUsername());
+            this.preStatement.setString(2, user.getPassword());
+            this.preStatement.executeUpdate();
+            System.out.println("Insert user success");
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
+    }
     @Override
     public User findById(int id){
         // TODO Auto-generated method stub
