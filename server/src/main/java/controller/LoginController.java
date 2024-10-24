@@ -37,7 +37,7 @@ public class LoginController {
         if(user2.getId()!=null){
             List<SocketHandlers> clients = ServerController.getSocketHandlers();
             for (SocketHandlers clientHandler : clients) {
-                if (clientHandler.getLoginController().playerLogin != null && clientHandler.getLoginController().playerLogin.getPlayerName().equalsIgnoreCase(player.getPlayerName())) {
+                if (clientHandler.getLoginController()!= null && clientHandler.getLoginController().getPlayerLogin()!=null &&clientHandler.getLoginController().getPlayerLogin().getPlayerName().equalsIgnoreCase(player.getPlayerName())) {
                     objectWrapper = new ObjectWrapper(StreamData.Message.LOGIN.name() + ";" + "falied", null);
                     socketHandlers.send(objectWrapper);
                     return;
@@ -57,6 +57,8 @@ public class LoginController {
         socketHandlers.send(objectWrapper);
         System.out.println("Sent login " + message);
     };
-    
 
+    public Player getPlayerLogin() {
+        return playerLogin;
+    }
 }
