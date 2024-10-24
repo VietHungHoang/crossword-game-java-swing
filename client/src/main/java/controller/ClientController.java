@@ -37,7 +37,7 @@ public class ClientController {
         if(socketHandlers.connect(severAddress, port)){
             System.out.println("Connect server successfully!");
             openFrame(FrameName.LOGIN);
-        } 
+        }
             
         else {
             System.out.println("Connect server error!");

@@ -18,7 +18,6 @@ public class LoginController {
         this.userDAO = new UserDAO(conn);
         this.socketHandlers = socketHandlers;
     }
-
     public void checkLogin(User user){
         System.out.println("Received username=" + user.getUsername() + "?password=" + user.getPassword());
         User user2 = userDAO.findByUsername(user.getUsername());

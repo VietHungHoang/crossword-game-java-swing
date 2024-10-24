@@ -12,7 +12,7 @@ public class LoginForm extends JFrame {
 
     public LoginForm() {
         setTitle("Login - ALPHABET FIGHTING GAME");
-        setSize(500, 500);  // Tăng kích thước cửa sổ để giao diện hiển thị tốt hơn
+        setSize(600, 400);  // Tăng kích thước cửa sổ để giao diện hiển thị tốt hơn
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);  // Căn giữa màn hình
         setLayout(new BorderLayout());
