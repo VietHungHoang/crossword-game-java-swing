@@ -62,11 +62,6 @@ public class LoginController {
             System.out.println(playerLogin.toString());
             ClientController.closeFrame(ClientController.FrameName.LOGIN);
             ClientController.openFrame(ClientController.FrameName.HOME);
-            try {
-                ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.HOME,null);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
             System.out.println("success");
         }
         else{

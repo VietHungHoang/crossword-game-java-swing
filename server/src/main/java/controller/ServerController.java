@@ -63,7 +63,7 @@ public class ServerController {
         }
     }
 
-
-
-
+    public static ArrayList<SocketHandlers> getSocketHandlers() {
+        return socketHandlers;
+    }
 }

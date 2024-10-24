@@ -12,9 +12,6 @@ public class Player implements Serializable {
     private Double totalPoint;
     private String playerName;
     private String status;
-    private List<PlayerFriend> listFriends;
-    private User user;
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -51,13 +48,6 @@ public class Player implements Serializable {
         this.playerName = playerName;
     }
 
-    public List<PlayerFriend> getListFriends() {
-        return listFriends;
-    }
-
-    public void setListFriends(List<PlayerFriend> listFriends) {
-        this.listFriends = listFriends;
-    }
 
 
     public Long getId() {
@@ -72,13 +62,6 @@ public class Player implements Serializable {
         this.status = status;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     @Override
     public String toString() {
@@ -89,8 +72,6 @@ public class Player implements Serializable {
                 ", totalPoint=" + totalPoint +
                 ", playerName='" + playerName + '\'' +
                 ", status='" + status + '\'' +
-                ", listFriends=" + listFriends +
-                ", user=" + user +
                 '}';
     }
 
