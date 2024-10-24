@@ -15,7 +15,7 @@ public class StreamData {
         CHAT_ROOM, 
         LEAVE_ROOM, 
         START,
-        MOVE, 
+        MOVE,
         PLAYER_STAT,
         UPDATE_PROFILE,
         SEND_INVITE_FRIEND,
@@ -26,7 +26,8 @@ public class StreamData {
         FIND_MATCH,
         ACCEPT_FIND_MATCH,
         TIME_FIND_MATCH,
-        UNKNOW_MESSAGE, 
+        UNKNOW_MESSAGE,
+        HOME
     }
 
     public static Message getStreamMessage(String message) {

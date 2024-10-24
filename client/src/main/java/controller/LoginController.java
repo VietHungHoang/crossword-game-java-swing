@@ -5,16 +5,31 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import controller.ClientController;
+import models.ObjectWrapper;
+import models.Player;
 import utils.StreamData;
 import views.LoginForm;
 import models.User;
 
+import javax.swing.*;
+
 public class LoginController {
     private LoginForm loginForm;
-    
+    public LoginForm getLoginForm() {
+        return loginForm;
+    }
+    public Player playerLogin=null;
+    public void setLoginForm(LoginForm loginForm) {
+        this.loginForm = loginForm;
+    }
+
+
+
     public LoginController(LoginForm loginForm){
         this.loginForm = loginForm;
         this.loginForm.addActionListener(new LoginListener());
+    }
+    public LoginController(){
     }
 
     class LoginListener implements ActionListener{
@@ -24,6 +39,7 @@ public class LoginController {
                 String username = loginForm.getTxtUsername().getText();
                 String password = new String(loginForm.getTxtPassword().getPassword());
                 User user = new User(username, password);
+
                 try {
                     ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.LOGIN, user);
                     System.out.println("Send username=" + username + "?password=" + password);
@@ -31,18 +47,35 @@ public class LoginController {
                     e1.printStackTrace();
                 }
             }
+            if (e.getSource() == loginForm.getBtnSwap()){
+                ClientController.closeFrame(ClientController.FrameName.LOGIN);
+                ClientController.openFrame(ClientController.FrameName.SIGNUP);
+            }
         }
     }
 
-    public static void loginHandler(String msg){
+    public void loginHandler(ObjectWrapper objecetWrapper){
+        String msg = objecetWrapper.getStatus();
         if(msg.equals("success")){
+            // Player đang chơi trong hệ thống
+            playerLogin = (Player) objecetWrapper.getObject();
+            System.out.println(playerLogin.toString());
             ClientController.closeFrame(ClientController.FrameName.LOGIN);
             ClientController.openFrame(ClientController.FrameName.HOME);
+            try {
+                ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.HOME,null);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             System.out.println("success");
         }
         else{
+            JOptionPane.showMessageDialog(loginForm, "Đăng nhập thất bại", "Đăng nhập không thành công", JOptionPane.ERROR_MESSAGE);
             System.out.println("error");
         }
     }
-    
+
+    public Player getPlayerLogin() {
+        return playerLogin;
+    }
 }

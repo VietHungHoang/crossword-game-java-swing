@@ -53,7 +53,7 @@ public class SplashScreen extends JFrame {
 
         // Sự kiện khi nhấn nút Register
         registerButton.addActionListener(e -> {
-            new RegisterForm();  // Mở màn hình đăng ký
+            new SignUpForm();  // Mở màn hình đăng ký
             dispose();  // Đóng màn hình chờ
         });
 

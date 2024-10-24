@@ -18,6 +18,7 @@ public class SocketHandlers extends Thread {
     private Connection conn;
     private ServerView view;
     private LoginController loginController;
+    private SignUpController signUpController;
 
 
     public SocketHandlers(Socket socketClient,Connection conn) throws IOException {
@@ -41,7 +42,12 @@ public class SocketHandlers extends Thread {
                         this.loginController = new LoginController(view, conn, this);
                         this.loginController.checkLogin((User)objectWrapper.getObject());
                         break;
-                
+                    case SIGNUP:
+                        this.signUpController = new SignUpController(view, conn, this);
+                        this.signUpController.signUp((User)objectWrapper.getObject());
+                        break;
+//                    case PLAYER_STAT:
+//
                     default:
                         break;
                 }

@@ -7,7 +7,7 @@ import controller.socket.SocketHandlers;
 import views.HomeForm;
 import views.InviteRoomForm;
 import views.LoginForm;
-import views.RegisterForm;
+import views.SignUpForm;
 
 
 
@@ -17,17 +17,18 @@ public class ClientController {
     private static String severAddress = "localhost";
     private static int port = 12345;
     private static LoginForm loginForm;
-    private static RegisterForm registerForm;
+    private static SignUpForm signUpForm;
     private static HomeForm homeForm;
     private static InviteRoomForm inviteRoomForm;
 
     private static LoginController loginController;
     private static HomeController homeController;
     private static InviteRoomController inviteRoomController;
+    private static SignUpController signUpController;
 
     public enum FrameName{
         LOGIN, 
-        REGISTER, 
+        SIGNUP,
         HOME, 
         INVITE_ROOM, 
     }
@@ -61,6 +62,11 @@ public class ClientController {
                 inviteRoomForm = new InviteRoomForm();
                 inviteRoomController = new InviteRoomController(inviteRoomForm);
                 inviteRoomForm.setVisible(true);
+                break;
+            case SIGNUP:
+                signUpForm = new SignUpForm();
+                signUpController = new SignUpController(signUpForm);
+                signUpForm.setVisible(true);
             default:
                 break;
         }
@@ -78,6 +84,9 @@ public class ClientController {
 
             case INVITE_ROOM:
             inviteRoomForm.dispose();
+
+            case SIGNUP:
+            signUpForm.dispose();
             default:
                 break;
         }
@@ -87,5 +96,4 @@ public class ClientController {
         return socketHandlers;
     }
 
-    
 }

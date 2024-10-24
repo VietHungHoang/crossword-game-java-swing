@@ -1,46 +1,45 @@
 package models;
 
-
+import java.io.Serializable;
 import java.util.List;
 
-public class Player {
-    private Long id;
-    private int totalGame;
-    private int totalGameWon;
-    private int totalPoint;
-    private String playerName;
-    private List<Player> listFriends;
-    private User user;
+public class Player implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    public Long getId() {
-        return id;
-    }
+    private Long id;
+    private Long totalGame;
+    private Long totalGameWon;
+    private Double totalPoint;
+    private String playerName;
+    private String status;
+    private List<PlayerFriend> listFriends;
+    private User user;
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public int getTotalGame() {
+    public Long getTotalGame() {
         return totalGame;
     }
 
-    public void setTotalGame(int totalGame) {
+    public void setTotalGame(Long totalGame) {
         this.totalGame = totalGame;
     }
 
-    public int getTotalGameWon() {
+    public Long getTotalGameWon() {
         return totalGameWon;
     }
 
-    public void setTotalGameWon(int totalGameWon) {
+    public void setTotalGameWon(Long totalGameWon) {
         this.totalGameWon = totalGameWon;
     }
 
-    public int getTotalPoint() {
+    public Double getTotalPoint() {
         return totalPoint;
     }
 
-    public void setTotalPoint(int totalPoint) {
+    public void setTotalPoint(Double totalPoint) {
         this.totalPoint = totalPoint;
     }
 
@@ -52,12 +51,25 @@ public class Player {
         this.playerName = playerName;
     }
 
-    public List<Player> getListFriends() {
+    public List<PlayerFriend> getListFriends() {
         return listFriends;
     }
 
-    public void setListFriends(List<Player> listFriends) {
+    public void setListFriends(List<PlayerFriend> listFriends) {
         this.listFriends = listFriends;
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public User getUser() {
@@ -68,13 +80,18 @@ public class Player {
         this.user = user;
     }
 
-    public Player(Long id, int totalGame, int totalGameWon, int totalPoint, String playerName, List<Player> listFriends, User user) {
-        this.id = id;
-        this.totalGame = totalGame;
-        this.totalGameWon = totalGameWon;
-        this.totalPoint = totalPoint;
-        this.playerName = playerName;
-        this.listFriends = listFriends;
-        this.user = user;
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", totalGame=" + totalGame +
+                ", totalGameWon=" + totalGameWon +
+                ", totalPoint=" + totalPoint +
+                ", playerName='" + playerName + '\'' +
+                ", status='" + status + '\'' +
+                ", listFriends=" + listFriends +
+                ", user=" + user +
+                '}';
     }
+
 }
