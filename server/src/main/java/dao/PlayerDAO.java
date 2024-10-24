@@ -38,12 +38,12 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
                 player.setTotalGameWon(rs.getLong("total_game_won"));
                 player.setStatus(rs.getString("status"));
             }
-            player.setListFriends(getListFriend(player.getId()));
             return player;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+    @Override
     public List<PlayerFriend> getListFriend(Long id ){
         String sql= "Call GET_PLAYER_FRIENDS(?)";
         List<PlayerFriend > friendList = new ArrayList<>();

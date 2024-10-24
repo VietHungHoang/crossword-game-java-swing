@@ -12,8 +12,8 @@ public class HomeController {
     public HomeController(HomeForm homeForm){
         this.homeForm = homeForm;
         this.homeForm.addActionListener(new HomeListener());
-//        homeForm.getUserLabel().setText("Xin chào, " + ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getPlayerName());
-//        homeForm.getScoreLabel().setText("Điểm: " + ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getTotalPoint());
+        homeForm.getUserLabel().setText("Xin chào, " + ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getPlayerName());
+        homeForm.getScoreLabel().setText("Điểm: " + ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getTotalPoint());
     }
 
     class HomeListener implements ActionListener{
