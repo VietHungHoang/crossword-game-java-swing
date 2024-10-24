@@ -63,5 +63,15 @@ public class Player implements Serializable {
         this.status = status;
     }
 
-
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", totalGame=" + totalGame +
+                ", totalGameWon=" + totalGameWon +
+                ", totalPoint=" + totalPoint +
+                ", playerName='" + playerName + '\'' +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

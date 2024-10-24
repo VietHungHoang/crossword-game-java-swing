@@ -1,6 +1,7 @@
 package controller;
 
 import java.sql.Connection;
+import java.util.List;
 
 import dao.PlayerDAO;
 import dao.UserDAO;
@@ -12,6 +13,7 @@ import views.ServerView;
 
 public class LoginController {
     private ServerView view;
+    private Player playerLogin;
     private UserDAO userDAO;
     private PlayerDAO playerDAO;
     private SocketHandlers socketHandlers;
@@ -29,15 +31,25 @@ public class LoginController {
         System.out.println(user2.getUsername());
         System.out.println(user2.getPassword());
         String message = StreamData.Message.LOGIN.name();
-        message += (user2 != null && user2.getPassword().equals(user.getPassword())) ? ";success" : ";failed";
-        if(user2!=null){
+        message += (user2.getId()!=null && user2.getPassword().equals(user.getPassword())) ? ";success" : ";failed";
+        Player player = playerDAO.findPlayerByUserId(user2.getId());
+        ObjectWrapper objectWrapper;
+        if(user2.getId()!=null){
+            List<SocketHandlers> clients = ServerController.getSocketHandlers();
+            for (SocketHandlers clientHandler : clients) {
+                if (clientHandler.getLoginController().playerLogin != null && clientHandler.getLoginController().playerLogin.getPlayerName().equalsIgnoreCase(player.getPlayerName())) {
+                    objectWrapper = new ObjectWrapper(StreamData.Message.LOGIN.name() + ";" + "falied", null);
+                    socketHandlers.send(objectWrapper);
+                    return;
+                }
+            }
             playerDAO.setPlayerOnline(user2);
             System.out.println("UserName: "+ user2.getUsername()+ " Online");
         }
-        Player player = playerDAO.findPlayerByUserId(user2.getId());
-        ObjectWrapper objectWrapper;
         if(message.endsWith("success")){
           objectWrapper = new ObjectWrapper(message, player);
+            playerLogin=player;
+            System.out.println(playerLogin);
         }
         else {
              objectWrapper = new ObjectWrapper(message,null);

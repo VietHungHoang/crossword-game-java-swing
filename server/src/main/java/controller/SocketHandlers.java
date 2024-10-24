@@ -66,4 +66,7 @@ public class SocketHandlers extends Thread {
         }
     }
 
+    public LoginController getLoginController() {
+        return loginController;
+    }
 }
