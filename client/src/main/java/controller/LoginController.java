@@ -58,6 +58,7 @@ public class LoginController {
         String msg = objecetWrapper.getStatus();
         if(msg.equals("success")){
             // Player đang chơi trong hệ thống
+            JOptionPane.showMessageDialog(loginForm, "Đăng nhập thành công ", "Đăng nhập thành công", JOptionPane.INFORMATION_MESSAGE);
             playerLogin = (Player) objecetWrapper.getObject();
             System.out.println(playerLogin.toString());
             ClientController.closeFrame(ClientController.FrameName.LOGIN);
@@ -68,6 +69,12 @@ public class LoginController {
             JOptionPane.showMessageDialog(loginForm, "Đăng nhập thất bại", "Đăng nhập không thành công", JOptionPane.ERROR_MESSAGE);
             System.out.println("error");
         }
+    }
+
+    public void logOut() {
+        this.playerLogin = null;
+        ClientController.closeFrame( ClientController.FrameName.HOME);
+        ClientController.openFrame( ClientController.FrameName.LOGIN);
     }
 
     public Player getPlayerLogin() {

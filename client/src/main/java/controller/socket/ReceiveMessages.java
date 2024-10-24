@@ -30,13 +30,13 @@ public class ReceiveMessages extends Thread{
                     case LOGIN:
                         this.loginController = new LoginController(new LoginForm());
                         this.loginController.loginHandler(objectWrapper);
-
                         break;
                     case SIGNUP:
                         this.signUpController= new SignUpController();
                         this.signUpController.signUpHandler(objectWrapper.getStatus());
                         break;
-
+                    case LOGOUT:
+                        this.loginController.logOut();
                     default:
                         break;
                 }
