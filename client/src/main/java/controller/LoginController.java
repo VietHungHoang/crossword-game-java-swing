@@ -8,7 +8,7 @@ import controller.ClientController;
 import models.ObjectWrapper;
 import models.Player;
 import utils.StreamData;
-import views.LoginForm;
+import views.screen.LoginForm;
 import models.User;
 
 import javax.swing.*;

@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import controller.ClientController;
 import controller.LoginController;
-import views.HomeForm;
+import views.screen.HomeForm;
 
 public class HomeController {
     private HomeForm homeForm;

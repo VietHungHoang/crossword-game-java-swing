@@ -4,10 +4,10 @@ import javax.swing.JOptionPane;
 
 import controller.socket.HomeController;
 import controller.socket.SocketHandlers;
-import views.HomeForm;
-import views.InviteRoomForm;
-import views.LoginForm;
-import views.SignUpForm;
+import views.screen.HomeForm;
+import views.screen.InviteRoomForm;
+import views.screen.LoginForm;
+import views.screen.SignUpForm;
 
 
 

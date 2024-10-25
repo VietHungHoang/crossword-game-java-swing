@@ -1,4 +1,4 @@
-package views;
+package views.screen;
 
 import utils.RoundedBorder;
 

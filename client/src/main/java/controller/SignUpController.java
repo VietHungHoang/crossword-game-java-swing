@@ -3,7 +3,7 @@ package controller;
 import models.ObjectWrapper;
 import models.User;
 import utils.StreamData;
-import views.SignUpForm;
+import views.screen.SignUpForm;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

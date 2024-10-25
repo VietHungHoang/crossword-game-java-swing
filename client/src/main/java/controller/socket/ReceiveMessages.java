@@ -7,8 +7,8 @@ import controller.SignUpController;
 import models.ObjectWrapper;
 import models.Player;
 import utils.StreamData;
-import views.LoginForm;
-import views.SignUpForm;
+import views.screen.LoginForm;
+import views.screen.SignUpForm;
 
 public class ReceiveMessages extends Thread{
     private ObjectInputStream ois;

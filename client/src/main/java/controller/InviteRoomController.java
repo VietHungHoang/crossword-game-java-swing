@@ -2,7 +2,7 @@ package controller;
 
 import java.awt.event.ActionEvent;
 
-import views.InviteRoomForm;
+import views.screen.InviteRoomForm;
 
 public class InviteRoomController {
     private InviteRoomForm inviteRoomForm;
