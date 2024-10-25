@@ -3,7 +3,6 @@ package views.screen;
 import utils.RoundedBorder;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -12,7 +11,7 @@ import static javax.swing.SwingUtilities.invokeLater;
 public class HomeForm extends JFrame {
     private JPanel mainPanel;
     private JLabel userLabel, scoreLabel;
-    private JButton rankButton, friendButton, customButton, rankingButton;
+    private JButton rankButton, friendButton, customButton, rankingButton, logoutButton;
 
     public HomeForm() {
         initComponents();
@@ -38,21 +37,23 @@ public class HomeForm extends JFrame {
         // User label
         String playerName = "Binh dang";
         userLabel = new JLabel();
+        userLabel.setText("Binh dang");
         userLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
-        // Placeholder for avatar image
+//        // Placeholder for avatar image
         JLabel avatarLabel = new JLabel();
-        avatarLabel.setIcon(new ImageIcon(new ImageIcon("src/client/img/avatar.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
+//        avatarLabel.setIcon(new ImageIcon(new ImageIcon("src/client/img/avatar.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
 
         // Add avatar and user label to the left panel
         leftUserInfo.add(avatarLabel);
         leftUserInfo.add(Box.createRigidArea(new Dimension(10, 0)));  // Add horizontal space between avatar and label
         leftUserInfo.add(userLabel);
 
-        String Score = "0";
+        String Score = "0.0";
         // Create a panel for the score label
         JPanel scorePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));  // Align score label to the right
-        scoreLabel = new JLabel();
+        scoreLabel = new JLabel(Score);
+        scoreLabel.setText(Score);
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 14));
         scoreLabel.setPreferredSize(new Dimension(150, 30));  // Set height equal to avatar
         scoreLabel.setBorder(new RoundedBorder(15, Color.RED));  // Set radius to 15 for rounded border
@@ -87,6 +88,12 @@ public class HomeForm extends JFrame {
         rankingButton.setForeground(Color.WHITE);
         rankingButton.setPreferredSize(new Dimension(250, 50));  // Set button size
 
+        // New Logout button
+        logoutButton = new JButton("ĐĂNG XUẤT 🚪");
+        logoutButton.setBackground(Color.GRAY);
+        logoutButton.setForeground(Color.WHITE);
+        logoutButton.setPreferredSize(new Dimension(250, 50));  // Set button size
+
         // Footer label
         JLabel footerLabel = new JLabel("Chọn một mục để bắt đầu chơi!");
         footerLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -112,6 +119,8 @@ public class HomeForm extends JFrame {
         buttonPanel.add(customButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         buttonPanel.add(rankingButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));  // Space before logout
+        buttonPanel.add(logoutButton);  // Add logout button
 
         // Add components to the main panel
         mainPanel.add(userPanel);
@@ -123,12 +132,6 @@ public class HomeForm extends JFrame {
         // Add the main panel to the center of the frame
         add(mainPanel, BorderLayout.CENTER);
     }
-
-
-
-
-
-
 
     public static void main(String args[]) {
 
@@ -172,6 +175,10 @@ public class HomeForm extends JFrame {
         return rankingButton;
     }
 
+    public JButton getLogoutButton() {
+        return logoutButton;  // Getter for logout button
+    }
+
     public JLabel getUserLabel() {
         return userLabel;
     }
@@ -180,10 +187,11 @@ public class HomeForm extends JFrame {
         return scoreLabel;
     }
 
-    public void addActionListener(ActionListener act){
+    public void addActionListener(ActionListener act) {
         rankButton.addActionListener(act);
         friendButton.addActionListener(act);
         customButton.addActionListener(act);
         rankingButton.addActionListener(act);
+        logoutButton.addActionListener(act);  // Add action listener for logout
     }
 }

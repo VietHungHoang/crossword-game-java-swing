@@ -46,8 +46,9 @@ public class SocketHandlers extends Thread {
                         this.signUpController = new SignUpController(view, conn, this);
                         this.signUpController.signUp((User)objectWrapper.getObject());
                         break;
-//                    case PLAYER_STAT:
-//
+                    case LOGOUT:
+                        this.loginController.logOut();
+                        break;
                     default:
                         break;
                 }

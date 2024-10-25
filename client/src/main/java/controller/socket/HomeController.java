@@ -2,10 +2,12 @@ package controller.socket;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import controller.ClientController;
 import controller.LoginController;
-import views.screen.HomeForm;
+import utils.StreamData;
+import views.HomeForm;
 
 public class HomeController {
     private HomeForm homeForm;
@@ -22,6 +24,13 @@ public class HomeController {
             if(e.getSource() == homeForm.getFriendButton()){
                 ClientController.closeFrame(ClientController.FrameName.HOME);
                 ClientController.openFrame(ClientController.FrameName.INVITE_ROOM);
+            }
+            if(e.getSource()== homeForm.getLogoutButton()){
+                try {
+                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.LOGOUT, null);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }

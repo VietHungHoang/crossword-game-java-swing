@@ -57,6 +57,11 @@ public class LoginController {
         socketHandlers.send(objectWrapper);
         System.out.println("Sent login " + message);
     };
+    public void logOut(){
+        this.playerLogin = null;
+        ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.LOGOUT.name(), null);
+        socketHandlers.send(objectWrapper);
+    }
 
     public Player getPlayerLogin() {
         return playerLogin;
