@@ -19,8 +19,13 @@ public class SocketHandlers extends Thread {
     private ServerView view;
     private LoginController loginController;
     private SignUpController signUpController;
+    private WaitingForGameController waitingForGameController;
+    private RoomController roomController;
+    
 
-
+    public LoginController getLoginController() {
+        return this.loginController;
+    }
     public SocketHandlers(Socket socketClient,Connection conn) throws IOException {
         this.socketClient = socketClient;
         this.oos = new ObjectOutputStream(this.socketClient.getOutputStream());
@@ -49,6 +54,13 @@ public class SocketHandlers extends Thread {
                     case LOGOUT:
                         this.loginController.logOut();
                         break;
+                    case WAITING_FOR_GAME:
+                        this.waitingForGameController = new WaitingForGameController(view, conn, this);
+                        break;
+                    case CREATE_ROOM:
+                        this.roomController = new RoomController(view, conn, this);
+                        this.roomController.createRoom();
+                        break;
                     default:
                         break;
                 }
@@ -67,7 +79,4 @@ public class SocketHandlers extends Thread {
         }
     }
 
-    public LoginController getLoginController() {
-        return loginController;
-    }
 }

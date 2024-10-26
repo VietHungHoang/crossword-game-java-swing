@@ -8,7 +8,7 @@ import views.HomeForm;
 import views.InviteRoomForm;
 import views.LoginForm;
 import views.SignUpForm;
-
+import views.WaitingForGameForm;
 
 
 public class ClientController {
@@ -20,17 +20,18 @@ public class ClientController {
     private static SignUpForm signUpForm;
     private static HomeForm homeForm;
     private static InviteRoomForm inviteRoomForm;
-
+    private static WaitingForGameForm waitingForGameForm;
     private static LoginController loginController;
     private static HomeController homeController;
     private static InviteRoomController inviteRoomController;
     private static SignUpController signUpController;
-
+    private static WaitingForGameController waitingForGameController;
     public enum FrameName{
         LOGIN, 
         SIGNUP,
         HOME, 
         INVITE_ROOM, 
+        WAITING_FOR_GAME, 
     }
 
     public ClientController(){
@@ -57,7 +58,7 @@ public class ClientController {
                 homeForm = new HomeForm();
                 homeController = new HomeController(homeForm);
                 homeForm.setVisible(true);
-            break;
+                break;
             case INVITE_ROOM:
                 inviteRoomForm = new InviteRoomForm();
                 inviteRoomController = new InviteRoomController(inviteRoomForm);
@@ -67,7 +68,13 @@ public class ClientController {
                 signUpForm = new SignUpForm();
                 signUpController = new SignUpController(signUpForm);
                 signUpForm.setVisible(true);
+                break;
+            case WAITING_FOR_GAME:
+                waitingForGameForm = new WaitingForGameForm();
+                waitingForGameController = new WaitingForGameController(waitingForGameForm);
+                waitingForGameForm.setVisible(true);
             default:
+
                 break;
         }
     }
@@ -84,11 +91,18 @@ public class ClientController {
 
             case INVITE_ROOM:
             inviteRoomForm.dispose();
+            break;
 
             case SIGNUP:
             signUpForm.dispose();
+            break;
+
+            case WAITING_FOR_GAME:
+            waitingForGameForm.dispose();
+            break;
+
             default:
-                break;
+            break;
         }
     }
 

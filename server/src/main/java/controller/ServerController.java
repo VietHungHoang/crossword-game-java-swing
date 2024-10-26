@@ -6,7 +6,9 @@ import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
+import java.util.List;
 
+import models.Room;
 import views.ServerView;
 
 public class ServerController {
@@ -15,12 +17,13 @@ public class ServerController {
     private static final String hostName = "127.0.0.1";
     private static final String dbName = "game_db";
     private static final String username = "root";
-    private static final String password = "dangbinh1770";
+    private static final String password = "";
     private static Connection conn;
     private static ServerSocket myServer; 
     private static ArrayList<SocketHandlers> socketHandlers;
-
+    public static List<Room> rooms;
     public ServerController(ServerView serverView){
+      rooms = new ArrayList<>();
         this.view = serverView;
         this.socketHandlers = new ArrayList<>();
         this.getDBConnection(this.dbName, this.username, this.password);

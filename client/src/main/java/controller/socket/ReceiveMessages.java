@@ -4,16 +4,15 @@ import java.io.ObjectInputStream;
 
 import controller.LoginController;
 import controller.SignUpController;
+import controller.WaitingForGameController;
 import models.ObjectWrapper;
-import models.Player;
 import utils.StreamData;
 import views.LoginForm;
-import views.SignUpForm;
-
 public class ReceiveMessages extends Thread{
     private ObjectInputStream ois;
     private LoginController loginController;
     private SignUpController signUpController;
+    private WaitingForGameController waitingForGameController;
     public ReceiveMessages(ObjectInputStream ois) {
         this.ois = ois;
     }
@@ -37,6 +36,15 @@ public class ReceiveMessages extends Thread{
                         break;
                     case LOGOUT:
                         this.loginController.logOut();
+                        break;
+                    case CREATE_ROOM:
+                      //TODO :  Khoi tao Waiting room From roi dong Frame // 
+                      // xu ly logic  obecject room
+                        break;
+                    case WAITING_FOR_GAME:
+                        this.waitingForGameController = new WaitingForGameController();
+                        this.waitingForGameController.waitingForGameHandler(objectWrapper);
+                        break;
                     default:
                         break;
                 }

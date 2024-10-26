@@ -4,14 +4,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import controller.ClientController;
+import javax.swing.JOptionPane;
+
 import models.ObjectWrapper;
 import models.Player;
+import models.User;
 import utils.StreamData;
 import views.LoginForm;
-import models.User;
-
-import javax.swing.*;
 
 public class LoginController {
     private LoginForm loginForm;
