@@ -27,7 +27,13 @@ public class StreamData {
         ACCEPT_FIND_MATCH,
         TIME_FIND_MATCH,
         UNKNOW_MESSAGE, 
-        WAITING_FOR_GAME
+        WAITING_FOR_GAME,
+        START_RANK_GAME,
+        OPPONENT_READY,
+        CANCEL_WAITING,
+        UPDATE_ROOM_STATUS,
+        START_GAME,
+        PLAYER_READY,
     }
 
     public static Message getStreamMessage(String message) {

@@ -9,7 +9,7 @@ public class GameRound implements Serializable {
     private Date timeRound;
     private Alphabet alphabet;
     private Word word;
-
+    private WordInGame wordInGame;
     public Long getId() {
         return id;
     }

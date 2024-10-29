@@ -174,7 +174,6 @@ public class HomeForm extends JFrame {
     public JButton getRankingButton() {
         return rankingButton;
     }
-
     public JButton getLogoutButton() {
         return logoutButton;  // Getter for logout button
     }

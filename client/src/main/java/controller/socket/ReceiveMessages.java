@@ -2,17 +2,23 @@ package controller.socket;
 
 import java.io.ObjectInputStream;
 
+import controller.GameController;
 import controller.LoginController;
 import controller.SignUpController;
 import controller.WaitingForGameController;
 import models.ObjectWrapper;
 import utils.StreamData;
+import views.GameForm;
 import views.LoginForm;
+import views.WaitingForGameForm;
+
+
 public class ReceiveMessages extends Thread{
     private ObjectInputStream ois;
     private LoginController loginController;
     private SignUpController signUpController;
     private WaitingForGameController waitingForGameController;
+    private GameController gameController;
     public ReceiveMessages(ObjectInputStream ois) {
         this.ois = ois;
     }
@@ -42,8 +48,21 @@ public class ReceiveMessages extends Thread{
                       // xu ly logic  obecject room
                         break;
                     case WAITING_FOR_GAME:
-                        this.waitingForGameController = new WaitingForGameController();
-                        this.waitingForGameController.waitingForGameHandler(objectWrapper);
+                        // Đảm bảo rằng WaitingForGameController đã được khởi tạo trước đó và chỉ gọi phương thức xử lý.
+                        if (this.waitingForGameController != null) {
+                            System.out.println("Khong can khoi tao controller");
+                            this.waitingForGameController.waitingForGameHandler(objectWrapper);
+                        } else {
+                            // Trong trường hợp chưa có controller, khởi tạo mới.
+                            System.out.println("Khoi tao controller");
+                            this.waitingForGameController = new WaitingForGameController(new WaitingForGameForm());
+                            this.waitingForGameController.waitingForGameHandler(objectWrapper);
+                        }
+                        break;
+                    case START_GAME:
+                        System.out.println("Mo game ne");
+                        this.waitingForGameController.closeConfirmationForm();
+                        this.gameController = new GameController(new GameForm());
                         break;
                     default:
                         break;

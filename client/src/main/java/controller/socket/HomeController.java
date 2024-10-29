@@ -10,7 +10,7 @@ import views.HomeForm;
 
 public class HomeController {
     private HomeForm homeForm;
-
+    
     public HomeController(HomeForm homeForm) {
         this.homeForm = homeForm;
         this.homeForm.addActionListener(new HomeListener());
@@ -39,16 +39,15 @@ public class HomeController {
                     e1.printStackTrace();
                 }
             }
-            if(e.getSource() == homeForm.getRankingButton()){
-                //TODO: Handle waiting for game
-                // try {
+            if(e.getSource() == homeForm.getRankButton()){
+                try {
                     ClientController.closeFrame(ClientController.FrameName.HOME);
                     ClientController.openFrame(ClientController.FrameName.WAITING_FOR_GAME);
-                    // ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.WAITING_FOR_GAME, null);
-                // } 
-                // catch (IOException e1) {
-                //     e1.printStackTrace();
-                // }
+                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.WAITING_FOR_GAME, null);
+                } 
+                catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }

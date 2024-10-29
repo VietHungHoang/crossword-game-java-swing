@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.Game;
 import models.Room;
 import views.ServerView;
 
@@ -20,12 +21,14 @@ public class ServerController {
     private static final String password = "";
     private static Connection conn;
     private static ServerSocket myServer; 
-    private static ArrayList<SocketHandlers> socketHandlers;
+    public static ArrayList<SocketHandlers> socketHandlers;
     public static List<Room> rooms;
+    public static List<Game> game;
     public ServerController(ServerView serverView){
-      rooms = new ArrayList<>();
+        rooms = new ArrayList<>();
+        game = new ArrayList<>();
+        socketHandlers = new ArrayList<>();
         this.view = serverView;
-        this.socketHandlers = new ArrayList<>();
         this.getDBConnection(this.dbName, this.username, this.password);
         this.openServer(port);
         view.showMessage("Server is running...");
