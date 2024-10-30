@@ -63,11 +63,11 @@ public class LoginController {
         ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.LOGOUT.name(), null);
         socketHandlers.send(objectWrapper);
         //TODO: Xóa client trong list
-        // for (SocketHandlers clientHandler : ServerController.socketHandlers) {
-        //     if (clientHandler.getLoginController()!= null && clientHandler.getLoginController().getPlayerLogin()!=null &&clientHandler.getLoginController().getPlayerLogin().getPlayerName().equalsIgnoreCase(playerLogin.getPlayerName())) {
-        //         ServerController.socketHandlers.remove(clientHandler);
-        //     }
-        // }
+        for (SocketHandlers clientHandler : ServerController.socketHandlers) {
+            if (clientHandler.getLoginController()!= null && clientHandler.getLoginController().getPlayerLogin()!=null &&clientHandler.getLoginController().getPlayerLogin().getPlayerName().equalsIgnoreCase(playerLogin.getPlayerName())) {
+                ServerController.socketHandlers.remove(clientHandler);
+            }
+        }
     }
 
     public Player getPlayerLogin() {

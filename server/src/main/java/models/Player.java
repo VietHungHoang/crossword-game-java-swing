@@ -1,11 +1,9 @@
 package models;
 
 import java.io.Serializable;
-import java.nio.DoubleBuffer;
-import java.util.List;
 
 public class Player implements Serializable {
-    private static final long serialVersionUID = 1L;
+    
 
     private Long id;
     private Long totalGame;
@@ -13,7 +11,7 @@ public class Player implements Serializable {
     private Double totalPoint;
     private String playerName;
     private String status;
-
+    private static final long serialVersionUID = 1L;
     public void setId(Long id) {
         this.id = id;
     }

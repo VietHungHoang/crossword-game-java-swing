@@ -8,13 +8,13 @@ import java.util.List;
 
 import dao.PlayerDAO;
 import dao.UserDAO;
+import models.Game;
 import models.ObjectWrapper;
 import models.Player;
 import models.Room;
 import utils.RandomString;
 import utils.StreamData;
 import views.ServerView;
-
 public class WaitingForGameController {
     private ServerView view;
     private Player playerLogin;
@@ -173,8 +173,12 @@ public class WaitingForGameController {
           if (room.areBothPlayersReady()) {
               System.out.println("Cả hai người chơi đều đã sẵn sàng, bắt đầu trò chơi.");
               room.setStatus("Đang chơi");
-              System.out.println("Dang tao phong cho ca 2 nguoi choi trong phong1");
-              ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME.name(), room);
+              System.out.println("Dang tao phong cho ca 2 nguoi choi trong phong");
+              Game game = new Game(room);
+              System.out.println("Da tao phong cho ca 2 nguoi choi trong phong");
+              ServerController.games.add(game);
+              System.out.println("Da them phong vao danh sach game");
+              ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME.name(), game);
               List<SocketHandlers> socketHandlers = ServerController.socketHandlers;
               for(SocketHandlers socketHandler : socketHandlers ){
                 if(socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(0)) || socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(1))){

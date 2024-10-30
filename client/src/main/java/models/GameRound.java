@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class GameRound implements Serializable {
     private String gameId; // ID của game
     private WordInGame wordInGame; // Đối tượng WordInGame tương ứng
-
+    private static final long serialVersionUID = 1L;
     // Constructor
     public GameRound(String gameId, WordInGame wordInGame) {
         this.gameId = gameId;

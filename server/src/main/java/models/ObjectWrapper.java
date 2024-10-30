@@ -6,7 +6,7 @@ public class ObjectWrapper implements Serializable {
     private String identifier;
     private Object object;
     private long elapsedTime; // Thêm trường elapsedTime để lưu thời gian đã trôi qua
-
+  
     public ObjectWrapper() {
     }
 

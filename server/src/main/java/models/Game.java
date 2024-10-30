@@ -1,5 +1,6 @@
 package models;
 
+import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +9,7 @@ import java.util.List;
 
 import utils.RandomString;
 
-public class Game {
+public class Game implements Serializable{
     private String id; // ID của game
     private Date endDate; // Thời gian kết thúc game
     private Date startDate; // Thời gian bắt đầu game
@@ -18,12 +19,12 @@ public class Game {
     private List<WordInGame> wordInGameList; // Danh sách từ trong game
     private List<GameRound> gameRoundList; // Danh sách các round
     private Room room; // Phòng chơi game
-    private Player player1; // Người chơi 1
-    private Player player2; // Người chơi 2
+    public Player player1; // Người chơi 1
+    public Player player2; // Người chơi 2
     private int player1Score = 0; // Điểm của người chơi 1
     private int player2Score = 0; // Điểm của người chơi 2
     private String roomId; // ID của phòng
-
+    private static final long serialVersionUID = 1L;
 
     public Game(Room room) {
         RandomString randomString = new RandomString(9, new SecureRandom(), RandomString.DIGITS);

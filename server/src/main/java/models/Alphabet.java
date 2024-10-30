@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Alphabet implements  Serializable{
     private Long id;
     private String value;
-
+    private static final long serialVersionUID = 1L;
     public Long getId() {
         return id;
     }
