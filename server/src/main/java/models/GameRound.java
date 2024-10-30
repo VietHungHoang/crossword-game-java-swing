@@ -1,62 +1,32 @@
 package models;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class GameRound implements Serializable {
-    private Long id;
-    private Double point;
-    private Date timeRound;
-    private Alphabet alphabet;
-    private Word word;
-    private WordInGame wordInGame;
-    public Long getId() {
-        return id;
+    private String gameId; // ID của game
+    private WordInGame wordInGame; // Đối tượng WordInGame tương ứng
+
+    // Constructor
+    public GameRound(String gameId, WordInGame wordInGame) {
+        this.gameId = gameId;
+        this.wordInGame = wordInGame;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    // Getter cho gameId
+    public String getGameId() {
+        return gameId;
     }
 
-    public Double getPoint() {
-        return point;
+    // Getter cho wordInGame
+    public WordInGame getWordInGame() {
+        return wordInGame;
     }
 
-    public void setPoint(Double point) {
-        this.point = point;
-    }
-
-    public Date getTimeRound() {
-        return timeRound;
-    }
-
-    public void setTimeRound(Date timeRound) {
-        this.timeRound = timeRound;
-    }
-
-    public Alphabet getAlphabet() {
-        return alphabet;
-    }
-
-    public void setAlphabet(Alphabet alphabet) {
-        this.alphabet = alphabet;
-    }
-
-
-
-    public Word getWord() {
-        return word;
-    }
-
-    public void setWord(Word word) {
-        this.word = word;
-    }
-
-    public GameRound(Long id, Double point, Date timeRound, Alphabet alphabet, Word word) {
-        this.id = id;
-        this.point = point;
-        this.timeRound = timeRound;
-        this.alphabet = alphabet;
-        this.word = word;
+    @Override
+    public String toString() {
+        return "GameRound{" +
+                "gameId='" + gameId + '\'' +
+                ", wordInGame=" + wordInGame +
+                '}';
     }
 }

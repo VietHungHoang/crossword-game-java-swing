@@ -24,6 +24,7 @@ public class SocketHandlers extends Thread {
     private RoomController roomController;
     private String roomID;
     private boolean IsReadyForGame = false;
+    private GameController gameController;
     public LoginController getLoginController() {
         return this.loginController;
     }

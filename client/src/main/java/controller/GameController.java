@@ -1,10 +1,11 @@
 package controller;
 
-import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 
 import models.ObjectWrapper;
 import models.Player;
 import views.GameForm;
+
 public class GameController {
   private GameForm gameForm;
   private Player player1;
@@ -15,12 +16,9 @@ public class GameController {
   }
 
   public void showMessage(String msg){
-    gameForm.showMessage(msg);
+    JOptionPane.showMessageDialog(gameForm, msg);
   }
 
-  public void addActionListener(ActionListener act){
-    gameForm.addActionListener(act);
-  }
   public void setPlayer1(Player player1){
     this.player1 = player1;
     gameForm.getLabelPlayer1().setText(player1.getPlayerName());

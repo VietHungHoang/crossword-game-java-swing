@@ -23,10 +23,10 @@ public class ServerController {
     private static ServerSocket myServer; 
     public static ArrayList<SocketHandlers> socketHandlers;
     public static List<Room> rooms;
-    public static List<Game> game;
+    public static List<Game> games;
     public ServerController(ServerView serverView){
         rooms = new ArrayList<>();
-        game = new ArrayList<>();
+        games = new ArrayList<>();
         socketHandlers = new ArrayList<>();
         this.view = serverView;
         this.getDBConnection(this.dbName, this.username, this.password);

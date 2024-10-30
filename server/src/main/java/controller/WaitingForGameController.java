@@ -166,12 +166,14 @@ public class WaitingForGameController {
               .findFirst()
               .orElse(null);
   
-      if (room != null) {
+      if (room != null && room.getPlayers().size() == 2) {
           room.setPlayerReady(player);
           System.out.println("Người chơi " + player.getPlayerName() + " đã sẵn sàng.");
           
           if (room.areBothPlayersReady()) {
               System.out.println("Cả hai người chơi đều đã sẵn sàng, bắt đầu trò chơi.");
+              room.setStatus("Đang chơi");
+              System.out.println("Dang tao phong cho ca 2 nguoi choi trong phong1");
               ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME.name(), room);
               List<SocketHandlers> socketHandlers = ServerController.socketHandlers;
               for(SocketHandlers socketHandler : socketHandlers ){

@@ -79,7 +79,7 @@ public class ClientController {
                 waitingForGameForm.setVisible(true);
                 break;
             case GAME:
-                gameForm = new GameForm();
+                gameForm = new GameForm("Player 1", "Player 2", "Player 3", 10, 10);
                 gameController = new GameController(gameForm);
                 gameForm.setVisible(true);
                 break;

@@ -1,123 +1,127 @@
 package models;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import utils.RandomString;
+
 public class Game {
-    private Long id;
-    private Date endDate;
-    private Date startDate;
-    private String status;
-    private String type;
-    private Long winner;
-    private WordInGame[] wordInGame;
-    private List<GameRound> gameRoundList;
-    private Room room;
-    public Game(Long id, Date endDate, Date startDate, String status, String type, Long winner) {
-        this.id = id;
-        this.endDate = endDate;
-        this.startDate = startDate;
-        this.status = status;
-        this.type = type;
-        this.winner = winner;
+    private String id; // ID của game
+    private Date endDate; // Thời gian kết thúc game
+    private Date startDate; // Thời gian bắt đầu game
+    private String status; // Trạng thái game (Pending, Completed, ...)
+    private String type; // Loại game (BO3)
+    private Long winner; // ID của người thắng
+    private List<WordInGame> wordInGameList; // Danh sách từ trong game
+    private List<GameRound> gameRoundList; // Danh sách các round
+    private Room room; // Phòng chơi game
+    private Player player1; // Người chơi 1
+    private Player player2; // Người chơi 2
+    private int player1Score = 0; // Điểm của người chơi 1
+    private int player2Score = 0; // Điểm của người chơi 2
+    private String roomId; // ID của phòng
 
-        // Tự động khởi tạo 3 đối tượng WordInGame và GameRound
-        this.wordInGame = createRandomWordInGameArray();
-        this.gameRoundList = createGameRoundList(this.wordInGame);
 
+    public Game(Room room) {
+        RandomString randomString = new RandomString(9, new SecureRandom(), RandomString.DIGITS);
+        this.id = randomString.nextString(); // Tạo ID game ngẫu nhiên
+        this.room = room; // Lưu thông tin phòng
+        this.startDate = new Date(); // Ghi nhận thời gian bắt đầu
+        this.status = "Pending"; // Trạng thái ban đầu là Pending
+        this.type = "BO3"; // Loại game BO3
+        this.roomId = room.getId();
+
+        // Lấy hai người chơi từ Room
+        this.player1 = room.getPlayers().get(0);
+        this.player2 = room.getPlayers().get(1);
+        this.winner = null;
+        
+        // Khởi tạo danh sách từ ngẫu nhiên cho WordInGame và danh sách GameRound rỗng
+        this.wordInGameList = WordInGame.generateSampleData();
+        this.gameRoundList = new ArrayList<>();
+
+        // Thêm GameRound đầu tiên
+        addNewRound();
     }
 
-    private WordInGame[] createRandomWordInGameArray() {
-        // Giả lập danh sách WordInGame với dữ liệu cứng
-        List<WordInGame> wordList = WordInGame.generateSampleData();
-
-        // Xáo trộn danh sách để lấy ngẫu nhiên
-        Collections.shuffle(wordList);
-
-        // Lấy 3 đối tượng ngẫu nhiên từ danh sách đã xáo trộn
-        return new WordInGame[] { wordList.get(0), wordList.get(1), wordList.get(2) };
+    // Kiểm tra xem có người chơi nào thắng chưa
+    public boolean checkWinner() {
+        return player1Score == 2 || player2Score == 2;
     }
 
-    private List<GameRound> createGameRoundList(WordInGame[] wordInGameArray) {
-        List<GameRound> rounds = new ArrayList<>();
-
-        // Tạo 3 đối tượng GameRound và mỗi đối tượng lấy một WordInGame tương ứng
-        for (WordInGame word : wordInGameArray) {
+    // Thêm một GameRound mới
+    public void addNewRound() {
+        if (checkWinner()) {
+            return; // Nếu đã có người thắng thì không thêm round mới
         }
-        return rounds;
+
+        WordInGame newWord = getUniqueKeyword(); // Lấy từ khóa ngẫu nhiên chưa được sử dụng
+        if (newWord != null) {
+            // Tạo GameRound mới với gameId và WordInGame
+            GameRound newRound = new GameRound(this.id, newWord);
+            gameRoundList.add(newRound); // Thêm round mới vào danh sách
+        }
     }
 
-    // Getters and setters
-    public Long getId() {
-        return id;
+    // Lấy từ khóa ngẫu nhiên chưa tồn tại trong game
+    private WordInGame getUniqueKeyword() {
+        List<WordInGame> shuffledWords = new ArrayList<>(wordInGameList);
+        Collections.shuffle(shuffledWords); // Xáo trộn danh sách từ
+
+        for (WordInGame word : shuffledWords) {
+            if (isUniqueKeyword(word)) {
+                return word; // Trả về từ khóa duy nhất
+            }
+        }
+        return null; // Không tìm thấy từ khóa duy nhất
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    // Kiểm tra xem từ khóa có duy nhất không
+    private boolean isUniqueKeyword(WordInGame newWord) {
+        for (GameRound existingRound : gameRoundList) {
+            if (existingRound.getWordInGame().getKeyword().equalsIgnoreCase(newWord.getKeyword())) {
+                return false; // Từ khóa đã tồn tại trong game
+            }
+        }
+        return true; // Từ khóa là duy nhất
     }
 
-    public Date getEndDate() {
-        return endDate;
+    // Cộng điểm cho người chơi dựa trên ID
+    public void addPoint(String playerId) {
+        if (player1.getId().toString().equals(playerId)) {
+            player1Score++; // Cộng điểm cho người chơi 1
+        } else if (player2.getId().toString().equals(playerId)) {
+            player2Score++; // Cộng điểm cho người chơi 2
+        }
+        
+        // Kiểm tra xem có ai thắng không sau khi cộng điểm
+        if (checkWinner()) {
+            endGame(player1Score == 2 ? player1 : player2); // Kết thúc game nếu có người thắng
+        }
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    // Kết thúc round và cập nhật điểm cho người thắng
+    public void endRound(GameRound round, Player winner) {
+        addPoint(winner.getId().toString()); // Cộng điểm cho người thắng
+        addNewRound(); // Thêm round mới nếu chưa có người thắng
     }
 
-    public Date getStartDate() {
-        return startDate;
+    // Kết thúc game và cập nhật thông tin người thắng
+    private void endGame(Player winner) {
+        this.endDate = new Date(); // Ghi nhận thời gian kết thúc
+        this.status = "Completed"; // Đánh dấu trạng thái là Completed
+        this.winner = winner.getId(); // Lưu ID của người thắng
+        winner.setTotalGameWon(winner.getTotalGameWon() + 1); // Cập nhật số game thắng cho người chơi
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Long getWinner() {
-        return winner;
-    }
-
-    public void setWinner(Long winner) {
-        this.winner = winner;
-    }
-
-    public WordInGame[] getWordInGame() {
-        return wordInGame;
-    }
-
+    // Getter cho danh sách các round
     public List<GameRound> getGameRoundList() {
         return gameRoundList;
     }
-
-    @Override
-    public String toString() {
-        return "Game{" +
-                "id=" + id +
-                ", endDate=" + endDate +
-                ", startDate=" + startDate +
-                ", status='" + status + '\'' +
-                ", type='" + type + '\'' +
-                ", winner=" + winner +
-                ", wordInGame=" + Arrays.toString(wordInGame) +
-                ", gameRoundList=" + gameRoundList +
-                '}';
+    public String getRoomId() {
+        return roomId;
     }
-}
+  }

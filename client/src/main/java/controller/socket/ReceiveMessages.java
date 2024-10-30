@@ -7,12 +7,11 @@ import controller.LoginController;
 import controller.SignUpController;
 import controller.WaitingForGameController;
 import models.ObjectWrapper;
+import models.Room;
 import utils.StreamData;
 import views.GameForm;
 import views.LoginForm;
 import views.WaitingForGameForm;
-
-
 public class ReceiveMessages extends Thread{
     private ObjectInputStream ois;
     private LoginController loginController;
@@ -44,25 +43,28 @@ public class ReceiveMessages extends Thread{
                         this.loginController.logOut();
                         break;
                     case CREATE_ROOM:
-                      //TODO :  Khoi tao Waiting room From roi dong Frame // 
-                      // xu ly logic  obecject room
+                    //TODO : Khoi tao phong custom de co the moi nguoi choi
                         break;
                     case WAITING_FOR_GAME:
                         // Đảm bảo rằng WaitingForGameController đã được khởi tạo trước đó và chỉ gọi phương thức xử lý.
                         if (this.waitingForGameController != null) {
-                            System.out.println("Khong can khoi tao controller");
+  
                             this.waitingForGameController.waitingForGameHandler(objectWrapper);
                         } else {
                             // Trong trường hợp chưa có controller, khởi tạo mới.
-                            System.out.println("Khoi tao controller");
+     
                             this.waitingForGameController = new WaitingForGameController(new WaitingForGameForm());
                             this.waitingForGameController.waitingForGameHandler(objectWrapper);
                         }
                         break;
                     case START_GAME:
                         System.out.println("Mo game ne");
+                        Room room = (Room)objectWrapper.getObject();
                         this.waitingForGameController.closeConfirmationForm();
-                        this.gameController = new GameController(new GameForm());
+                        //TODO: Chỗ này fix lại là phải lấy lại là khởi tạo GAME phải từ Object Game trả về nên nếu trả về ROOM thì ko đúng
+                        //TODO: Tức là chỗ này phải gọi lên server để lấy lại Object Game
+                        this.gameController = new GameController(new GameForm(room.getPlayers().get(0).getPlayerName(), room.getPlayers().get(1).getPlayerName(), "KEYWORD", 0, 0));
+                        // this.gameController.startGameHandler(objectWrapper);
                         break;
                     default:
                         break;
