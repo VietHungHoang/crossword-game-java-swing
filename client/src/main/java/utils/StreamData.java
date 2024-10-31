@@ -35,7 +35,8 @@ public class StreamData {
         PLAYER_READY,
         CANCEL_WAITING,
         OPPONENT_READY,
-        START_GAME
+        START_GAME,
+        RANKING
     }
 
     public static Message getStreamMessage(String message) {

@@ -25,6 +25,7 @@ public class SocketHandlers extends Thread {
     private String roomID;
     private boolean IsReadyForGame = false;
     private GameController gameController;
+    private  RankingController rankingController;
     public LoginController getLoginController() {
         return this.loginController;
     }
@@ -65,6 +66,10 @@ public void run() {
                     if (this.waitingForGameController != null) {
                         this.waitingForGameController.handlePlayerReady();
                     }
+                    break;
+                case RANKING:
+                    this.rankingController = new RankingController(view, conn, this);
+                    this.rankingController.ranking();
                     break;
                 case CANCEL_WAITING:
                     if (this.waitingForGameController != null) {

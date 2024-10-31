@@ -2,21 +2,20 @@ package controller.socket;
 
 import java.io.ObjectInputStream;
 
-import controller.GameController;
-import controller.LoginController;
-import controller.SignUpController;
-import controller.WaitingForGameController;
+import controller.*;
 import models.ObjectWrapper;
 import models.Room;
 import utils.StreamData;
 import views.GameForm;
 import views.LoginForm;
+import views.RankingForm;
 import views.WaitingForGameForm;
 public class ReceiveMessages extends Thread{
     private ObjectInputStream ois;
     private LoginController loginController;
     private SignUpController signUpController;
     private WaitingForGameController waitingForGameController;
+    private RankingController rankingController;
     private GameController gameController;
     public ReceiveMessages(ObjectInputStream ois) {
         this.ois = ois;
@@ -66,6 +65,10 @@ public class ReceiveMessages extends Thread{
                         this.gameController = new GameController(new GameForm(room.getPlayers().get(0).getPlayerName(), room.getPlayers().get(1).getPlayerName(), "KEYWORD", 0, 0));
                         // this.gameController.startGameHandler(objectWrapper);
                         break;
+                    case RANKING:
+                        this.rankingController = new RankingController(new RankingForm());
+                        this.rankingController.rankingHandler(objectWrapper.getObject());
+                        break;
                     default:
                         break;
                 }
@@ -77,6 +80,10 @@ public class ReceiveMessages extends Thread{
 
     public LoginController getLoginController() {
         return loginController;
+    }
+
+    public RankingController getRankingController() {
+        return rankingController;
     }
 
     public void setLoginController(LoginController loginController) {

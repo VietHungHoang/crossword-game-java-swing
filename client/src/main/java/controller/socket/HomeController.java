@@ -39,6 +39,13 @@ public class HomeController {
                     e1.printStackTrace();
                 }
             }
+            if (e.getSource() == homeForm.getRankingButton()) {
+                try {
+                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.RANKING, null);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
             if(e.getSource() == homeForm.getRankButton()){
                 try {
                     ClientController.closeFrame(ClientController.FrameName.HOME);

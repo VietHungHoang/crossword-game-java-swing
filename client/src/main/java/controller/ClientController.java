@@ -4,12 +4,7 @@ import javax.swing.JOptionPane;
 
 import controller.socket.HomeController;
 import controller.socket.SocketHandlers;
-import views.GameForm;
-import views.HomeForm;
-import views.InviteRoomForm;
-import views.LoginForm;
-import views.SignUpForm;
-import views.WaitingForGameForm;
+import views.*;
 
 public class ClientController {
 
@@ -28,6 +23,13 @@ public class ClientController {
     private static SignUpController signUpController;
     private static WaitingForGameController waitingForGameController;
     private static GameController gameController;
+    private  static RankingController rankingController;
+    private  static RankingForm rankingForm;
+
+
+    public static RankingController getRankingController() {
+        return rankingController;
+    }
 
     public enum FrameName{
         LOGIN, 
@@ -35,7 +37,8 @@ public class ClientController {
         HOME, 
         INVITE_ROOM, 
         WAITING_FOR_GAME,
-        GAME
+        GAME,
+        RANKING
     }
 
     public ClientController(){
@@ -83,8 +86,13 @@ public class ClientController {
                 gameController = new GameController(gameForm);
                 gameForm.setVisible(true);
                 break;
-            default:
+            case RANKING:
+                rankingForm = new RankingForm();
+                rankingController = new RankingController(rankingForm);
+                rankingForm.setVisible(true);
+                break;
 
+            default:
                 break;
         }
     }
@@ -114,6 +122,11 @@ public class ClientController {
             case GAME:
               gameForm.dispose();
               break;
+
+            case RANKING:
+              socketHandlers.getReceiveMessages().getRankingController().getRankingForm().dispose();
+              break;
+
             default:
               break;
         }

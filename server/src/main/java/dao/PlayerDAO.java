@@ -4,6 +4,7 @@ import dao.impl.IPlayerDAO;
 import dao.impl.IUserDAO;
 import models.Player;
 import models.PlayerFriend;
+import models.PlayerRanking;
 import models.User;
 
 import java.sql.Connection;
@@ -94,6 +95,39 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public List<PlayerRanking> getRanking() {
+        String sql = "SELECT player_name, (total_game_won * 100 / total_game) AS percent_win, " +
+                "total_game_won, total_game, total_point FROM player " +
+                "WHERE total_game != 0 " +
+                "ORDER BY total_game DESC, total_game_won DESC, total_point DESC";
+        List<PlayerRanking> playerRankingList = new ArrayList<>();
+
+        try {
+            this.preStatement = this.conn.prepareStatement(sql);
+            this.rs = this.preStatement.executeQuery();
+
+            while (rs.next()) {
+                PlayerRanking playerRanking = new PlayerRanking();
+                playerRanking.setPlayerName(rs.getString("player_name"));
+                playerRanking.setPercentWin(rs.getDouble("percent_win"));
+                playerRanking.setTotalWin(rs.getLong("total_game_won"));
+                playerRanking.setTotalGame(rs.getLong("total_game"));
+                playerRanking.setTotalPoint(rs.getLong("total_point"));
+                playerRankingList.add(playerRanking);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching player rankings", e);
+        } finally {
+            // Clean up resources, if necessary
+            if (rs != null) try { rs.close(); } catch (SQLException ignored) {}
+            if (preStatement != null) try { preStatement.close(); } catch (SQLException ignored) {}
+        }
+
+        return playerRankingList;
+    }
+
 
 
 
