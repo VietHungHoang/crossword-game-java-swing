@@ -6,7 +6,7 @@ public class JoinPlaying  implements Serializable {
     private Long id;
     private Game game;
     private Player player;
-
+    private static final long serialVersionUID = 1L;
     public Long getId() {
         return id;
     }

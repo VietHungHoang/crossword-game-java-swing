@@ -3,6 +3,7 @@ package controller.socket;
 import java.io.ObjectInputStream;
 
 import controller.*;
+import models.Game;
 import models.ObjectWrapper;
 import models.Room;
 import utils.StreamData;
@@ -58,11 +59,12 @@ public class ReceiveMessages extends Thread{
                         break;
                     case START_GAME:
                         System.out.println("Mo game ne");
-                        Room room = (Room)objectWrapper.getObject();
+                        // System.out.println(objectWrapper.getObject());
+                        Game game = (Game)objectWrapper.getObject();
                         this.waitingForGameController.closeConfirmationForm();
                         //TODO: Chỗ này fix lại là phải lấy lại là khởi tạo GAME phải từ Object Game trả về nên nếu trả về ROOM thì ko đúng
                         //TODO: Tức là chỗ này phải gọi lên server để lấy lại Object Game
-                        this.gameController = new GameController(new GameForm(room.getPlayers().get(0).getPlayerName(), room.getPlayers().get(1).getPlayerName(), "KEYWORD", 0, 0));
+                        this.gameController = new GameController(new GameForm(game.player1.getPlayerName(), game.player2.getPlayerName(), "KEYWORD", 0, 0));
                         // this.gameController.startGameHandler(objectWrapper);
                         break;
                     case RANKING:

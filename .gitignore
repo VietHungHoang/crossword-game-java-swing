@@ -1,3 +1,4 @@
-/target/
+/client/target/
+/server/target/
 /gradle/
 /build/
