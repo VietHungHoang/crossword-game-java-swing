@@ -1,0 +1,226 @@
+package controller;
+
+import java.security.SecureRandom;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import dao.PlayerDAO;
+import dao.UserDAO;
+import models.Game;
+import models.ObjectWrapper;
+import models.Player;
+import models.Room;
+import utils.RandomString;
+import utils.StreamData;
+import views.ServerView;
+public class WaitingForGameController {
+    private ServerView view;
+    private Player playerLogin;
+    private UserDAO userDAO;
+    private PlayerDAO playerDAO;
+    private SocketHandlers socketHandlers;
+    private Thread waitingThread;
+    private volatile boolean waiting;
+    private long startTime;
+
+    public WaitingForGameController(ServerView view, Connection conn, SocketHandlers socketHandlers) {
+        this.view = view;
+        this.userDAO = new UserDAO(conn);
+        this.playerDAO = new PlayerDAO(conn);
+        this.socketHandlers = socketHandlers;
+    }
+
+    /**
+     * Xử lý quá trình tìm phòng cho người chơi.
+     */
+    public void handleFindingRoom() {
+        waiting = true;
+        startWaitingTimer();
+
+        if (ServerController.rooms.isEmpty()) {
+            createWaitingRoom();
+        } else {
+            for (Room room : ServerController.rooms) {
+                if (room.getPlayers().size() == 1) {
+                    joinWaitingRoom(room.getId());
+                    return;
+                }
+            }
+            createWaitingRoom();
+        }
+    }
+
+    /**
+     * Khởi động một luồng riêng để theo dõi và in ra thời gian chờ.
+     */
+    private void startWaitingTimer() {
+        startTime = System.currentTimeMillis();
+        waitingThread = new Thread(() -> {
+            while (waiting) {
+                Player player = socketHandlers.getLoginController().getPlayerLogin();
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                long seconds = (elapsedTime / 1000) % 60;
+                long minutes = (elapsedTime / (1000 * 60)) % 60;
+                // System.out.println("Đã chờ phòng: " + player.getPlayerName() + " " + minutes + " phút " + seconds + " giây");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+        waitingThread.start();
+    }
+
+    /**
+     * Tạo một phòng chờ mới và thêm người chơi hiện tại vào phòng đó.
+     */
+    public void createWaitingRoom() {
+        RandomString randomString = new RandomString(9, new SecureRandom(), RandomString.DIGITS);
+        String randomId = randomString.nextString();
+        List<Player> playersInRoom = new ArrayList<>();
+        playersInRoom.add(socketHandlers.getLoginController().getPlayerLogin());
+        Room room = new Room(randomId, new Date(), socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2");
+        socketHandlers.getLoginController().getPlayerLogin().setStatus("Đang tìm trận");
+        System.out.println("Người dùng " + socketHandlers.getLoginController().getPlayerLogin().getPlayerName() + " đang tìm trận");
+        ServerController.rooms.add(room);
+    }
+
+    /**
+     * Tham gia người chơi vào một phòng đã tồn tại.
+     */
+    public void joinWaitingRoom(String roomId) {
+        waiting = false;
+        Room room = ServerController.rooms.stream()
+                .filter(r -> r.getId().equals(roomId))
+                .findFirst()
+                .orElse(null);
+
+        if (room == null) {
+            System.out.println("Phòng không tồn tại.");
+            return;
+        }
+
+        Player newPlayer = socketHandlers.getLoginController().getPlayerLogin();
+        room.getPlayers().add(newPlayer);
+        newPlayer.setStatus("Trong phòng");
+        room.setStatus("2/2");
+        System.out.println("Người chơi mới đã tham gia phòng: " + newPlayer.getPlayerName());
+        monitorRoomStatus(roomId);
+    }
+
+    /**
+     * Lắng nghe trạng thái của phòng và chỉ gửi thông báo khi cả hai người chơi sẵn sàng.
+     */
+    private void monitorRoomStatus(String roomId) {
+      System.out.println("Mo ni to ne");
+      // new Thread(() -> {
+          Room room = ServerController.rooms.stream()
+                  .filter(r -> r.getId().equals(roomId))
+                  .findFirst()
+                  .orElse(null);
+  
+          if (room == null) {
+              System.out.println("Phòng không tồn tại.");
+              return;
+          }
+  
+          boolean messageSent = false; // Cờ xác nhận gửi thông báo
+          while (!messageSent) {
+              if (room.getPlayers().size() == 2 && room.getStatus().equals("2/2")) {
+                  String message = StreamData.Message.WAITING_FOR_GAME.name() + ";find-game-success";
+                  ObjectWrapper objectWrapper = new ObjectWrapper(message, room);
+                  objectWrapper.setElapsedTime(System.currentTimeMillis() - startTime);
+  
+                  // Gửi thông báo cho tất cả người chơi trong phòng
+                  for (SocketHandlers socketHandler : ServerController.socketHandlers) {
+                      if (socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(0)) || 
+                          socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(1))) {
+                          socketHandler.send(objectWrapper);
+                          System.out.println("Đã gửi thông báo phòng đầy cho người chơi: " + socketHandler.getLoginController().getPlayerLogin().getPlayerName());
+                      }
+                  }
+                  messageSent = true; // Đánh dấu là đã gửi thông báo
+              }
+  
+              // try {
+              //     Thread.sleep(1000);
+              // } catch (InterruptedException e) {
+              //     Thread.currentThread().interrupt();
+              //     System.out.println("Luồng kiểm tra trạng thái phòng bị gián đoạn.");
+              //     break;
+              // }
+          }
+      // }).start();
+  }
+  
+    /**
+     * Bắt đầu trò chơi khi cả hai người chơi đều sẵn sàng.
+     */
+    public void handlePlayerReady() {
+      Player player = socketHandlers.getLoginController().getPlayerLogin();
+      Room room = ServerController.rooms.stream()
+              .filter(r -> r.getPlayers().contains(player))
+              .findFirst()
+              .orElse(null);
+  
+      if (room != null && room.getPlayers().size() == 2) {
+          room.setPlayerReady(player);
+          System.out.println("Người chơi " + player.getPlayerName() + " đã sẵn sàng.");
+          
+          if (room.areBothPlayersReady()) {
+              System.out.println("Cả hai người chơi đều đã sẵn sàng, bắt đầu trò chơi.");
+              room.setStatus("Đang chơi");
+              System.out.println("Dang tao phong cho ca 2 nguoi choi trong phong");
+              Game game = new Game(room);
+              System.out.println("Da tao phong cho ca 2 nguoi choi trong phong");
+              ServerController.games.add(game);
+              System.out.println("Da them phong vao danh sach game");
+              ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME.name(), game);
+              List<SocketHandlers> socketHandlers = ServerController.socketHandlers;
+              for(SocketHandlers socketHandler : socketHandlers ){
+                if(socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(0)) || socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(1))){
+                  socketHandler.send(objectWrapper);
+                }
+              }
+            }
+            else {
+              System.out.println("Chờ đối thủ sẵn sàng...");
+          } 
+      } else {
+          System.out.println("Không tìm thấy phòng cho người chơi: " + player.getPlayerName());
+      }
+  }
+  
+
+    /**
+     * Xử lý khi người chơi hủy tìm trận.
+     */
+    public void handleCancelWaiting() {
+        Player player = socketHandlers.getLoginController().getPlayerLogin();
+        Room room = ServerController.rooms.stream()
+                .filter(r -> r.getPlayers().contains(player))
+                .findFirst()
+                .orElse(null);
+
+        if (room != null) {
+            room.getPlayers().remove(player);
+            System.out.println("Người chơi " + player.getPlayerName() + " đã hủy tìm trận và rời khỏi phòng.");
+
+            if (room.getPlayers().isEmpty()) {
+                ServerController.rooms.remove(room);
+                System.out.println("Phòng " + room.getId() + " đã bị xóa vì không còn người chơi nào.");
+            } else {
+                room.setStatus("1/2");
+                ObjectWrapper updateWrapper = new ObjectWrapper(StreamData.Message.UPDATE_ROOM_STATUS.name(), room);
+                for (Player p : room.getPlayers()) {
+                    socketHandlers.sendToPlayer(p, updateWrapper);
+                }
+            }
+        } else {
+            System.out.println("Không tìm thấy phòng cho người chơi: " + player.getPlayerName());
+        }
+    }
+}

@@ -4,12 +4,7 @@ import javax.swing.JOptionPane;
 
 import controller.socket.HomeController;
 import controller.socket.SocketHandlers;
-import views.HomeForm;
-import views.InviteRoomForm;
-import views.LoginForm;
-import views.SignUpForm;
-
-
+import views.*;
 
 public class ClientController {
 
@@ -20,17 +15,30 @@ public class ClientController {
     private static SignUpForm signUpForm;
     private static HomeForm homeForm;
     private static InviteRoomForm inviteRoomForm;
-
+    private static WaitingForGameForm waitingForGameForm;
+    private static GameForm gameForm;
     private static LoginController loginController;
     private static HomeController homeController;
     private static InviteRoomController inviteRoomController;
     private static SignUpController signUpController;
+    private static WaitingForGameController waitingForGameController;
+    private static GameController gameController;
+    private  static RankingController rankingController;
+    private  static RankingForm rankingForm;
+
+
+    public static RankingController getRankingController() {
+        return rankingController;
+    }
 
     public enum FrameName{
         LOGIN, 
         SIGNUP,
         HOME, 
         INVITE_ROOM, 
+        WAITING_FOR_GAME,
+        GAME,
+        RANKING
     }
 
     public ClientController(){
@@ -57,7 +65,7 @@ public class ClientController {
                 homeForm = new HomeForm();
                 homeController = new HomeController(homeForm);
                 homeForm.setVisible(true);
-            break;
+                break;
             case INVITE_ROOM:
                 inviteRoomForm = new InviteRoomForm();
                 inviteRoomController = new InviteRoomController(inviteRoomForm);
@@ -67,6 +75,23 @@ public class ClientController {
                 signUpForm = new SignUpForm();
                 signUpController = new SignUpController(signUpForm);
                 signUpForm.setVisible(true);
+                break;
+            case WAITING_FOR_GAME:
+                waitingForGameForm = new WaitingForGameForm();
+                waitingForGameController = new WaitingForGameController(waitingForGameForm);
+                waitingForGameForm.setVisible(true);
+                break;
+            case GAME:
+                gameForm = new GameForm("Player 1", "Player 2", "Player 3", 10, 10);
+                gameController = new GameController(gameForm);
+                gameForm.setVisible(true);
+                break;
+            case RANKING:
+                rankingForm = new RankingForm();
+                rankingController = new RankingController(rankingForm);
+                rankingForm.setVisible(true);
+                break;
+
             default:
                 break;
         }
@@ -75,20 +100,35 @@ public class ClientController {
     public static void closeFrame(FrameName frameName) {
         switch (frameName) {
             case LOGIN:
-            loginForm.dispose();
-            break;
+              loginForm.dispose();
+              break;
         
             case HOME:
-            homeForm.dispose();
-            break;
+              homeForm.dispose();
+              break;
 
             case INVITE_ROOM:
-            inviteRoomForm.dispose();
+              inviteRoomForm.dispose();
+              break;
 
             case SIGNUP:
-            signUpForm.dispose();
+              signUpForm.dispose();
+              break;
+
+            case WAITING_FOR_GAME:
+              waitingForGameForm.dispose();
+              break;
+
+            case GAME:
+              gameForm.dispose();
+              break;
+
+            case RANKING:
+              socketHandlers.getReceiveMessages().getRankingController().getRankingForm().dispose();
+              break;
+
             default:
-                break;
+              break;
         }
     }
 

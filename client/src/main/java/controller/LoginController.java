@@ -4,14 +4,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import controller.ClientController;
+import javax.swing.JOptionPane;
+
 import models.ObjectWrapper;
 import models.Player;
+import models.User;
 import utils.StreamData;
 import views.LoginForm;
-import models.User;
-
-import javax.swing.*;
 
 public class LoginController {
     private LoginForm loginForm;
@@ -58,21 +57,23 @@ public class LoginController {
         String msg = objecetWrapper.getStatus();
         if(msg.equals("success")){
             // Player đang chơi trong hệ thống
+            JOptionPane.showMessageDialog(loginForm, "Đăng nhập thành công ", "Đăng nhập thành công", JOptionPane.INFORMATION_MESSAGE);
             playerLogin = (Player) objecetWrapper.getObject();
             System.out.println(playerLogin.toString());
             ClientController.closeFrame(ClientController.FrameName.LOGIN);
             ClientController.openFrame(ClientController.FrameName.HOME);
-            try {
-                ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.HOME,null);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
             System.out.println("success");
         }
         else{
             JOptionPane.showMessageDialog(loginForm, "Đăng nhập thất bại", "Đăng nhập không thành công", JOptionPane.ERROR_MESSAGE);
             System.out.println("error");
         }
+    }
+
+    public void logOut() {
+        this.playerLogin = null;
+        ClientController.closeFrame( ClientController.FrameName.HOME);
+        ClientController.openFrame( ClientController.FrameName.LOGIN);
     }
 
     public Player getPlayerLogin() {
