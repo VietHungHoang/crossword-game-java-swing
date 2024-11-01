@@ -34,7 +34,9 @@ public class StreamData {
         UPDATE_ROOM_STATUS,
         START_GAME,
         PLAYER_READY,
-        RANKING
+        RANKING,
+        LIST_PLAYER,
+        UPDATE_LIST_PLAYER
     }
 
     public static Message getStreamMessage(String message) {

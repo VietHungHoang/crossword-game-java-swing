@@ -56,6 +56,15 @@ public class HomeController {
                     e1.printStackTrace();
                 }
             }
+
+            if (e.getSource() == homeForm.getCustomButton()) {
+                try {
+                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.LIST_PLAYER, null);
+                    ClientController.closeFrame(ClientController.FrameName.HOME);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
 }

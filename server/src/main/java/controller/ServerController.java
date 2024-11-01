@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.Game;
+import models.PlayerStatus;
 import models.Room;
 import views.ServerView;
 

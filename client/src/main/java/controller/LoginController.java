@@ -60,9 +60,15 @@ public class LoginController {
             JOptionPane.showMessageDialog(loginForm, "Đăng nhập thành công ", "Đăng nhập thành công", JOptionPane.INFORMATION_MESSAGE);
             playerLogin = (Player) objecetWrapper.getObject();
             System.out.println(playerLogin.toString());
+            try {
+                ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.UPDATE_LIST_PLAYER, null);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             ClientController.closeFrame(ClientController.FrameName.LOGIN);
             ClientController.openFrame(ClientController.FrameName.HOME);
             System.out.println("success");
+
         }
         else{
             JOptionPane.showMessageDialog(loginForm, "Đăng nhập thất bại", "Đăng nhập không thành công", JOptionPane.ERROR_MESSAGE);
@@ -72,6 +78,11 @@ public class LoginController {
 
     public void logOut() {
         this.playerLogin = null;
+        try {
+            ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.UPDATE_LIST_PLAYER, null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         ClientController.closeFrame( ClientController.FrameName.HOME);
         ClientController.openFrame( ClientController.FrameName.LOGIN);
     }

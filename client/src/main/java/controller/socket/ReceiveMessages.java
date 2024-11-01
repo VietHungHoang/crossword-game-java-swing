@@ -1,16 +1,16 @@
 package controller.socket;
 
 import java.io.ObjectInputStream;
+import java.util.List;
 
 import controller.*;
 import models.Game;
 import models.ObjectWrapper;
+import models.PlayerStatus;
 import models.Room;
 import utils.StreamData;
-import views.GameForm;
-import views.LoginForm;
-import views.RankingForm;
-import views.WaitingForGameForm;
+import views.*;
+
 public class ReceiveMessages extends Thread{
     private ObjectInputStream ois;
     private LoginController loginController;
@@ -18,6 +18,7 @@ public class ReceiveMessages extends Thread{
     private WaitingForGameController waitingForGameController;
     private RankingController rankingController;
     private GameController gameController;
+    private ListPlayerController listPlayerController;
     public ReceiveMessages(ObjectInputStream ois) {
         this.ois = ois;
     }
@@ -29,7 +30,7 @@ public class ReceiveMessages extends Thread{
                 objectWrapper = (ObjectWrapper) ois.readObject();
                 String received = objectWrapper.getIdentifier();
                 StreamData.Message message = StreamData.getMessageFromData(received);
-                System.out.println(message);   
+                System.out.println(message);
                 switch (message) {
                     case LOGIN:
                         this.loginController = new LoginController(new LoginForm());
@@ -43,16 +44,16 @@ public class ReceiveMessages extends Thread{
                         this.loginController.logOut();
                         break;
                     case CREATE_ROOM:
-                    //TODO : Khoi tao phong custom de co the moi nguoi choi
+                        //TODO : Khoi tao phong custom de co the moi nguoi choi
                         break;
                     case WAITING_FOR_GAME:
                         // Đảm bảo rằng WaitingForGameController đã được khởi tạo trước đó và chỉ gọi phương thức xử lý.
                         if (this.waitingForGameController != null) {
-  
+
                             this.waitingForGameController.waitingForGameHandler(objectWrapper);
                         } else {
                             // Trong trường hợp chưa có controller, khởi tạo mới.
-     
+
                             this.waitingForGameController = new WaitingForGameController(new WaitingForGameForm());
                             this.waitingForGameController.waitingForGameHandler(objectWrapper);
                         }
@@ -71,6 +72,29 @@ public class ReceiveMessages extends Thread{
                         this.rankingController = new RankingController(new RankingForm());
                         this.rankingController.rankingHandler(objectWrapper.getObject());
                         break;
+                    case LIST_PLAYER:
+                        this.listPlayerController = new ListPlayerController(new ListPlayerForm());
+                        ClientController.players= (List<PlayerStatus>)objectWrapper.getObject();
+                        this.listPlayerController.updatePlayerList(ClientController.players);
+                        break;
+                    case ACCEPT_INVITE_FRIEND:
+                        if(this.listPlayerController== null){
+                            this.listPlayerController = new ListPlayerController();
+                        }
+                        this.listPlayerController.acceptFriend(objectWrapper);
+                        break;
+                    case SEND_INVITE_FRIEND:
+                        if(this.listPlayerController== null){
+                            this.listPlayerController = new ListPlayerController();
+                        }
+                        this.listPlayerController.receiveInviteFriend(objectWrapper);
+                        break;
+                    case UPDATE_LIST_PLAYER:
+                        ClientController.players= (List<PlayerStatus>)objectWrapper.getObject();
+                        if(this.listPlayerController != null && this.listPlayerController.getListPlayerForm()!=null){
+                            this.listPlayerController.updatePlayerList(ClientController.players);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -86,6 +110,10 @@ public class ReceiveMessages extends Thread{
 
     public RankingController getRankingController() {
         return rankingController;
+    }
+
+    public ListPlayerController getListPlayerController() {
+        return listPlayerController;
     }
 
     public void setLoginController(LoginController loginController) {

@@ -4,7 +4,11 @@ import javax.swing.JOptionPane;
 
 import controller.socket.HomeController;
 import controller.socket.SocketHandlers;
+import models.PlayerStatus;
 import views.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientController {
 
@@ -25,20 +29,27 @@ public class ClientController {
     private static GameController gameController;
     private  static RankingController rankingController;
     private  static RankingForm rankingForm;
+    public static List<PlayerStatus> players = new ArrayList<>();
 
+    public static ListPlayerForm getListPlayerForm() {
+        return listPlayerForm;
+    }
 
+    private  static ListPlayerForm listPlayerForm;
+    private static ListPlayerController listPlayerController;
     public static RankingController getRankingController() {
         return rankingController;
     }
 
     public enum FrameName{
-        LOGIN, 
+        LOGIN,
         SIGNUP,
-        HOME, 
-        INVITE_ROOM, 
+        HOME,
+        INVITE_ROOM,
         WAITING_FOR_GAME,
         GAME,
-        RANKING
+        RANKING,
+        LIST_PLAYER
     }
 
     public ClientController(){
@@ -46,8 +57,8 @@ public class ClientController {
         if(socketHandlers.connect(severAddress, port)){
             System.out.println("Connect server successfully!");
             openFrame(FrameName.LOGIN);
-        } 
-            
+        }
+
         else {
             System.out.println("Connect server error!");
             JOptionPane.showMessageDialog(null, "Connect server error!");
@@ -91,7 +102,11 @@ public class ClientController {
                 rankingController = new RankingController(rankingForm);
                 rankingForm.setVisible(true);
                 break;
-
+            case LIST_PLAYER:
+                listPlayerForm= new ListPlayerForm();
+                listPlayerController = new ListPlayerController(listPlayerForm);
+                listPlayerForm.setVisible(true);
+                break;
             default:
                 break;
         }
@@ -100,40 +115,45 @@ public class ClientController {
     public static void closeFrame(FrameName frameName) {
         switch (frameName) {
             case LOGIN:
-              loginForm.dispose();
-              break;
-        
+                loginForm.dispose();
+                break;
+
             case HOME:
-              homeForm.dispose();
-              break;
+                homeForm.dispose();
+                break;
 
             case INVITE_ROOM:
-              inviteRoomForm.dispose();
-              break;
+                inviteRoomForm.dispose();
+                break;
 
             case SIGNUP:
-              signUpForm.dispose();
-              break;
+                signUpForm.dispose();
+                break;
 
             case WAITING_FOR_GAME:
-              waitingForGameForm.dispose();
-              break;
+                waitingForGameForm.dispose();
+                break;
 
             case GAME:
-              gameForm.dispose();
-              break;
+                gameForm.dispose();
+                break;
 
             case RANKING:
-              socketHandlers.getReceiveMessages().getRankingController().getRankingForm().dispose();
-              break;
-
+                socketHandlers.getReceiveMessages().getRankingController().getRankingForm().dispose();
+                break;
+            case LIST_PLAYER:
+                if( socketHandlers.getReceiveMessages().getListPlayerController().getListPlayerForm()!=null) {
+                    socketHandlers.getReceiveMessages().getListPlayerController().getListPlayerForm().dispose();
+                }
+                break;
             default:
-              break;
+                break;
         }
     }
 
     public static SocketHandlers getSocketHandler() {
         return socketHandlers;
     }
+
 
 }

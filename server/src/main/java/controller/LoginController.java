@@ -33,6 +33,7 @@ public class LoginController {
         String message = StreamData.Message.LOGIN.name();
         message += (user2.getId()!=null && user2.getPassword().equals(user.getPassword())) ? ";success" : ";failed";
         Player player = playerDAO.findPlayerByUserId(user2.getId());
+        player.setStatus("Trực tuyến");
         ObjectWrapper objectWrapper;
         if(user2.getId()!=null){
             List<SocketHandlers> clients = ServerController.getSocketHandlers();
@@ -43,8 +44,6 @@ public class LoginController {
                     return;
                 }
             }
-            playerDAO.setPlayerOnline(user2);
-            System.out.println("UserName: "+ user2.getUsername()+ " Online");
         }
         if(message.endsWith("success")){
           objectWrapper = new ObjectWrapper(message, player);
@@ -62,12 +61,6 @@ public class LoginController {
         this.playerLogin = null;
         ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.LOGOUT.name(), null);
         socketHandlers.send(objectWrapper);
-        //TODO: Xóa client trong list
-        for (SocketHandlers clientHandler : ServerController.socketHandlers) {
-            if (clientHandler.getLoginController()!= null && clientHandler.getLoginController().getPlayerLogin()!=null &&clientHandler.getLoginController().getPlayerLogin().getPlayerName().equalsIgnoreCase(playerLogin.getPlayerName())) {
-                ServerController.socketHandlers.remove(clientHandler);
-            }
-        }
     }
 
     public Player getPlayerLogin() {
