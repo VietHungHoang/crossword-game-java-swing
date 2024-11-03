@@ -3,13 +3,25 @@ package controller.socket;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import controller.*;
+import controller.ClientController;
+import controller.GameController;
+import controller.InviteRoomController;
+import controller.ListPlayerController;
+import controller.LoginController;
+import controller.RankingController;
+import controller.SignUpController;
+import controller.WaitingForGameController;
 import models.Game;
 import models.ObjectWrapper;
 import models.PlayerStatus;
 import models.Room;
 import utils.StreamData;
-import views.*;
+import views.GameForm;
+import views.InviteRoomForm;
+import views.ListPlayerForm;
+import views.LoginForm;
+import views.RankingForm;
+import views.WaitingForGameForm;
 
 public class ReceiveMessages extends Thread{
     private ObjectInputStream ois;
@@ -19,6 +31,7 @@ public class ReceiveMessages extends Thread{
     private RankingController rankingController;
     private GameController gameController;
     private ListPlayerController listPlayerController;
+    private InviteRoomController inviteRoomController;
     public ReceiveMessages(ObjectInputStream ois) {
         this.ois = ois;
     }
@@ -93,6 +106,22 @@ public class ReceiveMessages extends Thread{
                         ClientController.players= (List<PlayerStatus>)objectWrapper.getObject();
                         if(this.listPlayerController != null && this.listPlayerController.getListPlayerForm()!=null){
                             this.listPlayerController.updatePlayerList(ClientController.players);
+                        }
+                        break;
+                    case INVITE_ROOM: 
+                    // Khi nhan duoc loi moi phong tu server khong can goi toi OPENFRAME vi da setVisible(true) trong InviteRoomController
+
+                        System.out.println("Nhan invite room tu server: " + objectWrapper.getObject());
+                        this.inviteRoomController = new InviteRoomController(new InviteRoomForm((Room)objectWrapper.getObject()));
+                        this.inviteRoomController.inviteRoomHandler(objectWrapper);
+                        break;
+                    case GET_LIST_FRIEND :
+                        if(this.inviteRoomController != null){
+                            System.out.println("Nhan list friend tu server: " + objectWrapper.getObject());
+                            this.inviteRoomController.getListFriendHandler(objectWrapper);
+                        }
+                        else{
+                          return;
                         }
                         break;
                     default:

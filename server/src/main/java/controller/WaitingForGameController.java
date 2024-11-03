@@ -43,7 +43,7 @@ public class WaitingForGameController {
             createWaitingRoom();
         } else {
             for (Room room : ServerController.rooms) {
-                if (room.getPlayers().size() == 1) {
+                if (room.getPlayers().size() == 1 && room.isRanking()) {
                     joinWaitingRoom(room.getId());
                     return;
                 }
@@ -82,9 +82,10 @@ public class WaitingForGameController {
         String randomId = randomString.nextString();
         List<Player> playersInRoom = new ArrayList<>();
         playersInRoom.add(socketHandlers.getLoginController().getPlayerLogin());
-        Room room = new Room(randomId, new Date(), socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2");
+        Room room = new Room(randomId, new Date(), socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", true);
         socketHandlers.getLoginController().getPlayerLogin().setStatus("Đang tìm trận");
         socketHandlers.getListPlayerController().updateListPlayer();
+        //TODO: UPDATE STATUS FOR LISt FRIEND
         System.out.println("Người dùng " + socketHandlers.getLoginController().getPlayerLogin().getPlayerName() + " đang tìm trận");
         ServerController.rooms.add(room);
     }
@@ -116,7 +117,6 @@ public class WaitingForGameController {
      * Lắng nghe trạng thái của phòng và chỉ gửi thông báo khi cả hai người chơi sẵn sàng.
      */
     private void monitorRoomStatus(String roomId) {
-      System.out.println("Mo ni to ne");
       // new Thread(() -> {
           Room room = ServerController.rooms.stream()
                   .filter(r -> r.getId().equals(roomId))

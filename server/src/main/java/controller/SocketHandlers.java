@@ -7,11 +7,12 @@ import java.net.Socket;
 import java.sql.Connection;
 import java.util.List;
 
-import models.*;
+import models.ObjectWrapper;
+import models.Player;
+import models.PlayerStatus;
+import models.User;
 import utils.StreamData;
 import views.ServerView;
-
-import static controller.ServerController.socketHandlers;
 
 public class SocketHandlers extends Thread {
     private Socket socketClient;
@@ -28,6 +29,7 @@ public class SocketHandlers extends Thread {
     private GameController gameController;
     private  RankingController rankingController;
     private ListPlayerController listPlayerController;
+    private InviteRoomController inviteRoomController;
     public LoginController getLoginController() {
 
         return this.loginController;
@@ -99,6 +101,13 @@ public void run() {
                 case UPDATE_LIST_PLAYER:
                     this.listPlayerController = new ListPlayerController(view,conn,this);
                     this.listPlayerController.updateListPlayer();
+                    break;
+                case INVITE_ROOM:
+                    this.inviteRoomController = new InviteRoomController(view,conn,this);
+                    this.inviteRoomController.createInviteRoom();
+                    break;
+                case GET_LIST_FRIEND:
+                    this.inviteRoomController.getListFriend();
                     break;
                 default:
                     break;

@@ -22,19 +22,16 @@ public class HomeController {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == homeForm.getFriendButton()) {
-                ClientController.closeFrame(ClientController.FrameName.HOME);
-                ClientController.openFrame(ClientController.FrameName.INVITE_ROOM);
-            }
-            if (e.getSource() == homeForm.getLogoutButton()) {
                 try {
-                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.LOGOUT, null);
+                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.INVITE_ROOM, null);
+                    ClientController.closeFrame(ClientController.FrameName.HOME);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
             }
-            if (e.getSource() == homeForm.getFriendButton()) {
+            if (e.getSource() == homeForm.getLogoutButton()) {
                 try {
-                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.CREATE_ROOM, null);
+                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.LOGOUT, null);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }

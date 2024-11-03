@@ -38,7 +38,10 @@ public class StreamData {
         START_GAME,
         RANKING,
         LIST_PLAYER,
-        UPDATE_LIST_PLAYER
+        UPDATE_LIST_PLAYER,
+        INVITE_ROOM,
+        INVITE_FRIEND_TO_ROOM,
+        GET_LIST_FRIEND
     }
 
     public static Message getStreamMessage(String message) {

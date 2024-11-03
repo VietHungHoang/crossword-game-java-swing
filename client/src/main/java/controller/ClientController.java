@@ -1,14 +1,21 @@
 package controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 
 import controller.socket.HomeController;
 import controller.socket.SocketHandlers;
 import models.PlayerStatus;
-import views.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import views.GameForm;
+import views.HomeForm;
+import views.InviteRoomForm;
+import views.ListPlayerForm;
+import views.LoginForm;
+import views.RankingForm;
+import views.SignUpForm;
+import views.WaitingForGameForm;
 
 public class ClientController {
 
@@ -78,8 +85,8 @@ public class ClientController {
                 homeForm.setVisible(true);
                 break;
             case INVITE_ROOM:
-                inviteRoomForm = new InviteRoomForm();
-                inviteRoomController = new InviteRoomController(inviteRoomForm);
+                // inviteRoomForm = new InviteRoomForm();
+                // inviteRoomController = new InviteRoomController(inviteRoomForm);
                 inviteRoomForm.setVisible(true);
                 break;
             case SIGNUP:
