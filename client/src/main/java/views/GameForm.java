@@ -1,99 +1,156 @@
 package views;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+
+import utils.GetImage;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 public class GameForm extends JFrame {
-    private JLabel player1Label;
-    private JLabel player2Label;
-    private JLabel player1ScoreLabel;
-    private JLabel player2ScoreLabel;
-    private JLabel keywordLabel;
-    private JLabel countdownLabel;
-    private JTextField enteredWordsField;
-    private JButton submitButton;
-    private JPanel keyboardPanel;
-    private JButton deleteButton;
+
+    private Font lblFont;
+    private Font timeFont;
+    private Font keybFont;
+    private Font keywFont;
+    private Font keywBtnFont;
+    private GetImage getImage;
+    private JPanel pnlGameInfo;
+    private JPanel pnlKeyword;
+    private JPanel pnlTextbox;
+    private JPanel pnlKeyboard;
+    private JLabel imgPlayer1;
+    private JLabel imgPlayer2;
+    private JLabel lblPlayer1Name;
+    private JLabel lblPlayer2Name;
+    private JLabel lblPlayer1Score;
+    private JLabel lblPlayer2Score;
+    private JLabel lblKeyword;
+    private JLabel lblCountdown;
     private Timer countdownTimer;
-    private int timeLeft = 60; // Đếm ngược từ 60 giây
+    private int timeLeft = 60;
     private String keyword;
     private List<JButton> keyboardButtons = new ArrayList<>();
-    private StringBuilder enteredWords = new StringBuilder();
+    private List<JButton> listKeywordBtns = new ArrayList<>();
 
-    public GameForm(String player1, String player2, String keyword, int player1Score, int player2Score) {
+    public GameForm(String player1Name, String player2Name, String keyword, int player1Score, int player2Score) {
+        getImage = new GetImage();
         this.keyword = keyword;
+        lblFont = new Font("Dialog", Font.CENTER_BASELINE, 17);
+        timeFont = new Font("Dialog", Font.CENTER_BASELINE, 20);
+        keybFont = new Font("Dialog", Font.CENTER_BASELINE, 12);
+        keywFont = new Font("Dialog", Font.CENTER_BASELINE, 26);
+        keywBtnFont = new Font("Dialog", Font.CENTER_BASELINE, 16);
 
-        // Cấu hình cửa sổ chính
-        setTitle("Game Form");
-        setSize(400, 600);
+        // Config JFrame
+        setTitle("Alphabet Challenge");
+        setSize(500, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        setLocationRelativeTo(this);
+        setLayout(null);
+        setIconImage(new ImageIcon(getClass().getResource("/assets/img/logo.png")).getImage());
 
-        // Tạo phần thông tin trên cùng
-        JPanel topPanel = new JPanel(new GridLayout(1, 3));
-        player1Label = new JLabel(player1);
-        countdownLabel = new JLabel("60");
-        countdownLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        player2Label = new JLabel(player2);
+        // PANEL1: Game info
+        pnlGameInfo = new JPanel();
+        pnlGameInfo.setLayout(null);
+        pnlGameInfo.setBounds(0, 0, 500, 100);
 
-        topPanel.add(player1Label);
-        topPanel.add(countdownLabel);
-        topPanel.add(player2Label);
-        add(topPanel, BorderLayout.NORTH);
+        imgPlayer1 = new JLabel(getImage.get("1.png", 60, 60));
+        imgPlayer2 = new JLabel(getImage.get("2.png", 60, 60));
+        lblPlayer1Name = new JLabel(player1Name);
+        lblPlayer2Name = new JLabel(player2Name);
+        lblPlayer1Score = new JLabel("Điểm: " + player1Score);
+        lblPlayer2Score = new JLabel("Điểm: " + player2Score);
+        lblCountdown = new JLabel("60");
 
-        // Tạo phần hiển thị điểm
-        JPanel scorePanel = new JPanel(new GridLayout(1, 2));
-        player1ScoreLabel = new JLabel("Điểm: " + player1Score);
-        player2ScoreLabel = new JLabel("Điểm: " + player2Score);
+        // Player1 image
+        imgPlayer1.setBounds(25, 30, 60, 60);
 
-        scorePanel.add(player1ScoreLabel);
-        scorePanel.add(player2ScoreLabel);
-        add(scorePanel, BorderLayout.CENTER);
+        // Player2 image
+        imgPlayer2.setBounds(410, 30, 60, 60);
 
-        // Hiển thị từ khóa
-        keywordLabel = new JLabel("Keyword: " + keyword);
-        keywordLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(keywordLabel, BorderLayout.CENTER);
+        // Player1 info
+        lblPlayer1Name.setFont(lblFont);
+        lblPlayer1Name.setBounds(85, 50, 110, 20);
 
-        // Phần hiển thị các từ đã nhập
-        JPanel enteredWordsPanel = new JPanel(new BorderLayout());
-        enteredWordsField = new JTextField();
-        enteredWordsField.setEditable(false);
+        // Player2 info
+        lblPlayer2Name.setFont(lblFont);
+        lblPlayer2Name.setBounds(300, 50, 110, 20);
 
-        enteredWordsPanel.add(new JLabel("Các từ đã nhập:"), BorderLayout.NORTH);
-        enteredWordsPanel.add(enteredWordsField, BorderLayout.CENTER);
+        // Player1 score
 
-        deleteButton = new JButton("Xóa");
-        deleteButton.addActionListener(e -> deleteLastCharacter());
-        enteredWordsPanel.add(deleteButton, BorderLayout.EAST);
+        // Player2 score
 
-        add(enteredWordsPanel, BorderLayout.CENTER);
+        // Countdown
+        lblCountdown.setFont(lblFont);
+        lblCountdown.setFont(timeFont);
+        lblCountdown.setHorizontalAlignment(SwingConstants.CENTER);
+        lblCountdown.setBounds(220, 20, 60, 60);
 
-        // Nút xác nhận kết quả
-        submitButton = new JButton("Xác nhận kết quả");
-        submitButton.addActionListener(e -> submitAnswer());
-        add(submitButton, BorderLayout.SOUTH);
+        // Add to panel
+        pnlGameInfo.add(imgPlayer1);
+        pnlGameInfo.add(imgPlayer2);
+        pnlGameInfo.add(lblPlayer1Name);
+        pnlGameInfo.add(lblCountdown);
+        pnlGameInfo.add(lblPlayer2Name);
+        pnlGameInfo.add(lblPlayer1Score);
+        pnlGameInfo.add(lblPlayer2Score);
 
-        // Bàn phím
-        keyboardPanel = new JPanel(new GridLayout(6, 6));
-        for (char c = 'A'; c <= 'Z'; c++) {
-            JButton button = new JButton(String.valueOf(c));
-            button.addActionListener(new KeyboardButtonListener());
-            keyboardButtons.add(button);
-            keyboardPanel.add(button);
+        // PANEL2: Keyword panel
+        pnlKeyword = new JPanel();
+        pnlKeyword.setLayout(null);
+        pnlKeyword.setBounds(0, 100, 500, 170);
+
+        // init component
+        lblKeyword = new JLabel(keyword);
+        lblKeyword.setBounds(50, 50, 400, 100);
+        lblKeyword.setBorder(new LineBorder(Color.BLACK, 2));
+        lblKeyword.setHorizontalAlignment(SwingConstants.CENTER);
+        lblKeyword.setFont(keywFont);
+
+        pnlKeyword.add(lblKeyword);
+
+        // PANEL3: Textbox panel
+        pnlTextbox = new JPanel(new FlowLayout());
+        pnlTextbox.setBounds(25, 270, 440, 100);
+        for (int i = 0; i < keyword.length(); i++) {
+            JButton x = new JButton();
+            x.setFont(keywBtnFont);
+            x.setPreferredSize(new Dimension(50, 50));
+            x.addActionListener(new KeywordListener());
+            listKeywordBtns.add(x);
+            pnlTextbox.add(x);
         }
-        add(keyboardPanel, BorderLayout.SOUTH);
+
+        // PANEL4: Bàn phím
+        pnlKeyboard = new JPanel(new GridLayout(3, 8, 10, 10));
+        pnlKeyboard.setBounds(25, 440, 440, 180);
+        String[] key = getKeyboard(keyword);
+        for (String c : key) {
+            JButton button = new JButton(c);
+            button.setFont(keybFont);
+            // button.addActionListener(new KeyboardButtonListener());
+            keyboardButtons.add(button);
+            pnlKeyboard.add(button);
+        }
 
         // Thiết lập đếm ngược
         countdownTimer = new Timer(1000, new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 if (timeLeft > 0) {
                     timeLeft--;
-                    countdownLabel.setText(String.valueOf(timeLeft));
+                    lblCountdown.setText(String.valueOf(timeLeft));
                 } else {
                     countdownTimer.stop();
                     JOptionPane.showMessageDialog(null, "Hết thời gian!");
@@ -101,45 +158,89 @@ public class GameForm extends JFrame {
             }
         });
         countdownTimer.start();
+        add(pnlGameInfo);
+        add(pnlKeyword);
+        add(pnlTextbox);
+        add(pnlKeyboard);
         setVisible(true);
     }
 
-    // Phương thức xử lý khi người chơi bấm vào nút bàn phím
-    private class KeyboardButtonListener implements ActionListener {
+    private class KeywordListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            JButton button = (JButton) e.getSource();
-            enteredWords.append(button.getText());
-            enteredWordsField.setText(enteredWords.toString());
-            button.setEnabled(false);
-        }
-    }
-
-    // Phương thức để xóa ký tự cuối cùng khỏi từ đã nhập
-    private void deleteLastCharacter() {
-        if (enteredWords.length() > 0) {
-            char lastChar = enteredWords.charAt(enteredWords.length() - 1);
-            enteredWords.deleteCharAt(enteredWords.length() - 1);
-            enteredWordsField.setText(enteredWords.toString());
-
-            // Tìm nút tương ứng và bật lại
+            JButton btn = (JButton) e.getSource();
+            String text = btn.getText();
+            btn.setText("");
             for (JButton button : keyboardButtons) {
-                if (button.getText().equalsIgnoreCase(String.valueOf(lastChar))) {
-                    button.setEnabled(true);
-                    break;
+                if (button.getText().equalsIgnoreCase(text)) {
+                    if (!button.isEnabled()) {
+                        button.setEnabled(true);
+                        break;
+                    }
                 }
             }
         }
     }
 
-    // Xử lý khi bấm nút "Xác nhận kết quả"
-    private void submitAnswer() {
-        if (enteredWords.toString().equalsIgnoreCase(keyword)) {
-            JOptionPane.showMessageDialog(this, "Kết quả chính xác!");
-            // Ở đây sẽ gọi controller để cập nhật kết quả lên server
-        } else {
-            JOptionPane.showMessageDialog(this, "Kết quả sai, hãy thử lại!");
-        }
+    public void addActionListener(ActionListener act){
+        for(JButton x : keyboardButtons)
+            x.addActionListener(act);
     }
+
+    public String[] getKeyboard(String keyword) {
+        String[] res = new String[24];
+        HashMap<Character, Integer> map = new HashMap<>();
+        for (char x : keyword.toCharArray())
+            map.put(x, map.containsKey(x) ? map.get(x) + 1 : 1);
+        Random random = new Random();
+        int i;
+        for (i = 0; i < 24 - map.size(); i++)
+            res[i] = Character.toString(65 + random.nextInt(26));
+        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+            int n = entry.getValue();
+            while (n-- > 0) {
+                res[i] = entry.getKey().toString();
+                i++;
+                n--;
+            }
+        }
+        return res;
+    }
+
+    
+    public JLabel getLblPlayer1Name() {
+        return lblPlayer1Name;
+    }
+
+
+    public void setLblPlayer1Name(JLabel lblPlayer1Name) {
+        this.lblPlayer1Name = lblPlayer1Name;
+    }
+
+
+    public JLabel getLblPlayer2Name() {
+        return lblPlayer2Name;
+    }
+
+
+    public void setLblPlayer2Name(JLabel lblPlayer2Name) {
+        this.lblPlayer2Name = lblPlayer2Name;
+    }
+
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+
+    public List<JButton> getKeyboardButtons() {
+        return keyboardButtons;
+    }
+
+
+    public List<JButton> getListKeywordBtns() {
+        return listKeywordBtns;
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -147,51 +248,5 @@ public class GameForm extends JFrame {
             gameForm.setVisible(true);
         });
     }
-    public JLabel getLabelPlayer1() {
-      return player1Label;
-  }
-  
-  public void setLabelPlayer1(JLabel player1Label) {
-      this.player1Label = player1Label;
-  }
-  
-  public JLabel getLabelPlayer2() {
-      return player2Label;
-  }
-  
-  public void setLabelPlayer2(JLabel player2Label) {
-      this.player2Label = player2Label;
-  }
-  
-  public JLabel getPlayer1ScoreLabel() {
-      return player1ScoreLabel;
-  }
-  
-  public void setPlayer1ScoreLabel(JLabel player1ScoreLabel) {
-      this.player1ScoreLabel = player1ScoreLabel;
-  }
-  
-  public JLabel getPlayer2ScoreLabel() {
-      return player2ScoreLabel;
-  }
-  
-  public void setPlayer2ScoreLabel(JLabel player2ScoreLabel) {
-      this.player2ScoreLabel = player2ScoreLabel;
-  }
-  
-  public JLabel getKeywordLabel() {
-      return keywordLabel;
-  }
-  
-  public void setKeywordLabel(JLabel keywordLabel) {
-      this.keywordLabel = keywordLabel;
-  }
-  
-  public JLabel getCountdownLabel() {
-      return countdownLabel;
-  }
-  
-  public void setCountdownLabel(JLabel countdownLabel) {
-      this.countdownLabel = countdownLabel;
-  }
+
 }

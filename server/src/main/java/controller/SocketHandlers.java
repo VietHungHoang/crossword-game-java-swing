@@ -5,12 +5,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.Connection;
+import java.util.List;
 
-import models.ObjectWrapper;
-import models.Player;
-import models.User;
+import models.*;
 import utils.StreamData;
 import views.ServerView;
+
+import static controller.ServerController.socketHandlers;
 
 public class SocketHandlers extends Thread {
     private Socket socketClient;
@@ -26,10 +27,17 @@ public class SocketHandlers extends Thread {
     private boolean IsReadyForGame = false;
     private GameController gameController;
     private  RankingController rankingController;
+    private ListPlayerController listPlayerController;
     public LoginController getLoginController() {
+
         return this.loginController;
     }
-    public SocketHandlers(Socket socketClient,Connection conn) throws IOException {
+
+    public ListPlayerController getListPlayerController() {
+        return listPlayerController;
+    }
+
+    public SocketHandlers(Socket socketClient, Connection conn) throws IOException {
         this.socketClient = socketClient;
         this.oos = new ObjectOutputStream(this.socketClient.getOutputStream());
         this.ois = new ObjectInputStream(this.socketClient.getInputStream());
@@ -75,6 +83,26 @@ public void run() {
                     if (this.waitingForGameController != null) {
                         this.waitingForGameController.handleCancelWaiting();
                     }
+                    break;
+                case LIST_PLAYER:
+                    this.listPlayerController = new ListPlayerController(view,conn,this);
+                    List< PlayerStatus> list= this.listPlayerController.listPlayer();
+                    objectWrapper = new ObjectWrapper(StreamData.Message.LIST_PLAYER.name(),list);
+                    this.send(objectWrapper);
+                    break;
+                case ACCEPT_INVITE_FRIEND:
+                    this.listPlayerController.acceptInviteFriend(objectWrapper);
+                    break;
+                case SEND_INVITE_FRIEND:
+                    this.listPlayerController.inviteFriend(objectWrapper);
+                    break;
+                case UPDATE_LIST_PLAYER:
+                    this.listPlayerController = new ListPlayerController(view,conn,this);
+                    this.listPlayerController.updateListPlayer();
+                    break;
+                case WIN_GAME:
+                    this.gameController = new GameController(view, conn, this);
+                    this.gameController.handleEndGame((Player)objectWrapper.getObject());
                 default:
                     break;
             }

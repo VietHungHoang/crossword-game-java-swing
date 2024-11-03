@@ -73,7 +73,6 @@ public class MatchFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new VictoryFrame();
             }
         });
 
@@ -123,7 +122,6 @@ public class MatchFrame extends JFrame {
                 } else {
                     timer.cancel();
                     dispose();
-                    new VictoryFrame();  // Switch to VictoryFrame when timer reaches 0
                 }
             }
         };

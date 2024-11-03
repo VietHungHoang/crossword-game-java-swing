@@ -24,49 +24,47 @@ public class LoginController {
         this.playerDAO = new PlayerDAO(conn);
         this.socketHandlers = socketHandlers;
     }
-    public void checkLogin(User user){
+
+    public void checkLogin(User user) {
+        // NOTE: need clean
         System.out.println("Received username=" + user.getUsername() + "?password=" + user.getPassword());
         User user2 = userDAO.findByUsername(user.getUsername());
-        System.out.println(user2.getUsername());
-        System.out.println(user2.getPassword());
         String message = StreamData.Message.LOGIN.name();
-        message += (user2.getId()!=null && user2.getPassword().equals(user.getPassword())) ? ";success" : ";failed";
+        message += (user2.getId() != null && user2.getPassword().equals(user.getPassword())) ? ";success" : ";failed";
         Player player = playerDAO.findPlayerByUserId(user2.getId());
+        System.out.println(player);
+        player.setStatus("Trực tuyến");
         ObjectWrapper objectWrapper;
-        if(user2.getId()!=null){
+        // already login
+        if (user2.getId() != null) {
             List<SocketHandlers> clients = ServerController.getSocketHandlers();
             for (SocketHandlers clientHandler : clients) {
-                if (clientHandler.getLoginController()!= null && clientHandler.getLoginController().getPlayerLogin()!=null &&clientHandler.getLoginController().getPlayerLogin().getPlayerName().equalsIgnoreCase(player.getPlayerName())) {
-                    objectWrapper = new ObjectWrapper(StreamData.Message.LOGIN.name() + ";" + "falied", null);
+                if (clientHandler.getLoginController() != null
+                        && clientHandler.getLoginController().getPlayerLogin() != null
+                        && clientHandler.getLoginController().getPlayerLogin().getPlayerName()
+                                .equalsIgnoreCase(player.getPlayerName())) {
+                    objectWrapper = new ObjectWrapper(StreamData.Message.LOGIN.name() + ";" + "logging", null);
                     socketHandlers.send(objectWrapper);
                     return;
                 }
             }
-            playerDAO.setPlayerOnline(user2);
-            System.out.println("UserName: "+ user2.getUsername()+ " Online");
         }
-        if(message.endsWith("success")){
-          objectWrapper = new ObjectWrapper(message, player);
-            playerLogin=player;
+        if (message.endsWith("success")) {
+            objectWrapper = new ObjectWrapper(message, player);
+            playerLogin = player;
             System.out.println(playerLogin);
-        }
-        else {
-             objectWrapper = new ObjectWrapper(message,null);
+        } else {
+            objectWrapper = new ObjectWrapper(message, null);
         }
         socketHandlers.send(objectWrapper);
         System.out.println("Sent login " + message);
-        
+
     };
-    public void logOut(){
+
+    public void logOut() {
         this.playerLogin = null;
         ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.LOGOUT.name(), null);
         socketHandlers.send(objectWrapper);
-        //TODO: Xóa client trong list
-        for (SocketHandlers clientHandler : ServerController.socketHandlers) {
-            if (clientHandler.getLoginController()!= null && clientHandler.getLoginController().getPlayerLogin()!=null &&clientHandler.getLoginController().getPlayerLogin().getPlayerName().equalsIgnoreCase(playerLogin.getPlayerName())) {
-                ServerController.socketHandlers.remove(clientHandler);
-            }
-        }
     }
 
     public Player getPlayerLogin() {

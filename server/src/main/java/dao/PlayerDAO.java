@@ -1,7 +1,6 @@
 package dao;
 
 import dao.impl.IPlayerDAO;
-import dao.impl.IUserDAO;
 import models.Player;
 import models.PlayerFriend;
 import models.PlayerRanking;
@@ -66,16 +65,15 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
 
     @Override
     public void insertPlayer(User user) {
-        String sql = "INSERT INTO player (player_name, status, total_game, total_game_won, total_point, user_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";;
+        String sql = "INSERT INTO player (player_name, total_game, total_game_won, total_point, user_id) " +
+                "VALUES (?, ?, ?, ?, ?)";;
         try {
             this.preStatement = this.conn.prepareStatement(sql);
-            this.preStatement.setString(1, user.getUsername());  // set player_name
-            this.preStatement.setString(2, "Offline");      // set status
-            this.preStatement.setLong(3, 0);     // set total_game
-            this.preStatement.setLong(4, 0);  // set total_game_won
-            this.preStatement.setDouble(5, 0.0);  // set total_point
-            this.preStatement.setLong(6, user.getId());
+            this.preStatement.setString(1, user.getUsername());  // set player_name// set status
+            this.preStatement.setLong(2, 0);     // set total_game
+            this.preStatement.setLong(3, 0);  // set total_game_won
+            this.preStatement.setDouble(4, 0.0);  // set total_point
+            this.preStatement.setLong(5, user.getId());
             this.preStatement.executeUpdate();
             System.out.println("Insert player success");
         } catch (SQLException ex) {
@@ -83,18 +81,6 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
         }
     }
 
-    @Override
-    public void setPlayerOnline(User user) {
-        String sql = "UPDATE player SET status = ? WHERE user_id = ?";
-        try {
-            this.preStatement = this.conn.prepareStatement(sql);
-            this.preStatement.setString(1, "Online");  // Set status to "Online"
-            this.preStatement.setLong(2, user.getId());
-            this.preStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
     @Override
     public List<PlayerRanking> getRanking() {
         String sql = "SELECT player_name, (total_game_won * 100 / total_game) AS percent_win, " +
@@ -128,7 +114,38 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
         return playerRankingList;
     }
 
+    @Override
+    public void makeFriend(Long id, Long friendId) {
+        String sql = "Call ADD_FRIEND(?,?)";
+        try {
+            this.preStatement = this.conn.prepareStatement(sql);
+            this.preStatement.setLong(1, id);
+            this.preStatement.setLong(2, friendId);
+            this.preStatement.executeUpdate();
+            System.out.println("Add friend success");
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
+    }
 
+
+
+    @Override
+    public boolean isFriend(Long id, Long friendId) {
+        String sql = "SELECT EXISTS (SELECT 1 FROM list_friends WHERE player_id = ? AND friend_id = ?) AS is_friend";
+        try {
+            this.preStatement = this.conn.prepareStatement(sql);
+            this.preStatement.setLong(1, id);
+            this.preStatement.setLong(2, friendId);
+            this.rs = this.preStatement.executeQuery();
+                if (rs.next()) {
+                    return rs.getBoolean("is_friend");
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Return false if an exception occurs or no result found
+    }
 
 
     @Override

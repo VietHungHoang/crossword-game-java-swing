@@ -32,9 +32,7 @@ public class WaitingForGameController {
         this.socketHandlers = socketHandlers;
     }
 
-    /**
-     * Xử lý quá trình tìm phòng cho người chơi.
-     */
+    // Xử lý quá trình tìm phòng cho người chơi.
     public void handleFindingRoom() {
         waiting = true;
         startWaitingTimer();
@@ -52,9 +50,7 @@ public class WaitingForGameController {
         }
     }
 
-    /**
-     * Khởi động một luồng riêng để theo dõi và in ra thời gian chờ.
-     */
+    // Khởi động một luồng riêng để theo dõi và in ra thời gian chờ.
     private void startWaitingTimer() {
         startTime = System.currentTimeMillis();
         waitingThread = new Thread(() -> {
@@ -84,6 +80,7 @@ public class WaitingForGameController {
         playersInRoom.add(socketHandlers.getLoginController().getPlayerLogin());
         Room room = new Room(randomId, new Date(), socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2");
         socketHandlers.getLoginController().getPlayerLogin().setStatus("Đang tìm trận");
+        socketHandlers.getListPlayerController().updateListPlayer();
         System.out.println("Người dùng " + socketHandlers.getLoginController().getPlayerLogin().getPlayerName() + " đang tìm trận");
         ServerController.rooms.add(room);
     }
@@ -208,7 +205,8 @@ public class WaitingForGameController {
         if (room != null) {
             room.getPlayers().remove(player);
             System.out.println("Người chơi " + player.getPlayerName() + " đã hủy tìm trận và rời khỏi phòng.");
-
+            socketHandlers.getLoginController().getPlayerLogin().setStatus("Trực tuyến");
+            socketHandlers.getListPlayerController().updateListPlayer();
             if (room.getPlayers().isEmpty()) {
                 ServerController.rooms.remove(room);
                 System.out.println("Phòng " + room.getId() + " đã bị xóa vì không còn người chơi nào.");

@@ -5,6 +5,7 @@ import java.sql.Connection;
 import dao.PlayerDAO;
 import dao.UserDAO;
 import models.Game;
+import models.ObjectWrapper;
 import models.Player;
 import models.Room;
 import views.ServerView;
@@ -38,5 +39,20 @@ public class GameController {
         ServerController.games.remove(game);
     }
 
+    public void handleEndGame(Player player){
+        Player reamainingPlayer = getRemainingPlayer(player);
+        this.view.showMessage(player.getPlayerName() + "is win and " + reamainingPlayer.getPlayerName() + "is lost");
+        socketHandlers.send(new ObjectWrapper("WIN_GAME", player));
+        socketHandlers.send(new ObjectWrapper("LOST_GAME", reamainingPlayer));
 
+    }
+
+    public Player getRemainingPlayer(Player player){
+        for(Game x : ServerController.games)
+            if(x.getPlayer1().getId().equals(player.getId()))
+                return x.getPlayer2();
+            else if(x.getPlayer2().getId().equals(player.getId()))
+                return x.getPlayer1();
+        return null;
+    }
 }

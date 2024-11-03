@@ -78,7 +78,7 @@ public class HomeForm extends JFrame {
         friendButton.setForeground(Color.WHITE);
         friendButton.setPreferredSize(new Dimension(250, 50));  // Set button size
 
-        customButton = new JButton("TÙY CHỈNH ⚙️");
+        customButton = new JButton("DANH SÁCH NGƯỜI CHƠI \uD83D\uDC65");
         customButton.setBackground(new Color(0, 204, 102));
         customButton.setForeground(Color.WHITE);
         customButton.setPreferredSize(new Dimension(250, 50));  // Set button size

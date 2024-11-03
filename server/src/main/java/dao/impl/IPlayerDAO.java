@@ -5,12 +5,15 @@ import models.PlayerFriend;
 import models.PlayerRanking;
 import models.User;
 
+import java.sql.Connection;
 import java.util.List;
 
 public interface IPlayerDAO {
     Player findPlayerByUserId(Long id);
     void insertPlayer(User user);
-    void setPlayerOnline(User user);
     public List<PlayerFriend> getListFriend(Long id );
     public List<PlayerRanking > getRanking();
+    public void makeFriend(Long id, Long friendId);
+    public boolean isFriend(Long id, Long friendId);
+
 }
