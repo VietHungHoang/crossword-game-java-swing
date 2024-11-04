@@ -91,15 +91,15 @@ public class InviteRoomController {
           // Cập nhật trạng thái phòng
           roomInServer.setStatus("2/2");
           Player acceptingPlayer = this.socketHandlers.getLoginController().getPlayerLogin();
+          System.out.println("123123123"+socketHandlers.getLoginController().getPlayerLogin().getPlayerName());
           roomInServer.getPlayers().add(acceptingPlayer);
           
 
-          
+          System.out.println(roomInServer);
           // Gửi ACCEPT_INVITE_ROOM với roomInServer đã được cập nhật
-          System.out.println("Dua nguoi choi" + acceptingPlayer.getPlayerName() + " vao room " + roomInServer.getId() + "co status " + roomInServer.getStatus() + " va co player " + roomInServer.getPlayers().get(0).getPlayerName() + " va " + roomInServer.getPlayers().get(1).getPlayerName());
+          // System.out.println("Dua nguoi choi" + acceptingPlayer.getPlayerName() + " vao room " + roomInServer.getId() + "co status " + roomInServer.getStatus() + " va co player " + roomInServer.getPlayers().get(0).getPlayerName() + " va " + roomInServer.getPlayers().get(1).getPlayerName());
           ObjectWrapper acceptMessage = new ObjectWrapper(StreamData.Message.ACCEPT_INVITE_ROOM.name(), roomInServer);
           socketHandlers.send(acceptMessage);
-          
           // Tìm người mời và gửi UPDATE_INVITE_ROOM
           Player invitingPlayer = roomInServer.getPlayers().stream()
               .filter(p -> !p.getPlayerName().equals(acceptingPlayer.getPlayerName()))

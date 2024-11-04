@@ -15,7 +15,7 @@ public class Room implements Serializable {
   private String status;
   private Map<Player, Boolean> playerReadyStatus = new HashMap<>();
   private boolean isRanking;
-
+  private static final long serialVersionUID = 1L;
     public Room(String id, Date createAt, Player createBy, List<Player> players, String status, boolean isRanking) {
         this.id = id;
         this.createAt = createAt;

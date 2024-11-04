@@ -23,7 +23,12 @@ public class InviteRoomController {
     } 
     
     public void getListFriendHandler(List<PlayerFriend> listFriend){
-      this.inviteRoomForm.updateFriendList(listFriend);
+      try {
+        this.inviteRoomForm.updateFriendList(listFriend);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      // this.inviteRoomForm.updateFriendList(listFriend);
       this.inviteRoomForm.addActionListener(new InviteRoomListener());
     }
 

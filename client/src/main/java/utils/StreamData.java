@@ -44,6 +44,7 @@ public class StreamData {
         GET_LIST_FRIEND,
         RECEIVE_INVITE_ROOM,
         ACCEPT_INVITE_ROOM,
+        ACCEPT_INVITE_ROOM1,
         UPDATE_INVITE_ROOM
     }
 

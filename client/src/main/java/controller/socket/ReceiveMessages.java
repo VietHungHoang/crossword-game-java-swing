@@ -123,6 +123,7 @@ public class ReceiveMessages extends Thread{
                         else{
                           return;
                         }
+                      break;
                     case RECEIVE_INVITE_ROOM:
                       Room invitedRoom = (Room)objectWrapper.getObject();
                       System.out.println("Nhan invite room tu server: " + invitedRoom.getId());
@@ -138,7 +139,7 @@ public class ReceiveMessages extends Thread{
                         ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.ACCEPT_INVITE_ROOM, invitedRoom.getId());
                       } else {
                         // Gửi phản hồi từ chối tham gia phòng về server
-
+                          
                       }
                       break;
                     case ACCEPT_INVITE_ROOM: 
@@ -148,7 +149,7 @@ public class ReceiveMessages extends Thread{
                           this.inviteRoomController = new InviteRoomController(new InviteRoomForm((Room)objectWrapper.getObject()));
                         break;
                     case UPDATE_INVITE_ROOM:
-                        this.inviteRoomController.updateInviteRoomHandler((Room)objectWrapper.getObject());
+                        // this.inviteRoomController.updateInviteRoomHandler((Room)objectWrapper.getObject());
                         break;
                     default:
                         break;
