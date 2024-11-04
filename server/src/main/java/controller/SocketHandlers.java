@@ -27,14 +27,19 @@ public class SocketHandlers extends Thread {
     private String roomID;
     private boolean IsReadyForGame = false;
     private GameController gameController;
-    private  RankingController rankingController;
+    private RankingController rankingController;
     private ListPlayerController listPlayerController;
     private InviteRoomController inviteRoomController;
     public LoginController getLoginController() {
 
         return this.loginController;
     }
-
+    public String getRoomID(){
+        return this.roomID;
+    }
+    public void setRoomID(String roomID){
+        this.roomID = roomID;
+    }
     public ListPlayerController getListPlayerController() {
         return listPlayerController;
     }
@@ -44,6 +49,7 @@ public class SocketHandlers extends Thread {
         this.oos = new ObjectOutputStream(this.socketClient.getOutputStream());
         this.ois = new ObjectInputStream(this.socketClient.getInputStream());
         this.conn = conn;
+        this.roomID = null;
     }
 
     @Override
@@ -108,6 +114,16 @@ public void run() {
                     break;
                 case GET_LIST_FRIEND:
                     this.inviteRoomController.getListFriend();
+                    break;
+                case INVITE_FRIEND_TO_ROOM: 
+                    this.inviteRoomController.invitePlayer((String) objectWrapper.getObject());
+                    break;
+                case ACCEPT_INVITE_ROOM:
+                    if(this.inviteRoomController == null){
+                        this.inviteRoomController = new InviteRoomController(view,conn,this);
+                    }
+                    this.inviteRoomController.acceptInviteRoom((String) objectWrapper.getObject());
+
                     break;
                 default:
                     break;

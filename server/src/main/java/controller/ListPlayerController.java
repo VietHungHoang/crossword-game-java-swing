@@ -1,5 +1,9 @@
 package controller;
 
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+
 import dao.PlayerDAO;
 import dao.UserDAO;
 import models.FriendInvite;
@@ -8,10 +12,6 @@ import models.Player;
 import models.PlayerStatus;
 import utils.StreamData;
 import views.ServerView;
-
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ListPlayerController {
     private ServerView view;
@@ -98,6 +98,6 @@ public class ListPlayerController {
             clientHandler.send(objectWrapper);
         }
     }
-
+    
 
 }

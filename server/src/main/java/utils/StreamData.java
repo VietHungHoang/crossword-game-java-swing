@@ -39,7 +39,11 @@ public class StreamData {
         UPDATE_LIST_PLAYER,
         INVITE_ROOM,
         CANCEL_READY,
-        GET_LIST_FRIEND
+        GET_LIST_FRIEND,
+        INVITE_FRIEND_TO_ROOM,
+        RECEIVE_INVITE_ROOM,
+        ACCEPT_INVITE_ROOM,
+        UPDATE_INVITE_ROOM
         
     }
 

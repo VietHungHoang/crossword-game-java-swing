@@ -13,6 +13,7 @@ import controller.SignUpController;
 import controller.WaitingForGameController;
 import models.Game;
 import models.ObjectWrapper;
+import models.PlayerFriend;
 import models.PlayerStatus;
 import models.Room;
 import utils.StreamData;
@@ -35,6 +36,7 @@ public class ReceiveMessages extends Thread{
     public ReceiveMessages(ObjectInputStream ois) {
         this.ois = ois;
     }
+    @SuppressWarnings("unchecked")
     @Override
     public void run() {
         while (true) {
@@ -110,19 +112,43 @@ public class ReceiveMessages extends Thread{
                         break;
                     case INVITE_ROOM: 
                     // Khi nhan duoc loi moi phong tu server khong can goi toi OPENFRAME vi da setVisible(true) trong InviteRoomController
-
-                        System.out.println("Nhan invite room tu server: " + objectWrapper.getObject());
+                        System.out.println("Khoi tao Invite Room tu Room get tu tren server: " + objectWrapper.getObject());
                         this.inviteRoomController = new InviteRoomController(new InviteRoomForm((Room)objectWrapper.getObject()));
-                        this.inviteRoomController.inviteRoomHandler(objectWrapper);
                         break;
                     case GET_LIST_FRIEND :
                         if(this.inviteRoomController != null){
                             System.out.println("Nhan list friend tu server: " + objectWrapper.getObject());
-                            this.inviteRoomController.getListFriendHandler(objectWrapper);
+                            this.inviteRoomController.getListFriendHandler((List<PlayerFriend>)objectWrapper.getObject());
                         }
                         else{
                           return;
                         }
+                    case RECEIVE_INVITE_ROOM:
+                      Room invitedRoom = (Room)objectWrapper.getObject();
+                      System.out.println("Nhan invite room tu server: " + invitedRoom.getId());
+                      int option = javax.swing.JOptionPane.showConfirmDialog(
+                        null,
+                        "Bạn nhận được lời mời từ " + invitedRoom.getPlayers().get(0).getPlayerName() + " để vào chơi game vui vẻ",
+                        "Lời mời vào phòng",
+                        javax.swing.JOptionPane.YES_NO_OPTION
+                      );
+                    
+                      if (option == javax.swing.JOptionPane.YES_OPTION) {
+                        // Gửi phản hồi đồng ý tham gia phòng về server
+                        ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.ACCEPT_INVITE_ROOM, invitedRoom.getId());
+                      } else {
+                        // Gửi phản hồi từ chối tham gia phòng về server
+
+                      }
+                      break;
+                    case ACCEPT_INVITE_ROOM: 
+                        System.out.println("Nhan accept invite room tu server: " + objectWrapper.getObject());
+                        ClientController.closeFrame(ClientController.FrameName.HOME);
+                        if(inviteRoomController == null)
+                          this.inviteRoomController = new InviteRoomController(new InviteRoomForm((Room)objectWrapper.getObject()));
+                        break;
+                    case UPDATE_INVITE_ROOM:
+                        this.inviteRoomController.updateInviteRoomHandler((Room)objectWrapper.getObject());
                         break;
                     default:
                         break;
