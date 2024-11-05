@@ -143,13 +143,23 @@ public class ReceiveMessages extends Thread{
                       }
                       break;
                     case ACCEPT_INVITE_ROOM: 
-                        System.out.println("Nhan accept invite room tu server: " + objectWrapper.getObject());
-                        ClientController.closeFrame(ClientController.FrameName.HOME);
-                        if(inviteRoomController == null)
-                          this.inviteRoomController = new InviteRoomController(new InviteRoomForm((Room)objectWrapper.getObject()));
-                        break;
+                      System.out.println("Nhan accept invite room tu server: " + objectWrapper.getObject());
+                      ClientController.closeFrame(ClientController.FrameName.HOME);
+                      // Luôn tạo mới controller và form khi accept invite
+                      this.inviteRoomController = new InviteRoomController(new InviteRoomForm((Room)objectWrapper.getObject()));
+                      break;
                     case UPDATE_INVITE_ROOM:
                         this.inviteRoomController.updateInviteRoomHandler((Room)objectWrapper.getObject());
+                        break;
+                 
+                    case LEAVE_INVITE_ROOM:
+                        System.out.println("Nhan leave room tu server: " + objectWrapper.getObject());
+                        if (this.inviteRoomController != null ) {
+                            this.inviteRoomController.leaveInviteRoomHandler();
+                        }
+                        else {
+                          System.out.println();
+                        }
                         break;
                     default:
                         break;

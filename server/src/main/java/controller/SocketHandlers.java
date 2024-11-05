@@ -123,7 +123,9 @@ public void run() {
                         this.inviteRoomController = new InviteRoomController(view,conn,this);
                     }
                     this.inviteRoomController.acceptInviteRoom((String) objectWrapper.getObject());
-
+                    break;
+                case LEAVE_INVITE_ROOM:
+                    this.inviteRoomController.leaveInviteRoom();
                     break;
                 default:
                     break;

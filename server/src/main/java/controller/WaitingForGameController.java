@@ -83,7 +83,7 @@ public class WaitingForGameController {
         List<Player> playersInRoom = new ArrayList<>();
         playersInRoom.add(socketHandlers.getLoginController().getPlayerLogin());
         Room room = new Room(randomId, new Date(), socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", true);
-        socketHandlers.getLoginController().getPlayerLogin().setStatus("Đang tìm trận");
+        socketHandlers.getLoginController().getPlayerLogin().setStatus("Finding game");
         socketHandlers.getListPlayerController().updateListPlayer();
         //TODO: UPDATE STATUS FOR LISt FRIEND
         System.out.println("Người dùng " + socketHandlers.getLoginController().getPlayerLogin().getPlayerName() + " đang tìm trận");
@@ -209,7 +209,7 @@ public class WaitingForGameController {
         if (room != null) {
             room.getPlayers().remove(player);
             System.out.println("Người chơi " + player.getPlayerName() + " đã hủy tìm trận và rời khỏi phòng.");
-            socketHandlers.getLoginController().getPlayerLogin().setStatus("Trực tuyến");
+            socketHandlers.getLoginController().getPlayerLogin().setStatus("Online");
             socketHandlers.getListPlayerController().updateListPlayer();
             if (room.getPlayers().isEmpty()) {
                 ServerController.rooms.remove(room);

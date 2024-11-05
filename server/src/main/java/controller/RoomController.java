@@ -31,7 +31,7 @@ public class RoomController {
         List<Player> playersInRoom = new ArrayList<>();
         playersInRoom.add(this.socketHandlers.getLoginController().getPlayerLogin());
         Room room = new Room(randomId, new Date(), this.socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", true);
-        this.socketHandlers.getLoginController().getPlayerLogin().setStatus("Trong phòng");
+        this.socketHandlers.getLoginController().getPlayerLogin().setStatus("In room");
         ServerController.rooms.add(room);
         // this.idRoom = randomId;
         ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.CREATE_ROOM.name(), room);

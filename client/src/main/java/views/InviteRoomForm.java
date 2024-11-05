@@ -26,6 +26,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import controller.ClientController;
 import models.Player;
 import models.PlayerFriend;
 import models.Room;
@@ -74,8 +75,10 @@ public class InviteRoomForm extends JFrame {
           System.out.println("update nguoi thu 2");
           updatePlayerPanel(player2Panel, room.getPlayers().get(1), "Người chơi 2", PLAYER2_COLOR);
       } else {
-          player2Panel.removeAll();
-          player2Panel.add(createEmptyPlayerPanel());
+        player2Panel.removeAll();
+        player2Panel.setLayout(new GridLayout(2, 1, 0, 2));
+        player2Panel.setBackground(BACKGROUND_COLOR);
+        player2Panel.add(createEmptyPlayerPanel());
       }
   
       // Refresh the state of the start button and friend list
@@ -336,18 +339,34 @@ public class InviteRoomForm extends JFrame {
       updateButtonStates();
   }
 
-    private void updateButtonStates() {
-        boolean isRoomFull = currentRoom.getStatus().equals("2/2");
+    // ... existing code ...
+
+  private void updateButtonStates() {
+    boolean isRoomFull = currentRoom.getStatus().equals("2/2");
+    String loginPlayerName = ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getPlayerName();
+    
+    // Check if player 2 is the logged-in player
+    boolean isPlayer2LoggedIn = currentRoom.getPlayers().size() > 1 && 
+        currentRoom.getPlayers().get(1).getPlayerName().equals(loginPlayerName);
+    
+    if (isPlayer2LoggedIn) {
+        startButton.setText("CHỜ CHỦ PHÒNG BẮT ĐẦU TRÒ CHƠI");
+        startButton.setEnabled(false);
+        startButton.setBackground(HEADER_ORANGE); // Using the orange color defined earlier
+    } else {
+        startButton.setText("BẮT ĐẦU TRÒ CHƠI");
         startButton.setEnabled(isRoomFull);
         startButton.setBackground(isRoomFull ? new Color(52, 152, 219) : BUTTON_DISABLED);
-      
-        if (friendTable != null) {
-            for (int i = 0; i < friendTable.getRowCount(); i++) {
-                updateFriendButtonState(i);
-
-            }
+    }
+    
+    if (friendTable != null) {
+        for (int i = 0; i < friendTable.getRowCount(); i++) {
+            updateFriendButtonState(i);
+        }
         }
     }
+
+// ... existing code ...
 
     private void updateFriendButtonState(int row) {
       String status = (String) friendTable.getValueAt(row, 1);
@@ -380,6 +399,12 @@ public class InviteRoomForm extends JFrame {
   }
 
     public void addActionListener(ActionListener act) {
+      for (ActionListener al : startButton.getActionListeners()) {
+        startButton.removeActionListener(al);
+      }
+      for (ActionListener al : leaveButton.getActionListeners()) {
+        leaveButton.removeActionListener(al);
+      }
       startButton.addActionListener(act);
       leaveButton.addActionListener(act);
       // Chỉ thêm action listener cho các nút mời một lần

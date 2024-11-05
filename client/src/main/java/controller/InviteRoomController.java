@@ -35,7 +35,10 @@ public class InviteRoomController {
     public void updateInviteRoomHandler(Room room){
       this.inviteRoomForm.updateInviteRoom(room);
     }
-    
+    public void leaveInviteRoomHandler(){
+      this.inviteRoomForm.dispose();
+      ClientController.openFrame(ClientController.FrameName.HOME);
+    }
    class InviteRoomListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -43,8 +46,11 @@ public class InviteRoomController {
         if (e.getSource() == inviteRoomForm.getLeaveButton()) {
             System.out.println("Roi khoi phong");
             // Xử lý rời phòng
-            // ClientController.closeFrame(ClientController.FrameName.INVITE_ROOM);
-            // ClientController.openFrame(ClientController.FrameName.HOME);
+            try {
+              ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.LEAVE_INVITE_ROOM, null);
+            } catch (IOException ex) {
+              ex.printStackTrace();
+            }
             return;
         }
         

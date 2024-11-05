@@ -33,7 +33,7 @@ public class LoginController {
         String message = StreamData.Message.LOGIN.name();
         message += (user2.getId()!=null && user2.getPassword().equals(user.getPassword())) ? ";success" : ";failed";
         Player player = playerDAO.findPlayerByUserId(user2.getId());
-        player.setStatus("Trực tuyến");
+        player.setStatus("Online");
         ObjectWrapper objectWrapper;
         if(user2.getId()!=null){
             List<SocketHandlers> clients = ServerController.getSocketHandlers();

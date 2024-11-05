@@ -43,7 +43,8 @@ public class StreamData {
         INVITE_FRIEND_TO_ROOM,
         RECEIVE_INVITE_ROOM,
         ACCEPT_INVITE_ROOM,
-        UPDATE_INVITE_ROOM
+        UPDATE_INVITE_ROOM,
+        LEAVE_INVITE_ROOM
         
     }
 

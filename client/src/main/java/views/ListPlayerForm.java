@@ -1,15 +1,23 @@
 package views;
 
-import controller.ClientController;
-import models.PlayerStatus;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+
+import controller.ClientController;
+import models.PlayerStatus;
 
 public class ListPlayerForm extends JFrame {
     private JTextField searchField;
@@ -67,13 +75,13 @@ public class ListPlayerForm extends JFrame {
             // Center the content in each cell
             setHorizontalAlignment(SwingConstants.CENTER);
             if (column == 1) { // Apply color only to the "Status" column
-                if ("Trực tuyến".equals(player.getStatus())) {
+                if ("Online".equals(player.getStatus())) {
                     cell.setForeground(Color.GREEN); // Green for "Online"
-                } else if ("Đang trong phòng".equals(player.getStatus())) {
+                } else if ("In Room".equals(player.getStatus())) {
                     cell.setForeground(Color.GREEN); // Blue for "In Room"
-                }else if ("Đang tìm trận".equals(player.getStatus())) {
+                }else if ("Finding game".equals(player.getStatus())) {
                     cell.setForeground(Color.ORANGE); // Orange for "Find Match"
-                }else if ("Trong trận".equals(player.getStatus())) {
+                }else if ("In Game".equals(player.getStatus())) {
                     cell.setForeground(Color.BLUE); // Red for "In Game"
                 }
                 else {
