@@ -11,6 +11,7 @@ import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
@@ -37,13 +38,12 @@ import javax.swing.table.JTableHeader;
 import controller.ClientController;
 import models.PlayerStatus;
 import utils.RoundedBorder;
-
 public class ListPlayerForm extends JFrame {
     private JTextField searchField;
     private JTable playerTable;
     private DefaultTableModel tableModel;
     private JButton searchButton, makeFriendButton, backButton;
-
+    private Point initialClick;
     public ListPlayerForm() {
         initComponents();
         setVisible(true);
@@ -83,7 +83,28 @@ public class ListPlayerForm extends JFrame {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleBar.add(titleLabel, BorderLayout.CENTER);
-
+        titleBar.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mousePressed(MouseEvent e) {
+              initialClick = e.getPoint();
+          }
+      });
+  
+      titleBar.addMouseMotionListener(new MouseAdapter() {
+          @Override
+          public void mouseDragged(MouseEvent e) {
+              int thisX = getLocation().x;
+              int thisY = getLocation().y;
+  
+              int xMoved = (thisX + e.getX()) - (thisX + initialClick.x);
+              int yMoved = (thisY + e.getY()) - (thisY + initialClick.y);
+  
+              int X = thisX + xMoved;
+              int Y = thisY + yMoved;
+              setLocation(X, Y);
+          }
+      });
+  
         /// ... existing code ...
 
         // Search panel - more compact

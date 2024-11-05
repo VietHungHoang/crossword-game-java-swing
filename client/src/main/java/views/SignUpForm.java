@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
@@ -34,13 +35,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import utils.RoundedBorder;
-
 public class SignUpForm extends JFrame {
     private JTextField txtUsername;
     private JPasswordField txtPassword, txtConfirmPassword;
     private JButton registerButton;
     private JButton swapButton;
-
+    private Point initialClick;
     public SignUpForm() {
         initComponents();
     }
@@ -79,7 +79,28 @@ public class SignUpForm extends JFrame {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleBar.add(titleLabel, BorderLayout.CENTER);
+         // Thêm đoạn code này sau khi khởi tạo titleBar
+     titleBar.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mousePressed(MouseEvent e) {
+          initialClick = e.getPoint();
+      }
+  });
 
+    titleBar.addMouseMotionListener(new MouseAdapter() {
+      @Override
+      public void mouseDragged(MouseEvent e) {
+          int thisX = getLocation().x;
+          int thisY = getLocation().y;
+
+          int xMoved = (thisX + e.getX()) - (thisX + initialClick.x);
+          int yMoved = (thisY + e.getY()) - (thisY + initialClick.y);
+
+          int X = thisX + xMoved;
+          int Y = thisY + yMoved;
+          setLocation(X, Y);
+            }
+        });
         // Main panel
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
