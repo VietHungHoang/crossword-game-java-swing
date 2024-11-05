@@ -160,7 +160,7 @@ public class SignUpForm extends JFrame {
         textField.setFont(new Font("Arial", Font.PLAIN, 14));
         textField.setBorder(BorderFactory.createCompoundBorder(
             new RoundedBorder(10, new Color(200, 200, 200)),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+            BorderFactory.createEmptyBorder(1, 10, 1, 10)
         ));
         return textField;
     }
@@ -170,7 +170,7 @@ public class SignUpForm extends JFrame {
         passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
         passwordField.setBorder(BorderFactory.createCompoundBorder(
             new RoundedBorder(10, new Color(200, 200, 200)),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+            BorderFactory.createEmptyBorder(1, 10, 1, 10)
         ));
         return passwordField;
     }

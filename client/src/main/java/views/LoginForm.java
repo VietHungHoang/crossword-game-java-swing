@@ -103,7 +103,7 @@ public class LoginForm extends JFrame {
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, 20, 0);
         txtUsername = createStyledTextField(20);
-        txtUsername.setPreferredSize(new Dimension(525, 40));
+        txtUsername.setPreferredSize(new Dimension(525, 50));
         formPanel.add(txtUsername, gbc);
 
         // Password
@@ -116,7 +116,7 @@ public class LoginForm extends JFrame {
         gbc.gridy = 3;
         gbc.insets = new Insets(0, 0, 20, 0);
         txtPassword = createStyledPasswordField(20);
-        txtPassword.setPreferredSize(new Dimension(525, 40));
+        txtPassword.setPreferredSize(new Dimension(525, 50));
         formPanel.add(txtPassword, gbc);
 
         // Login button
@@ -143,20 +143,24 @@ public class LoginForm extends JFrame {
 
     private JTextField createStyledTextField(int columns) {
         JTextField textField = new JTextField(columns);
-        textField.setFont(new Font("Arial", Font.PLAIN, 14));
+        textField.setFont(new Font("Arial", Font.PLAIN, 16));
+        textField.setForeground(Color.BLACK);
+        textField.setBackground(Color.WHITE);
         textField.setBorder(BorderFactory.createCompoundBorder(
-            new RoundedBorder(10, new Color(200, 200, 200)),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+            new RoundedBorder(15, new Color(200, 200, 200)),
+            BorderFactory.createEmptyBorder(1, 15, 2, 15)
         ));
         return textField;
     }
 
     private JPasswordField createStyledPasswordField(int columns) {
         JPasswordField passwordField = new JPasswordField(columns);
-        passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
+        passwordField.setFont(new Font("Arial", Font.PLAIN, 16));
+        passwordField.setForeground(Color.BLACK);
+        passwordField.setBackground(Color.WHITE);
         passwordField.setBorder(BorderFactory.createCompoundBorder(
-            new RoundedBorder(10, new Color(200, 200, 200)),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+            new RoundedBorder(15, new Color(200, 200, 200)),
+            BorderFactory.createEmptyBorder(1, 15, 1, 15)
         ));
         return passwordField;
     }
