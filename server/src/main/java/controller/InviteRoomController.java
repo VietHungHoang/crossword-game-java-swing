@@ -89,9 +89,10 @@ public class InviteRoomController {
       this.socketHandlers.getLoginController().getPlayerLogin().setStatus("Trong phòng");
       if (roomInServer != null) {
           // Cập nhật trạng thái phòng
+          roomInServer = new Room(roomInServer);
           roomInServer.setStatus("2/2");
           Player acceptingPlayer = this.socketHandlers.getLoginController().getPlayerLogin();
-          System.out.println("123123123"+socketHandlers.getLoginController().getPlayerLogin().getPlayerName());
+
           roomInServer.getPlayers().add(acceptingPlayer);
           
 

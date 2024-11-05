@@ -1,6 +1,7 @@
 package models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,15 @@ public class Room implements Serializable {
     }
   public Room() {
   }
-
+public Room(Room room) {
+        this.id = room.id;
+        this.createAt = new Date(room.createAt.getTime()); // Tạo bản sao của createAt để tránh tham chiếu trực tiếp
+        this.createBy = room.createBy; // Giả định là Player là một đối tượng bất biến, nếu không bạn cần sao chép sâu
+        this.players = new ArrayList<>(room.players); // Tạo bản sao của danh sách players
+        this.status = room.status;
+        this.isRanking = room.isRanking;
+        this.playerReadyStatus = new HashMap<>(room.playerReadyStatus); // Sao chép trạng thái sẵn sàng của người chơi
+    }
   public String getId() {
       return id;
   }

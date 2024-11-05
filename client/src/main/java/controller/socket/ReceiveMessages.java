@@ -149,7 +149,7 @@ public class ReceiveMessages extends Thread{
                           this.inviteRoomController = new InviteRoomController(new InviteRoomForm((Room)objectWrapper.getObject()));
                         break;
                     case UPDATE_INVITE_ROOM:
-                        // this.inviteRoomController.updateInviteRoomHandler((Room)objectWrapper.getObject());
+                        this.inviteRoomController.updateInviteRoomHandler((Room)objectWrapper.getObject());
                         break;
                     default:
                         break;

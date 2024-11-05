@@ -57,10 +57,66 @@ public class InviteRoomForm extends JFrame {
         setupLayout();
         setFrameProperties();
     }
-    public void updateInviteRoom(Room room){
-      this.currentRoom = room;
-      initRoomInfo();
-    }
+    public void updateInviteRoom(Room room) {
+      // Update room information
+      currentRoom = room;
+
+      ((JLabel) roomInfoPanel.getComponent(0)).setText("ID Phòng: " + room.getId());
+      ((JLabel) roomInfoPanel.getComponent(1)).setText("Trạng thái: " + room.getStatus());
+      ((JLabel) roomInfoPanel.getComponent(2)).setText(room.isRanking() ? "Xếp hạng" : "Chơi vui vẻ");
+      ((JLabel) roomInfoPanel.getComponent(3)).setText("Tạo bởi: " + room.getCreateBy().getPlayerName());
+      
+      // Update Player 1 information
+      updatePlayerPanel(player1Panel, room.getPlayers().get(0), "Người chơi 1", PLAYER1_COLOR);
+  
+      // Update Player 2 information or set to empty if no player
+      if (room.getPlayers().size() > 1) {
+          System.out.println("update nguoi thu 2");
+          updatePlayerPanel(player2Panel, room.getPlayers().get(1), "Người chơi 2", PLAYER2_COLOR);
+      } else {
+          player2Panel.removeAll();
+          player2Panel.add(createEmptyPlayerPanel());
+      }
+  
+      // Refresh the state of the start button and friend list
+      updateButtonStates();
+      revalidate();
+      repaint();
+  }
+  
+  private void updatePlayerPanel(JPanel panel, Player player, String title, Color color) {
+    // Xóa tất cả components cũ
+    panel.removeAll();
+    
+    // Tạo lại panel với thông tin mới
+    JLabel titleLabel = new JLabel(title, JLabel.CENTER);
+    titleLabel.setOpaque(true);
+    titleLabel.setBackground(color);
+    titleLabel.setForeground(Color.WHITE);
+    titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+    titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+    JPanel infoPanel = new JPanel(new GridLayout(3, 1, 0, 2));
+    infoPanel.setBackground(color);
+    infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+    JLabel nameLabel = new JLabel("Tên: " + player.getPlayerName(), JLabel.LEFT);
+    JLabel pointsLabel = new JLabel("Điểm: " + player.getTotalPoint(), JLabel.LEFT);
+    JLabel gamesLabel = new JLabel("Số trận thắng: " + player.getTotalGameWon(), JLabel.LEFT);
+
+    nameLabel.setForeground(Color.WHITE);
+    pointsLabel.setForeground(Color.WHITE);
+    gamesLabel.setForeground(Color.WHITE);
+
+    infoPanel.add(nameLabel);
+    infoPanel.add(pointsLabel);
+    infoPanel.add(gamesLabel);
+
+    panel.setLayout(new GridLayout(2, 1, 0, 2));
+    panel.add(titleLabel);
+    panel.add(infoPanel);
+}
+  
     private void initComponents() {
         initPanels();
         initButtons();
