@@ -5,3 +5,8 @@ public class ClientRun {
         new ClientController();
     }
 }
+    
+/* Update:
+    - Khi tim tran khong dong trang home
+
+ */

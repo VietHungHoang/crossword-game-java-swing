@@ -14,13 +14,15 @@ public class Room implements Serializable {
   private List<Player> players;
   private String status;
   private Map<Player, Boolean> playerReadyStatus = new HashMap<>();
+  private boolean isRanking;
 
-    public Room(String id, Date createAt, Player createBy, List<Player> players, String status) {
+    public Room(String id, Date createAt, Player createBy, List<Player> players, String status, boolean isRanking) {
         this.id = id;
         this.createAt = createAt;
         this.createBy = createBy;
         this.players = players;
         this.status = status;
+        this.isRanking = isRanking;
         // Khởi tạo trạng thái ready của tất cả người chơi là false
         for (Player player : players) {
             playerReadyStatus.put(player, false);
@@ -88,7 +90,14 @@ public class Room implements Serializable {
   public void removePlayer(Player player) {
       this.players.remove(player);
   }
+  public void setRanking(boolean isRanking) {
+      this.isRanking = isRanking;
+  }
+  public boolean isRanking() {
+      return isRanking;
+  }
   @Override
+  //Phải in ra đủ các Player trong room
   public String toString() {
       return "Room{" +
               "id='" + id + '\'' +
@@ -96,6 +105,8 @@ public class Room implements Serializable {
               ", createBy=" + createBy +
               ", players=" + players +
               ", status='" + status + '\'' +
+              ", isRanking=" + isRanking +
+              ", playerReadyStatus=" + playerReadyStatus +
               '}';
   }
 }

@@ -4,19 +4,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import models.ObjectWrapper;
 import models.Player;
 import models.User;
 import utils.StreamData;
+import views.EndGameForm;
 import views.GameForm;
 
 public class GameController {
   private GameForm gameForm;
+  private EndGameForm endGameForm;
   private Player player1;
   private Player player2;
+
+  private Timer countDownTimer;
+
+  private Integer timeLeft = 30;
 
 class SubmitAnswerListener implements ActionListener{
         @Override
@@ -41,12 +46,20 @@ class SubmitAnswerListener implements ActionListener{
                 }
                 if(sb.toString().equalsIgnoreCase(gameForm.getKeyword())){
                     try {
-                        ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.WIN_GAME, player1);
+                        gameForm.getCountdownTimer().stop();
+                        for(JButton x : gameForm.getKeyboardButtons()){
+                            x.setEnabled(false);
+                        }
+                        for(JButton x : gameForm.getListKeywordBtns()){
+                            x.setEnabled(false);
+                        }
+                        ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.WIN_GAME, null);
                     } catch (Exception ex) {
                     }
                 }
                 else{
-                    JOptionPane.showMessageDialog(gameForm, "Chưa đúng", "Đăng nhập không thành công", JOptionPane.ERROR_MESSAGE);
+
+                    JOptionPane.showMessageDialog(gameForm, "Chưa đúng", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -55,6 +68,27 @@ class SubmitAnswerListener implements ActionListener{
   public GameController(GameForm gameForm){
     this.gameForm = gameForm;
     this.gameForm.addActionListener(new SubmitAnswerListener());
+    this.startCountDown();
+  }
+
+  public void startCountDown(){
+      countDownTimer = new Timer(1000, new ActionListener() {
+          public void actionPerformed(ActionEvent evt) {
+              if (timeLeft > 0) {
+                  timeLeft--;
+                  gameForm.getLblCountdown().setText(String.valueOf(timeLeft));
+              } else {
+                  countDownTimer.stop();
+                  try{
+                      ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.DRAW_GAME, null);
+                  }
+                  catch (Exception ex){
+
+                  }
+              }
+          }
+      });
+      countDownTimer.start();
   }
 
   public void showMessage(String msg){
@@ -70,12 +104,27 @@ class SubmitAnswerListener implements ActionListener{
     gameForm.getLblPlayer2Name().setText(player2.getPlayerName());
   }
 
-  public void handleEndGame(String msg){
-    if(msg.equals("Win"))
+  public GameForm getGameForm() {
+    return gameForm;
+  }
+
+  public void handleEndGame(String results){
+    System.out.println("Xu ly end game");
+    ClientController.closeFrame(ClientController.FrameName.GAME);
+    if(results.equals("Win"))
         ClientController.openFrame(ClientController.FrameName.WIN_GAME);
     else
         ClientController.openFrame(ClientController.FrameName.LOST_GAME);
 
   }
-
+  class BackHomeListener implements ActionListener{
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == endGameForm.getBackButton()){
+          // endGameForm.dispose();
+          // gameForm.dispose();
+            // ClientController.closeFrame(ClientController.FrameName.GAME); // co lua bang nhau
+      }
+  }
+}
 }

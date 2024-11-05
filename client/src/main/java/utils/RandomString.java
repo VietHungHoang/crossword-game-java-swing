@@ -11,7 +11,6 @@ public class RandomString {
     public static final String DIGITS = "0123456789";
     public static final String SPECIAL = "!@#$%^&*()_+";
     public static final String ALPHANUM_SPECIAL = UPPER + LOWER + DIGITS + SPECIAL;
-
     private final Random random;
     private final char[] symbols;
     private final char[] buf; 

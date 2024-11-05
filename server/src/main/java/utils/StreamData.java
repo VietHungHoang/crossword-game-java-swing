@@ -37,7 +37,13 @@ public class StreamData {
         RANKING,
         LIST_PLAYER,
         UPDATE_LIST_PLAYER, 
-        WIN_GAME
+        WIN_GAME, 
+        INVITE_ROOM,
+        CANCEL_READY,
+        GET_LIST_FRIEND,
+        INVITE_REPLAY,
+        DRAW_GAME
+        
     }
 
     public static Message getStreamMessage(String message) {
@@ -48,7 +54,6 @@ public class StreamData {
         } catch (Exception e) {
             System.err.println("Unknow message: " + e.getMessage());
         }
-
         return result;
     }
 

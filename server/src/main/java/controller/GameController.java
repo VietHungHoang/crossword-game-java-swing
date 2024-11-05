@@ -39,12 +39,27 @@ public class GameController {
         ServerController.games.remove(game);
     }
 
-    public void handleEndGame(Player player){
+    public void handleEndGame(){
+        // Lấy ra người chơi chiến thang va xu ly
+        Player player = socketHandlers.getLoginController().getPlayerLogin();
+        player.setTotalGame(player.getTotalGame() + 1);
+        player.setTotalGameWon(player.getTotalGameWon() + 1);
+        player.setTotalPoint(player.getTotalPoint() + 5);
+        // Lay ra nguoi thua va xu ly
         Player reamainingPlayer = getRemainingPlayer(player);
+        reamainingPlayer.setTotalGame(reamainingPlayer.getTotalGame() + 1);
         this.view.showMessage(player.getPlayerName() + "is win and " + reamainingPlayer.getPlayerName() + "is lost");
-        socketHandlers.send(new ObjectWrapper("WIN_GAME", player));
-        socketHandlers.send(new ObjectWrapper("LOST_GAME", reamainingPlayer));
 
+        // send to nguoi thang
+        socketHandlers.send(new ObjectWrapper("WIN_GAME", player));
+
+        // send to nguoi thua
+        for(SocketHandlers x : ServerController.getSocketHandlers()){
+            if(x.getLoginController().getPlayerLogin().getId().equals(reamainingPlayer.getId())){
+                x.send(new ObjectWrapper("LOST_GAME", reamainingPlayer));
+                return;
+            }
+        }
     }
 
     public Player getRemainingPlayer(Player player){
@@ -54,5 +69,12 @@ public class GameController {
             else if(x.getPlayer2().getId().equals(player.getId()))
                 return x.getPlayer1();
         return null;
+    }
+
+    public void handleDraw(){
+        socketHandlers.getLoginController().getPlayerLogin();
+        for(Game x : ServerController.games){
+            if(x.)
+        }
     }
 }

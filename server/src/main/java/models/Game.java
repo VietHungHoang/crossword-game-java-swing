@@ -17,6 +17,8 @@ public class Game implements Serializable{
     private String type; // Loại game (BO3)
     private Long winner; // ID của người thắng
     private List<WordInGame> wordInGameList; // Danh sách từ trong game
+
+    private Keyword keyword;
     private List<GameRound> gameRoundList; // Danh sách các round
     private Room room; // Phòng chơi game
     public Player player1; // Người chơi 1
@@ -25,6 +27,62 @@ public class Game implements Serializable{
     private int player2Score = 0; // Điểm của người chơi 2
     private String roomId; // ID của phòng
     private static final long serialVersionUID = 1L;
+
+    public String getId() {
+        return id;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public Keyword getKeyword() {
+        return keyword;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public Long getWinner() {
+        return winner;
+    }
+
+    public List<WordInGame> getWordInGameList() {
+        return wordInGameList;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public int getPlayer1Score() {
+        return player1Score;
+    }
+
+    public int getPlayer2Score() {
+        return player2Score;
+    }
+
+    public void setKeyword(Keyword keyword) {
+        this.keyword = keyword;
+    }
 
     public Game(Room room) {
         RandomString randomString = new RandomString(9, new SecureRandom(), RandomString.DIGITS);
@@ -39,13 +97,14 @@ public class Game implements Serializable{
         this.player1 = room.getPlayers().get(0);
         this.player2 = room.getPlayers().get(1);
         this.winner = null;
-        
+
         // Khởi tạo danh sách từ ngẫu nhiên cho WordInGame và danh sách GameRound rỗng
         this.wordInGameList = WordInGame.generateSampleData();
         this.gameRoundList = new ArrayList<>();
 
         // Thêm GameRound đầu tiên
         addNewRound();
+
     }
 
     // Kiểm tra xem có người chơi nào thắng chưa
@@ -97,7 +156,7 @@ public class Game implements Serializable{
         } else if (player2.getId().toString().equals(playerId)) {
             player2Score++; // Cộng điểm cho người chơi 2
         }
-        
+
         // Kiểm tra xem có ai thắng không sau khi cộng điểm
         if (checkWinner()) {
             endGame(player1Score == 2 ? player1 : player2); // Kết thúc game nếu có người thắng
@@ -126,11 +185,10 @@ public class Game implements Serializable{
         return roomId;
     }
 
-    public Player getPlayer1() {
-        return player1;
-    }
-
-    public Player getPlayer2() {
-        return player2;
+    @Override
+    public String toString() {
+        return "Game{" +
+                ", keyword=" + keyword +
+                '}';
     }
 }

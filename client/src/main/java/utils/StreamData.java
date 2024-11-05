@@ -40,7 +40,13 @@ public class StreamData {
         LIST_PLAYER,
         UPDATE_LIST_PLAYER, 
         WIN_GAME,
-        LOST_GAME
+        LOST_GAME, 
+        INVITE_ROOM,
+        INVITE_FRIEND_TO_ROOM,
+        GET_LIST_FRIEND,
+
+        INVITE_REPLAY,
+        DRAW_GAME
     }
 
     public static Message getStreamMessage(String message) {

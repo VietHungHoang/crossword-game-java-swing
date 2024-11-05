@@ -1,9 +1,19 @@
 package models;
 
 import java.io.Serializable;
+import java.security.Key;
 
-public class Alphabet implements  Serializable{
+public class Keyword implements  Serializable{
     private Long id;
+
+    @Override
+    public String toString() {
+        return "Keyword{" +
+                "id=" + id +
+                ", value='" + value + '\'' +
+                '}';
+    }
+
     private String value;
     private static final long serialVersionUID = 1L;
     public Long getId() {
@@ -22,7 +32,11 @@ public class Alphabet implements  Serializable{
         this.value = value;
     }
 
-    public Alphabet(Long id, String value) {
+    public Keyword(){
+
+    }
+
+    public Keyword(Long id, String value) {
         this.id = id;
         this.value = value;
     }

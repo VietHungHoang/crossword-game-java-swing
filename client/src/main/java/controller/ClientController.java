@@ -1,14 +1,18 @@
 package controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import javax.swing.JOptionPane;
 
 import controller.socket.HomeController;
 import controller.socket.SocketHandlers;
+import models.Game;
+import models.Player;
 import models.PlayerStatus;
 import views.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import views.EndGameForm;
 
 public class ClientController {
 
@@ -27,8 +31,8 @@ public class ClientController {
     private static SignUpController signUpController;
     private static WaitingForGameController waitingForGameController;
     private static GameController gameController;
-    private  static RankingController rankingController;
-    private  static RankingForm rankingForm;
+    private static RankingController rankingController;
+    private static RankingForm rankingForm;
     public static List<PlayerStatus> players = new ArrayList<>();
 
     public static ListPlayerForm getListPlayerForm() {
@@ -45,6 +49,18 @@ public class ClientController {
 
     private static EndGameController endGameController;
 
+    private static ConfirmationForm confirmationForm;
+
+    private static Player currentPlayer;
+
+    public static ArrayList<Game> getListGame() {
+        return listGame;
+    }
+
+    private static ConfirmController confirmController;
+
+    private static ArrayList<Game> listGame = new ArrayList<>();
+
     public enum FrameName{
         LOGIN,
         SIGNUP,
@@ -55,7 +71,8 @@ public class ClientController {
         RANKING,
         LIST_PLAYER,
         WIN_GAME,
-        LOST_GAME
+        LOST_GAME,
+        CONFIRM
     }
 
     public ClientController(){
@@ -71,6 +88,14 @@ public class ClientController {
         }
     }
 
+    public static Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public static void setCurrentPlayer(Player currentPlayer) {
+        ClientController.currentPlayer = currentPlayer;
+    }
+
     public static void openFrame(FrameName frameName){
         switch (frameName) {
             case LOGIN:
@@ -84,9 +109,9 @@ public class ClientController {
                 homeForm.setVisible(true);
                 break;
             case INVITE_ROOM:
-                inviteRoomForm = new InviteRoomForm();
-                inviteRoomController = new InviteRoomController(inviteRoomForm);
-                inviteRoomForm.setVisible(true);
+                // inviteRoomForm = new InviteRoomForm();
+                // inviteRoomController = new InviteRoomController(inviteRoomForm);
+//                inviteRoomForm.setVisible(true);
                 break;
             case SIGNUP:
                 signUpForm = new SignUpForm();
@@ -99,9 +124,27 @@ public class ClientController {
                 waitingForGameForm.setVisible(true);
                 break;
             case GAME:
-                gameForm = new GameForm("Player 1", "Player 2", "Player 3", 10, 10);
-                gameController = new GameController(gameForm);
-                gameForm.setVisible(true);
+                for(Game x : listGame){
+                    Player currentPlayer = getCurrentPlayer();
+                    Player remainingPlayer = null;
+                    if(Objects.equals(x.getPlayer1().getId(), currentPlayer.getId()))
+                        remainingPlayer = x.getPlayer2();
+                    else if(Objects.equals(x.getPlayer2().getId(), currentPlayer.getId()))
+                        remainingPlayer = x.getPlayer1();
+                    if(remainingPlayer != null)
+                        System.out.println("Da tim thay nguoi choi de tao game");
+                    gameForm = new GameForm(
+                            currentPlayer.getPlayerName(),
+                            remainingPlayer.getPlayerName(),
+                            x.getKeyword().getValue(),
+                            currentPlayer.getTotalPoint(),
+                            remainingPlayer.getTotalPoint()
+                            );
+                    gameController = new GameController(gameForm);
+                    gameForm.setVisible(true);
+                    break;
+                    }
+
                 break;
             case RANKING:
                 rankingForm = new RankingForm();
@@ -123,6 +166,11 @@ public class ClientController {
                 endGameController = new EndGameController(endGameForm);
                 endGameForm.setVisible(true);
                 break;
+            case CONFIRM:
+                confirmationForm = new ConfirmationForm();
+                confirmController = new ConfirmController(confirmationForm);
+                confirmationForm.setVisible(true);
+                break;
             default:
                 break;
         }
@@ -136,6 +184,7 @@ public class ClientController {
 
             case HOME:
                 homeForm.dispose();
+                System.out.println(gameForm);
                 break;
 
             case INVITE_ROOM:
@@ -147,7 +196,9 @@ public class ClientController {
                 break;
 
             case WAITING_FOR_GAME:
+                System.out.println("dispose waitingForGameForm");
                 waitingForGameForm.dispose();
+                System.out.println(waitingForGameForm);
                 break;
 
             case GAME:
@@ -167,6 +218,9 @@ public class ClientController {
                 break;
             case LOST_GAME:
                 endGameForm.dispose();
+                break;
+            case CONFIRM:
+                confirmationForm.dispose();
                 break;
             default:
                 break;

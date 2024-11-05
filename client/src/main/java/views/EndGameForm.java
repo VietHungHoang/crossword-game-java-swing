@@ -5,15 +5,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EndGameForm extends JFrame {
+    private JButton backButton;
 
     public EndGameForm(String notice, Icon icon) {
         setTitle(notice);
         setSize(300, 150);
         setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
         // Tạo label thông báo
-        JLabel victoryLabel = new JLabel("Chúc mừng! Bạn đã thắng!", JLabel.CENTER);
+        JLabel victoryLabel = new JLabel();
+        if(notice.equals("Win")) victoryLabel.setText("Chúc mừng! Bạn đã thắng!");
+        else victoryLabel.setText("Bạn đã thua!");
         victoryLabel.setFont(new Font("Arial", Font.BOLD, 16));
         add(victoryLabel, BorderLayout.CENTER);
         
@@ -22,16 +25,8 @@ public class EndGameForm extends JFrame {
         buttonPanel.setLayout(new FlowLayout());
         
         // Nút "Quay lại"
-        JButton backButton = new JButton("Quay lại");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Xử lý sự kiện khi bấm nút "Quay lại"
-                dispose(); // Đóng form thông báo
-                // Thực hiện hành động quay lại hoặc mở menu chính
-            }
-        });
-        
+        backButton = new JButton("Quay lại");
+
         // Nút "Mời đấu lại"
         JButton replayButton = new JButton("Mời đấu lại");
         replayButton.addActionListener(new ActionListener() {
@@ -50,7 +45,15 @@ public class EndGameForm extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    public void addActionListener(ActionListener act) {
+        backButton.addActionListener(act);
+    }
+
     public static void main(String[] args) {
         new EndGameForm("", null);
+    }
+
+    public JButton getBackButton() {
+        return backButton;
     }
 }

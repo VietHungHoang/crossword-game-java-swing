@@ -1,15 +1,15 @@
 package dao;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import dao.impl.IPlayerDAO;
 import models.Player;
 import models.PlayerFriend;
 import models.PlayerRanking;
 import models.User;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PlayerDAO extends DAO implements IPlayerDAO {
     public PlayerDAO(Connection conn){
@@ -33,7 +33,7 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
             if (rs.next()){
                 player.setId(rs.getLong("id"));
                 player.setPlayerName(rs.getString("player_name"));
-                player.setTotalPoint( rs.getDouble("total_point"));
+                player.setTotalPoint( rs.getInt("total_point"));
                 player.setTotalGame(rs.getLong("total_game"));
                 player.setTotalGameWon(rs.getLong("total_game_won"));
                 player.setStatus(rs.getString("status"));
@@ -51,8 +51,9 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
             this.preStatement = this.conn.prepareStatement(sql);
             this.preStatement.setLong(1, id);
             this.rs = this.preStatement.executeQuery();
-            if (rs.next()){
+            while (rs.next()){
                 PlayerFriend playerFriend=new PlayerFriend();
+                playerFriend.setId(rs.getLong("id"));
                 playerFriend.setPlayerName(rs.getString("player_name"));
                 playerFriend.setStatus(rs.getString("status"));
                 friendList.add(playerFriend);
@@ -163,6 +164,7 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
         return 0;
     }
 
+
     @Override
     public int update(Object object) {
         return 0;
@@ -175,6 +177,5 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
 
     @Override
     public void closeConnection() {
-
     }
 }

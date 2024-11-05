@@ -3,15 +3,27 @@ package models;
 import java.io.Serializable;
 
 public class Player implements Serializable {
-    
+
 
     private Long id;
     private Long totalGame;
     private Long totalGameWon;
-    private Double totalPoint;
+    private Integer totalPoint;
     private String playerName;
     private String status;
     private static final long serialVersionUID = 1L;
+
+    public Player() {
+    }
+
+    //Constructor using playerName only
+    public Player(String playerName, String status) {
+        this.playerName = playerName;
+        this.totalGame = 0L;
+        this.totalGameWon = 0L;
+        this.totalPoint = 0;
+        this.status = status;
+    }
     public void setId(Long id) {
         this.id = id;
     }
@@ -32,12 +44,13 @@ public class Player implements Serializable {
         this.totalGameWon = totalGameWon;
     }
 
-    public Double getTotalPoint() {
+    public Integer getTotalPoint() {
         return totalPoint;
     }
 
-    public void setTotalPoint(Double totalPoint) {
+    public void setTotalPoint(Integer totalPoint) {
         this.totalPoint = totalPoint;
+
     }
 
     public String getPlayerName() {
@@ -47,6 +60,7 @@ public class Player implements Serializable {
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
+
 
 
     public Long getId() {
@@ -61,6 +75,7 @@ public class Player implements Serializable {
         this.status = status;
     }
 
+
     @Override
     public String toString() {
         return "Player{" +
@@ -72,4 +87,5 @@ public class Player implements Serializable {
                 ", status='" + status + '\'' +
                 '}';
     }
+
 }

@@ -7,11 +7,12 @@ import java.net.Socket;
 import java.sql.Connection;
 import java.util.List;
 
-import models.*;
+import models.ObjectWrapper;
+import models.Player;
+import models.PlayerStatus;
+import models.User;
 import utils.StreamData;
 import views.ServerView;
-
-import static controller.ServerController.socketHandlers;
 
 public class SocketHandlers extends Thread {
     private Socket socketClient;
@@ -28,6 +29,7 @@ public class SocketHandlers extends Thread {
     private GameController gameController;
     private  RankingController rankingController;
     private ListPlayerController listPlayerController;
+    private InviteRoomController inviteRoomController;
     public LoginController getLoginController() {
 
         return this.loginController;
@@ -42,6 +44,7 @@ public class SocketHandlers extends Thread {
         this.oos = new ObjectOutputStream(this.socketClient.getOutputStream());
         this.ois = new ObjectInputStream(this.socketClient.getInputStream());
         this.conn = conn;
+        this.view = new ServerView();
     }
 
     @Override
@@ -101,8 +104,18 @@ public void run() {
                     this.listPlayerController.updateListPlayer();
                     break;
                 case WIN_GAME:
-                    this.gameController = new GameController(view, conn, this);
-                    this.gameController.handleEndGame((Player)objectWrapper.getObject());
+                        this.gameController = new GameController(view, conn, this);
+                        this.gameController.handleEndGame();
+                    break;
+                case INVITE_ROOM:
+                    this.inviteRoomController = new InviteRoomController(view,conn,this);
+                    this.inviteRoomController.createInviteRoom();
+                    break;
+                case GET_LIST_FRIEND:
+                    this.inviteRoomController.getListFriend();
+                    break;
+                case DRAW_GAME:
+                    this.gameController.handleDraw();
                 default:
                     break;
             }

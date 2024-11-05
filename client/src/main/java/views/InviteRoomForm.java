@@ -2,179 +2,374 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.border.Border;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+
+import models.Player;
+import models.Room;
+
+public class InviteRoomForm extends JFrame {
+
+    private JPanel player1Panel, player2Panel, buttonPanel, friendListPanel, roomInfoPanel;
+    private JButton startButton, leaveButton;
+    private JTable friendTable;
+    private DefaultTableModel friendTableModel;
+    private JLabel friendTitle;
+    private Room currentRoom;
+
+    // Enhanced color scheme
+    private static final Color HEADER_DARK = new Color(52, 73, 94);
+    private static final Color HEADER_PURPLE = new Color(155, 89, 182);
+    private static final Color HEADER_ORANGE = new Color(230, 126, 34);
+    private static final Color HEADER_GREEN = new Color(46, 204, 113);
+    private static final Color PLAYER1_COLOR = new Color(26, 188, 156);
+    private static final Color PLAYER2_COLOR = new Color(241, 196, 15);
+    private static final Color EMPTY_PLAYER_COLOR = new Color(189, 195, 199);
+    private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
+    private static final Color FRIEND_LIST_COLOR = new Color(52, 152, 219);
+    private static final Color BUTTON_DISABLED = new Color(149, 165, 166);
 
 
-public class InviteRoomForm extends JFrame {  
+    
+    public InviteRoomForm(Room room) {
+        this.currentRoom = room;
+        initComponents();
+        setupLayout();
+        setFrameProperties();
+    }
 
-    JLabel Player1lb, Player2lb, Name1lb, Name2lb;
-    JButton Startbtn, Leavebtn, Invitebtn;
-    JPanel Buttonpn, Pairpn, friendListpn;
-    JTable friendTable;
-    JLabel friendTitle;
+    private void initComponents() {
+        initPanels();
+        initButtons();
+        initFriendList();
+        initRoomInfo();
+    }
 
-    void panel() {
-        Border innerBorder = BorderFactory.createEtchedBorder();
-        Border outerBorder = BorderFactory.createEmptyBorder(5, 5, 10, 10);
+    private void initPanels() {
+        roomInfoPanel = new JPanel(new GridLayout(2, 2, 2, 2));
+        roomInfoPanel.setBackground(BACKGROUND_COLOR);
+
+        player1Panel = createPlayerPanel(currentRoom.getPlayers().get(0), "Người chơi 1", PLAYER1_COLOR);
         
-        Pairpn = new JPanel();
-        Pairpn.setBackground(new Color(255, 255, 255));
-        Pairpn.setOpaque(true);
-        Pairpn.setLayout(new GridBagLayout());
+        if (currentRoom.getPlayers().size() > 1) {
+            player2Panel = createPlayerPanel(currentRoom.getPlayers().get(1), "Người chơi 2", PLAYER2_COLOR);
+        } else {
+            player2Panel = createEmptyPlayerPanel();
+        }
+
+        buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setBackground(BACKGROUND_COLOR);
+
+        friendListPanel = new JPanel(new BorderLayout(0, 10));
+        friendListPanel.setPreferredSize(new Dimension(250, 500));
+        friendListPanel.setBackground(BACKGROUND_COLOR);
+        friendListPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    }
+
+    private void initRoomInfo() {
+        JLabel idLabel = createHeaderLabel("ID Phòng: " + currentRoom.getId(), HEADER_DARK);
+        JLabel statusLabel = createHeaderLabel("Trạng thái: " + currentRoom.getStatus(), HEADER_PURPLE);
+        JLabel typeLabel = createHeaderLabel(currentRoom.isRanking() ? "Xếp hạng" : "Chơi vui vẻ", HEADER_ORANGE);
+        JLabel creatorLabel = createHeaderLabel("Tạo bởi: " + currentRoom.getCreateBy().getPlayerName(), HEADER_GREEN);
         
-        Buttonpn = new JPanel();
-        Buttonpn.setBackground(new Color(200, 200, 200));
-        Buttonpn.setOpaque(true);
-        Buttonpn.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 10));
+        roomInfoPanel.add(idLabel);
+        roomInfoPanel.add(statusLabel);
+        roomInfoPanel.add(typeLabel);
+        roomInfoPanel.add(creatorLabel);
+    }
+
+    private JPanel createPlayerPanel(Player player, String title, Color color) {
+        JPanel panel = new JPanel(new GridLayout(2, 1, 0, 2));
+        panel.setBackground(BACKGROUND_COLOR);
         
-        friendListpn = new JPanel();
-        friendListpn.setPreferredSize(new Dimension(300, 500));  
-        friendListpn.setBorder(BorderFactory.createCompoundBorder(innerBorder, outerBorder));
-        friendListpn.setLayout(new BorderLayout());
+        JLabel titleLabel = new JLabel(title, JLabel.CENTER);
+        titleLabel.setOpaque(true);
+        titleLabel.setBackground(color);
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        JPanel infoPanel = new JPanel(new GridLayout(3, 1, 0, 2));
+        infoPanel.setBackground(color);
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel nameLabel = new JLabel("Tên: " + player.getPlayerName(), JLabel.LEFT);
+        JLabel pointsLabel = new JLabel("Điểm: " + player.getTotalPoint(), JLabel.LEFT);
+        JLabel gamesLabel = new JLabel("Số trận thắng: " + player.getTotalGameWon(), JLabel.LEFT);
+
+        nameLabel.setForeground(Color.WHITE);
+        pointsLabel.setForeground(Color.WHITE);
+        gamesLabel.setForeground(Color.WHITE);
+
+        infoPanel.add(nameLabel);
+        infoPanel.add(pointsLabel);
+        infoPanel.add(gamesLabel);
+
+        panel.add(titleLabel);
+        panel.add(infoPanel);
+
+        return panel;
+    }
+
+    private JPanel createEmptyPlayerPanel() {
+        JPanel panel = new JPanel(new GridLayout(2, 1, 0, 2));
+        panel.setBackground(BACKGROUND_COLOR);
         
+        JLabel titleLabel = new JLabel("Người chơi 2", JLabel.CENTER);
+        titleLabel.setOpaque(true);
+        titleLabel.setBackground(PLAYER2_COLOR);
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        JLabel emptyLabel = new JLabel("Trống (Mời)", JLabel.CENTER);
+        emptyLabel.setOpaque(true);
+        emptyLabel.setBackground(EMPTY_PLAYER_COLOR);
+        emptyLabel.setForeground(Color.WHITE);
+        emptyLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        emptyLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        panel.add(titleLabel);
+        panel.add(emptyLabel);
+
+        return panel;
+    }
+
+    private JLabel createHeaderLabel(String text, Color bgColor) {
+        JLabel label = new JLabel(text, JLabel.CENTER);
+        label.setOpaque(true);
+        label.setBackground(bgColor);
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font("Arial", Font.BOLD, 14));
+        label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        return label;
+    }
+
+    private void initButtons() {
+        startButton = createButton("BẮT ĐẦU TRÒ CHƠI", new Color(52, 152, 219));
+        leaveButton = createButton("RỜI", new Color(231, 76, 60));
+        
+        updateButtonStates();
+    }
+
+    private JButton createButton(String text, Color bgColor) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setBackground(bgColor);
+        button.setForeground(Color.WHITE);
+        button.setOpaque(true);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(200, 40));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
+    }
+
+    private void initFriendList() {
         friendTitle = new JLabel("DANH SÁCH BẠN BÈ", JLabel.CENTER);
-        friendTitle.setFont(new Font("Serif", Font.BOLD, 18));
         friendTitle.setOpaque(true);
-        friendTitle.setBackground(new Color(173, 216, 230));  // Màu xanh nhạt
-        friendTitle.setPreferredSize(new Dimension(300, 30));
-        friendListpn.add(friendTitle, BorderLayout.NORTH);
+        friendTitle.setBackground(FRIEND_LIST_COLOR);
+        friendTitle.setForeground(Color.WHITE);
+        friendTitle.setFont(new Font("Arial", Font.BOLD, 14));
+        friendTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
-        String[] columnNames = {"Tên", "Trạng thái"};
-        Object[][] data = {
-            {"Hoang", "Online"},
-            {"Bao", "Online"},
-            {"Vtda", "Online"},
-            {"Duy", "Offline"},
-            {"HATXA", "Offline"},
-            {"Meomeo", "Offline"}
-        };
-        friendTable = new JTable(data, columnNames);
-        friendTable.setPreferredScrollableViewportSize(new Dimension(300, 150));  // Điều chỉnh kích thước của bảng
-        friendTable.setFillsViewportHeight(true);
-
-        JScrollPane scrollPane = new JScrollPane(friendTable);
-        friendListpn.add(scrollPane, BorderLayout.CENTER);
-
-        friendTable.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                int selectedRow = friendTable.getSelectedRow();
-                if (selectedRow != -1) {
-                    String selectedName = (String) friendTable.getValueAt(selectedRow, 0);
-                    Name2lb.setText(selectedName); 
-                    Name2lb.setBackground(new Color(144, 238, 144));  
+        String[] columnNames = {"Tên", "Trạng thái", ""};
+        friendTableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 2; // Only the button column is editable
             }
-        }});
 
-     
-        Invitebtn = new JButton("MỜI");
-        Invitebtn.setFont(new Font("Serif", Font.BOLD, 18));
-        Invitebtn.setBackground(new Color(144, 238, 144));  
-        Invitebtn.setOpaque(true);
-        Invitebtn.setPreferredSize(new Dimension(300, 50)); 
-        friendListpn.add(Invitebtn, BorderLayout.SOUTH); 
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 2 ? JButton.class : Object.class;
+            }
+        };
+        friendTable = new JTable(friendTableModel);
+        friendTable.setRowHeight(30);
+        friendTable.setFont(new Font("Arial", Font.PLAIN, 12));
+        friendTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        friendTable.getTableHeader().setBackground(FRIEND_LIST_COLOR);
+        friendTable.getTableHeader().setForeground(Color.WHITE);
+        friendTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        friendTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+        friendTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox()));
+
+        friendTable.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int column = friendTable.getColumnModel().getColumnIndexAtX(e.getX());
+                int row = e.getY() / friendTable.getRowHeight();
+
+                if (row < friendTable.getRowCount() && row >= 0 && column == 2) {
+                    Object value = friendTable.getValueAt(row, column);
+                    if (value instanceof JButton) {
+                        ((JButton) value).doClick();
+                    }
+                }
+            }
+        });
     }
 
-    void button() {
-        Startbtn = new JButton();
-        Startbtn.setText("BẮT ĐẦU TRÒ CHƠI");
-        Startbtn.setFont(new Font("Serif", Font.BOLD, 18));
-        Startbtn.setBackground(new Color(255, 165, 0));
-        Startbtn.setOpaque(true);
-        Startbtn.setPreferredSize(new Dimension(300, 50)); 
+    private void setupLayout() {
+        setLayout(new BorderLayout(5, 5));
+        
+        add(roomInfoPanel, BorderLayout.NORTH);
 
-        Leavebtn = new JButton();
-        Leavebtn.setText("RỜI");
-        Leavebtn.setFont(new Font("Serif", Font.BOLD, 18));
-        Leavebtn.setBackground(new Color(135, 206, 250));  
-        Leavebtn.setOpaque(true);
-        Leavebtn.setPreferredSize(new Dimension(300, 50)); 
+        JPanel centerPanel = new JPanel(new GridLayout(2, 1, 10, 10));
+        centerPanel.setBackground(BACKGROUND_COLOR);
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        centerPanel.add(player1Panel);
+        centerPanel.add(player2Panel);
+        add(centerPanel, BorderLayout.CENTER);
+
+        friendListPanel.add(friendTitle, BorderLayout.NORTH);
+        JScrollPane scrollPane = new JScrollPane(friendTable);
+        friendListPanel.add(scrollPane, BorderLayout.CENTER);
+        add(friendListPanel, BorderLayout.EAST);
+
+        buttonPanel.add(startButton);
+        buttonPanel.add(leaveButton);
+        add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    void label() {
-        Player1lb = new JLabel("Người chơi 1", JLabel.CENTER);
-        Player1lb.setFont(new Font("Serif", Font.BOLD, 18));
-        Player1lb.setOpaque(true);
-        Player1lb.setBackground(new Color(173, 216, 230));  
-        Player1lb.setPreferredSize(new Dimension(300, 50));
-
-        Player2lb = new JLabel("Người chơi 2", JLabel.CENTER);
-        Player2lb.setFont(new Font("Serif", Font.BOLD, 18));
-        Player2lb.setOpaque(true);
-        Player2lb.setBackground(new Color(173, 216, 230));  
-        Player2lb.setPreferredSize(new Dimension(300, 50));
-
-        Name1lb = new JLabel("Dxvjka (Bạn)", JLabel.CENTER);
-        Name1lb.setFont(new Font("Serif", Font.BOLD, 18));
-        Name1lb.setOpaque(true);
-        Name1lb.setBackground(new Color(144, 238, 144));  
-        Name1lb.setPreferredSize(new Dimension(300, 50));
-
-        Name2lb = new JLabel("Trống (Mời)", JLabel.CENTER);
-        Name2lb.setFont(new Font("Serif", Font.BOLD, 18));
-        Name2lb.setOpaque(true);
-        Name2lb.setBackground(new Color(192, 192, 192)); 
-        Name2lb.setPreferredSize(new Dimension(300, 50));
-    }
-
-    public InviteRoomForm() {
-        button();
-        panel();
-        label();
+    private void setFrameProperties() {
         setTitle("Giao diện phòng mời");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1060, 600);  
-        setLayout(new BorderLayout());
-
-        add(Pairpn, BorderLayout.CENTER);
-        add(Buttonpn, BorderLayout.SOUTH);
-        add(friendListpn, BorderLayout.EAST);
-
-        Buttonpn.add(Startbtn);
-        Buttonpn.add(Leavebtn);
-
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = GridBagConstraints.BOTH;
-        gc.insets = new Insets(10, 0, 10, 0);
-  
-        gc.gridx = 0;
-        gc.gridy = 0;
-        Pairpn.add(Player1lb, gc);
-        
-        gc.gridx = 0;
-        gc.gridy = 1;
-        Pairpn.add(Name1lb, gc);
-
-        gc.gridx = 0;
-        gc.gridy = 2;
-        Pairpn.add(Player2lb, gc);
-
-        gc.gridx = 0;
-        gc.gridy = 3;
-        Pairpn.add(Name2lb, gc);
-
+        setSize(800, 600);
+        setLocationRelativeTo(null);
+        getContentPane().setBackground(BACKGROUND_COLOR);
         setVisible(true);
     }
 
-    // public void addActionListener(ActionListener act){
-    //     btnLogin.addActionListener(act);
-    //     btnSwap.addActionListener(act);
-    // }
+    public void updateFriendList(List<Player> friends) {
+        friendTableModel.setRowCount(0);
+        for (Player friend : friends) {
+            JButton inviteButton = new JButton("Mời");
+            inviteButton.setName(friend.getPlayerName()); // Set the name of the button to the friend's name
+            friendTableModel.addRow(new Object[]{friend.getPlayerName(), friend.getStatus(), inviteButton});
+        }
+        updateButtonStates();
+    }
 
-    public static void main(String[] args) {
-        new InviteRoomForm();
+    // ... existing code ...
+
+  private void updateButtonStates() {
+    boolean isRoomFull = currentRoom.getStatus().equals("2/2");
+    startButton.setEnabled(isRoomFull);
+    startButton.setBackground(isRoomFull ? new Color(52, 152, 219) : BUTTON_DISABLED);
+  
+  // Thêm kiểm tra null để tránh NullPointerException
+    if (friendTable != null) {
+      for (int i = 0; i < friendTable.getRowCount(); i++) {
+          JButton inviteButton = (JButton) friendTable.getValueAt(i, 2);
+          if (inviteButton != null) {
+              inviteButton.setEnabled(!isRoomFull);
+              inviteButton.setBackground(!isRoomFull ? FRIEND_LIST_COLOR : BUTTON_DISABLED);
+          }
+      }
+    }
+  }
+
+
+    //Tao ra conStructor lay ra cac button nhe
+    public JButton getStartButton() {
+        return startButton;
+    }
+    public JButton getLeaveButton() {
+        return leaveButton;
+    }
+    public JTable getFriendTable() {
+      return friendTable;
+    }
+    public JButton getInviteButtonAt(int row) {
+      if (row >= 0 && row < friendTable.getRowCount()) {
+          return (JButton) friendTable.getValueAt(row, 2);
+      }
+      return null;
+  }
+    public void addActionListener(ActionListener act) {
+        startButton.addActionListener(act);
+        leaveButton.addActionListener(act);
+        
+        for (int i = 0; i < friendTable.getRowCount(); i++) {
+            JButton inviteButton = (JButton) friendTable.getValueAt(i, 2);
+            if (inviteButton != null) {
+                inviteButton.addActionListener(act);
+            }
+        }
+    }
+
+    private class ButtonRenderer extends JButton implements TableCellRenderer {
+        public ButtonRenderer() {
+            setOpaque(true);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value instanceof JButton) {
+                return (JButton) value;
+            }
+            return this;
+        }
+    }
+
+    private class ButtonEditor extends DefaultCellEditor {
+        private JButton button;
+        private String label;
+        private boolean isPushed;
+
+        public ButtonEditor(JCheckBox checkBox) {
+            super(checkBox);
+            button = new JButton();
+            button.setOpaque(true);
+            button.addActionListener(e -> fireEditingStopped());
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            if (value instanceof JButton) {
+                button = (JButton) value;
+            }
+            isPushed = true;
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            if (isPushed) {
+                // Perform the button click action
+                button.doClick();
+            }
+            isPushed = false;
+            return button;
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            isPushed = false;
+            return super.stopCellEditing();
+        }
     }
 }

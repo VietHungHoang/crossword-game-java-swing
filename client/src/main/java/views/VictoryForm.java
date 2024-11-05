@@ -26,14 +26,6 @@ public class VictoryForm extends JFrame {
         
         // Nút "Quay lại"
         JButton backButton = new JButton("Quay lại");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Xử lý sự kiện khi bấm nút "Quay lại"
-                dispose(); // Đóng form thông báo
-                // Thực hiện hành động quay lại hoặc mở menu chính
-            }
-        });
         
         // Nút "Mời đấu lại"
         JButton replayButton = new JButton("Mời đấu lại");

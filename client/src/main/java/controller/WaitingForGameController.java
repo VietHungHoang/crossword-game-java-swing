@@ -34,7 +34,7 @@ public class WaitingForGameController {
                 elapsedTime++;
                 long minutes = elapsedTime / 60;
                 long seconds = elapsedTime % 60;
-                String time = "Đã chờ: " + minutes + " phút " + seconds + " giây";
+                String time = String.format("%02d", minutes) + " : " + String.format("%02d", seconds);
                 waitingForGameForm.updateWaitingTime(time);
             }
         }, 0, 1000);
@@ -52,22 +52,22 @@ public class WaitingForGameController {
         String msg = objectWrapper.getStatus();
         if (msg.equals("find-game-success")) {
             System.out.println("Đã tìm thấy đối thủ thành công");
-
             stopWaitingTimer();
-            closeWaitingForm();  // Đóng màn hình chờ
-
+//            closeWaitingForm();
+            ClientController.closeFrame(ClientController.FrameName.WAITING_FOR_GAME);
+            ClientController.openFrame(ClientController.FrameName.CONFIRM);
             // Hiển thị màn hình xác nhận
-            System.out.println("Mo form xac nhan tim tran"); 
-            confirmationForm = new ConfirmationForm();
-            confirmationForm.addActionListener(new ConfirmationListener());
-            confirmationForm.showConfirmationMessage("Đã tìm thấy đối thủ. Bạn có muốn bắt đầu trò chơi không?");
-            System.out.println("Da mo form tim tran");
+//            System.out.println("Mo form xac nhan tim tran");
+//            confirmationForm = new ConfirmationForm();
+//            confirmationForm.addActionListener(new ConfirmationListener());
+//            confirmationForm.showConfirmationMessage("Đã tìm thấy đối thủ. Bạn có muốn bắt đầu trò chơi không?");
+//            System.out.println("Da mo form tim tran");
         }
     }
 
     // Phương thức để đóng form chờ
     private void closeWaitingForm() {
-        if (waitingForGameForm != null) {
+        if (waitingForGameForm != null) { 
             ClientController.closeFrame(ClientController.FrameName.WAITING_FOR_GAME);
             waitingForGameForm.dispose();
             System.out.println("Đã đóng form dem thoi gian  chờ");
@@ -101,10 +101,8 @@ public class WaitingForGameController {
     class ConfirmationListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == confirmationForm.getBtnConfirm()) {
+                confirmationForm.getBtnConfirm().setEnabled(false);
                 sendReadyToPlay();
-
-            } else if (e.getSource() == confirmationForm.getBtnDecline()) {
-                System.out.println("Decline");
             }
         }
 
@@ -125,5 +123,9 @@ public class WaitingForGameController {
         if (confirmationForm != null) {
             confirmationForm.dispose();
         }
+    }
+
+    public static void main(String[] args) {
+        new ConfirmationForm();
     }
 }

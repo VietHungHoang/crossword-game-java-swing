@@ -5,9 +5,12 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
+import dao.KeywordDAO;
 import dao.PlayerDAO;
 import dao.UserDAO;
+import dao.impl.IKeywordDAO;
 import models.Game;
 import models.ObjectWrapper;
 import models.Player;
@@ -23,51 +26,27 @@ public class WaitingForGameController {
     private SocketHandlers socketHandlers;
     private Thread waitingThread;
     private volatile boolean waiting;
-    private long startTime;
+    private IKeywordDAO keywordDAO;
 
     public WaitingForGameController(ServerView view, Connection conn, SocketHandlers socketHandlers) {
         this.view = view;
         this.userDAO = new UserDAO(conn);
         this.playerDAO = new PlayerDAO(conn);
+        this.keywordDAO = new KeywordDAO(conn);
         this.socketHandlers = socketHandlers;
     }
 
     // Xử lý quá trình tìm phòng cho người chơi.
     public void handleFindingRoom() {
-        waiting = true;
-        startWaitingTimer();
-
-        if (ServerController.rooms.isEmpty()) {
-            createWaitingRoom();
-        } else {
+        if (ServerController.rooms.isEmpty()) createWaitingRoom();
+        else {
             for (Room room : ServerController.rooms) {
-                if (room.getPlayers().size() == 1) {
+                if (room.getPlayers().size() == 1 && room.isRanking()) {
                     joinWaitingRoom(room.getId());
                     return;
                 }
             }
-            createWaitingRoom();
         }
-    }
-
-    // Khởi động một luồng riêng để theo dõi và in ra thời gian chờ.
-    private void startWaitingTimer() {
-        startTime = System.currentTimeMillis();
-        waitingThread = new Thread(() -> {
-            while (waiting) {
-                Player player = socketHandlers.getLoginController().getPlayerLogin();
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                long seconds = (elapsedTime / 1000) % 60;
-                long minutes = (elapsedTime / (1000 * 60)) % 60;
-                // System.out.println("Đã chờ phòng: " + player.getPlayerName() + " " + minutes + " phút " + seconds + " giây");
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        });
-        waitingThread.start();
     }
 
     /**
@@ -78,9 +57,10 @@ public class WaitingForGameController {
         String randomId = randomString.nextString();
         List<Player> playersInRoom = new ArrayList<>();
         playersInRoom.add(socketHandlers.getLoginController().getPlayerLogin());
-        Room room = new Room(randomId, new Date(), socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2");
+        Room room = new Room(randomId, new Date(), socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", true);
         socketHandlers.getLoginController().getPlayerLogin().setStatus("Đang tìm trận");
         socketHandlers.getListPlayerController().updateListPlayer();
+        //TODO: UPDATE STATUS FOR LISt FRIEND
         System.out.println("Người dùng " + socketHandlers.getLoginController().getPlayerLogin().getPlayerName() + " đang tìm trận");
         ServerController.rooms.add(room);
     }
@@ -112,7 +92,6 @@ public class WaitingForGameController {
      * Lắng nghe trạng thái của phòng và chỉ gửi thông báo khi cả hai người chơi sẵn sàng.
      */
     private void monitorRoomStatus(String roomId) {
-      System.out.println("Mo ni to ne");
       // new Thread(() -> {
           Room room = ServerController.rooms.stream()
                   .filter(r -> r.getId().equals(roomId))
@@ -129,8 +108,7 @@ public class WaitingForGameController {
               if (room.getPlayers().size() == 2 && room.getStatus().equals("2/2")) {
                   String message = StreamData.Message.WAITING_FOR_GAME.name() + ";find-game-success";
                   ObjectWrapper objectWrapper = new ObjectWrapper(message, room);
-                  objectWrapper.setElapsedTime(System.currentTimeMillis() - startTime);
-  
+
                   // Gửi thông báo cho tất cả người chơi trong phòng
                   for (SocketHandlers socketHandler : ServerController.socketHandlers) {
                       if (socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(0)) || 
@@ -152,7 +130,7 @@ public class WaitingForGameController {
           }
       // }).start();
   }
-  
+
     /**
      * Bắt đầu trò chơi khi cả hai người chơi đều sẵn sàng.
      */
@@ -166,16 +144,21 @@ public class WaitingForGameController {
       if (room != null && room.getPlayers().size() == 2) {
           room.setPlayerReady(player);
           System.out.println("Người chơi " + player.getPlayerName() + " đã sẵn sàng.");
+
           
           if (room.areBothPlayersReady()) {
               System.out.println("Cả hai người chơi đều đã sẵn sàng, bắt đầu trò chơi.");
               room.setStatus("Đang chơi");
               System.out.println("Dang tao phong cho ca 2 nguoi choi trong phong");
               Game game = new Game(room);
+              Random random = new Random();
+              Long x = random.nextInt(this.keywordDAO.countAll())*1L;
+              game.setKeyword(this.keywordDAO.findById(x));
               System.out.println("Da tao phong cho ca 2 nguoi choi trong phong");
               ServerController.games.add(game);
               System.out.println("Da them phong vao danh sach game");
               ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME.name(), game);
+              System.out.println("Game object Wrapper" + game.toString());
               List<SocketHandlers> socketHandlers = ServerController.socketHandlers;
               for(SocketHandlers socketHandler : socketHandlers ){
                 if(socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(0)) || socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(1))){

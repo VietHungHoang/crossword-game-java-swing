@@ -22,6 +22,11 @@ public class ReceiveMessages extends Thread {
 
     private EndGameController endGameController;
 
+    // private EndGameController endGameController;
+
+    private InviteRoomController inviteRoomController;
+
+    private ConfirmController confirmController;
     public ReceiveMessages(ObjectInputStream ois) {
         this.ois = ois;
     }
@@ -34,7 +39,7 @@ public class ReceiveMessages extends Thread {
                 objectWrapper = (ObjectWrapper) ois.readObject();
                 String received = objectWrapper.getIdentifier();
                 StreamData.Message message = StreamData.getMessageFromData(received);
-                System.out.println(message);
+                System.out.println("Khong co si dsfsd" + message);
                 switch (message) {
                     case LOGIN:
                         this.loginController = new LoginController(new LoginForm());
@@ -55,15 +60,17 @@ public class ReceiveMessages extends Thread {
                             this.waitingForGameController.waitingForGameHandler(objectWrapper);
                         break;
                     case START_GAME:
-                        System.out.println("Mo game ne");
-                        Game game = (Game) objectWrapper.getObject();
-                        this.waitingForGameController.closeConfirmationForm();
-                        // TODO: Chỗ này fix lại là phải lấy lại là khởi tạo GAME phải từ Object Game
-                        // trả về nên nếu trả về ROOM thì ko đúng
-                        // TODO: Tức là chỗ này phải gọi lên server để lấy lại Object Game
-                        this.gameController = new GameController(new GameForm(game.player1.getPlayerName(),
-                                game.player2.getPlayerName(), "KEYWORD", 0, 0));
+//                        System.out.println("Mo game ne");
+//                        Game game = (Game) objectWrapper.getObject();
+////                        this.waitingForGameControllper.closeConfirmationForm();
+////                        // TODO: Chỗ này fix lại là phải lấy lại là khởi tạo GAME hải từ Object Game
+//                        // trả về nên nếu trả về ROOM thì ko đúng
+//                        // TODO: Tức là chỗ này phải gọi lên server để lấy lại Object Game
+//                        this.gameController = new GameController(new GameForm(game.player1.getPlayerName(),
+//                                game.player2.getPlayerName(), "KEYWORD", 0, 0));
                         // this.gameController.startGameHandler(objectWrapper);
+                        this.confirmController = new ConfirmController(new ConfirmationForm());
+                        this.confirmController.handleStartGame((Game) objectWrapper.getObject());
                         break;
                     case RANKING:
                         this.rankingController = new RankingController(new RankingForm());
@@ -94,9 +101,29 @@ public class ReceiveMessages extends Thread {
                         }
                         break;
                     case WIN_GAME:
+                         this.gameController = new GameController(new GameForm());
                         this.gameController.handleEndGame("Win");
+                        break;
                     case LOST_GAME:
+                        this.gameController = new GameController(new GameForm());
                         this.gameController.handleEndGame("Lost");
+                        break;
+                    case INVITE_ROOM:
+                    // Khi nhan duoc loi moi phong tu server khong can goi toi OPENFRAME vi da setVisible(true) trong InviteRoomController
+
+                        System.out.println("Nhan invite room tu server: " + objectWrapper.getObject());
+                        this.inviteRoomController = new InviteRoomController(new InviteRoomForm((Room)objectWrapper.getObject()));
+                        this.inviteRoomController.inviteRoomHandler(objectWrapper);
+                        break;
+                    case GET_LIST_FRIEND:
+                        if(this.inviteRoomController != null){
+                            System.out.println("Nhan list friend tu server: " + objectWrapper.getObject());
+                            this.inviteRoomController.getListFriendHandler(objectWrapper);
+                        }
+                        else{
+                          return;
+                        }
+                        break;
                     default:
                         break;
                 }

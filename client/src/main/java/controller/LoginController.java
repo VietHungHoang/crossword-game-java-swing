@@ -59,6 +59,7 @@ public class LoginController {
             }
             ClientController.closeFrame(ClientController.FrameName.LOGIN);
             ClientController.openFrame(ClientController.FrameName.HOME);
+            ClientController.setCurrentPlayer(playerLogin);
             System.out.println("success");
 
         } else if(msg.equals("failed")){

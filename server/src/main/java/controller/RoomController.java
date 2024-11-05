@@ -30,7 +30,7 @@ public class RoomController {
         String randomId = randomString.nextString();
         List<Player> playersInRoom = new ArrayList<>();
         playersInRoom.add(this.socketHandlers.getLoginController().getPlayerLogin());
-        Room room = new Room(randomId, new Date(), this.socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2");
+        Room room = new Room(randomId, new Date(), this.socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", true);
         this.socketHandlers.getLoginController().getPlayerLogin().setStatus("Trong phòng");
         ServerController.rooms.add(room);
         // this.idRoom = randomId;

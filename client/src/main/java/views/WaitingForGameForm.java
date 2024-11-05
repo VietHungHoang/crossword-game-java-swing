@@ -1,18 +1,18 @@
 package views;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import utils.GetImage;
+
+import java.awt.*;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class WaitingForGameForm extends JFrame {
     private JButton btnCancel, btnConfirm, btnDecline;
     private JLabel lblWaitingTime;
+
+    private Font timeFont = new Font("Dialog", Font.BOLD, 24);
 
     public WaitingForGameForm() {
         setTitle("Đang chờ đối thủ...");
@@ -22,15 +22,23 @@ public class WaitingForGameForm extends JFrame {
 
         JPanel panel = new JPanel(new BorderLayout());
 
-        lblWaitingTime = new JLabel("Đã chờ: 0 phút 0 giây", JLabel.CENTER);
-        panel.add(lblWaitingTime, BorderLayout.CENTER);
+        lblWaitingTime = new JLabel("00:00", JLabel.CENTER);
+        lblWaitingTime.setFont(timeFont);
+        lblWaitingTime.setBorder(new EmptyBorder(20, 10, 10, 10));
+        panel.add(lblWaitingTime, BorderLayout.NORTH);
 
+        GetImage getImage = new GetImage();
+        JLabel gif = new JLabel(new ImageIcon(getClass().getResource(
+                "/assets/img/ezgif.gif")));
+
+        JPanel btnPanel = new JPanel(new FlowLayout());
         btnCancel = new JButton("Hủy tìm trận");
-        btnCancel.setPreferredSize(new Dimension(100, 30));
-        panel.add(btnCancel, BorderLayout.SOUTH);
-
+        btnCancel.setPreferredSize(new Dimension(120, 30));
+        panel.add(gif, BorderLayout.CENTER);
+        btnPanel.add(btnCancel);
+        btnPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
         add(panel);
-        setVisible(true);
+        add(btnPanel, BorderLayout.SOUTH);
     }
 
     public void addActionListener(ActionListener act) {
@@ -66,5 +74,9 @@ public class WaitingForGameForm extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
         revalidate();
         repaint();
+    }
+
+    public static void main(String[] args) {
+        new WaitingForGameForm();
     }
 }

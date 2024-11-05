@@ -44,6 +44,14 @@ public class GameForm extends JFrame {
     private List<JButton> keyboardButtons = new ArrayList<>();
     private List<JButton> listKeywordBtns = new ArrayList<>();
 
+    public Timer getCountdownTimer() {
+        return countdownTimer;
+    }
+
+    public GameForm(){
+
+    }
+
     public GameForm(String player1Name, String player2Name, String keyword, int player1Score, int player2Score) {
         getImage = new GetImage();
         this.keyword = keyword;
@@ -146,23 +154,11 @@ public class GameForm extends JFrame {
         }
 
         // Thiết lập đếm ngược
-        countdownTimer = new Timer(1000, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    lblCountdown.setText(String.valueOf(timeLeft));
-                } else {
-                    countdownTimer.stop();
-                    JOptionPane.showMessageDialog(null, "Hết thời gian!");
-                }
-            }
-        });
-        countdownTimer.start();
+
         add(pnlGameInfo);
         add(pnlKeyword);
         add(pnlTextbox);
         add(pnlKeyboard);
-        setVisible(true);
     }
 
     private class KeywordListener implements ActionListener {
@@ -241,6 +237,9 @@ public class GameForm extends JFrame {
         return listKeywordBtns;
     }
 
+    public JLabel getLblCountdown() {
+        return lblCountdown;
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

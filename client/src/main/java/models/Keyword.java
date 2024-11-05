@@ -2,7 +2,7 @@ package models;
 
 import java.io.Serializable;
 
-public class Alphabet implements  Serializable{
+public class Keyword implements  Serializable{
     private Long id;
     private String value;
     private static final long serialVersionUID = 1L;
@@ -22,7 +22,7 @@ public class Alphabet implements  Serializable{
         this.value = value;
     }
 
-    public Alphabet(Long id, String value) {
+    public Keyword(Long id, String value) {
         this.id = id;
         this.value = value;
     }
