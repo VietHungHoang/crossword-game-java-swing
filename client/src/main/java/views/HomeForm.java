@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
+
 
 import static javax.swing.SwingUtilities.invokeLater;
 
@@ -16,122 +16,144 @@ public class HomeForm extends JFrame {
     private JPanel mainPanel;
     private JLabel userLabel, scoreLabel;
     private JButton rankButton, friendButton, customButton, rankingButton, logoutButton;
-
+    private Point initialClick;
     public HomeForm() {
         initComponents();
     }
 
     private void initComponents() {
-        // Set up the JFrame
-        setTitle("ALPHABET FIGHTING");
-        setSize(700, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-        setUndecorated(true);
-        setShape(new RoundRectangle2D.Double(0, 0, 700, 600, 20, 20));
-
-        // Custom title bar
-        JPanel titleBar = new JPanel(new BorderLayout());
-        titleBar.setBackground(new Color(33, 150, 243));
-        JLabel titleLabel = new JLabel("ALPHABET FIGHTING");
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        titleLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        titleBar.add(titleLabel, BorderLayout.WEST);
-
-        // Main panel with vertical layout (Y_AXIS)
-        mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        mainPanel.setBackground(new Color(240, 240, 240));
-
-        // User Information Panel
-        JPanel userPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        userPanel.setOpaque(false);
-
-        // User label with rounded border
-        userLabel = new JLabel("Xin chào Binh dang", SwingConstants.CENTER);
-        userLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        userLabel.setOpaque(true);
-        userLabel.setBackground(new Color(179, 229, 252));
-        userLabel.setBorder(BorderFactory.createCompoundBorder(
-            new RoundedBorder(15, new Color(33, 150, 243)),
-            BorderFactory.createEmptyBorder(5, 15, 5, 15)
-        ));
-
-        // Score panel
-        JPanel scorePanel = new JPanel(new BorderLayout());
-        scorePanel.setOpaque(false);
-        JLabel scoreTextLabel = new JLabel("", SwingConstants.RIGHT);
-        scoreTextLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        scoreTextLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
-        
-        scoreLabel = new JLabel("0.0", SwingConstants.CENTER);
-        scoreLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        scoreLabel.setOpaque(true);
-        scoreLabel.setBackground(new Color(255, 255, 0));
-        scoreLabel.setBorder(BorderFactory.createCompoundBorder(
-            new RoundedBorder(15, new Color(255, 200, 0)),
-            BorderFactory.createEmptyBorder(5, 15, 5, 15)
-        ));
-
-        scorePanel.add(scoreTextLabel, BorderLayout.WEST);
-        scorePanel.add(scoreLabel, BorderLayout.CENTER);
-
-        // Add components to userPanel
-        userPanel.add(userLabel);
-        userPanel.add(scorePanel);
-
-      // Thay đổi text khi tạo button
-        rankButton = createStyledButton("ĐÁNH RANK ", new Color(255, 50, 50));
-        friendButton = createStyledButton("CHƠI CÙNG BẠN BÈ ", new Color(85, 167, 247));
-        customButton = createStyledButton("DANH SÁCH NGƯỜI CHƠI ", new Color(0, 204, 102));
-        rankingButton = createStyledButton("XEM BẢNG XẾP HẠNG ", new Color(255, 153, 51));
-        logoutButton = createStyledButton("ĐĂNG XUẤT ", new Color(158, 158, 158));
-
-        // Footer label
-        JLabel footerLabel = new JLabel("Chọn một mục để bắt đầu chơi!");
-        footerLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        footerLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        footerLabel.setForeground(new Color(100, 100, 100));
-
-        // Button panel with centered alignment
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        buttonPanel.setOpaque(false);
-
-        // Add buttons with consistent spacing
-        addButtonWithSpacing(buttonPanel, rankButton);
-        addButtonWithSpacing(buttonPanel, friendButton);
-        addButtonWithSpacing(buttonPanel, customButton);
-        addButtonWithSpacing(buttonPanel, rankingButton);
-        addButtonWithSpacing(buttonPanel, logoutButton);
-
-        // Center align the buttons
-        rankButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        friendButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        customButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        rankingButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Footer panel
-        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        footerPanel.setOpaque(false);
-        footerPanel.add(footerLabel);
-
-        // Add all components to main panel
-        mainPanel.add(userPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        mainPanel.add(buttonPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        mainPanel.add(footerPanel);
-
-        // Add title bar and main panel to frame
-        add(titleBar, BorderLayout.NORTH);
-        add(mainPanel, BorderLayout.CENTER);
-    }
+      // Set up the JFrame
+      setTitle("ALPHABET FIGHTING");
+      setSize(700, 600);
+      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setLocationRelativeTo(null);
+      setLayout(new BorderLayout());
+      setUndecorated(true);
+      setResizable(false);
+  
+      // Combined MouseAdapter for window dragging
+      MouseAdapter mouseAdapter = new MouseAdapter() {
+          @Override
+          public void mousePressed(MouseEvent e) {
+              initialClick = e.getPoint();
+          }
+  
+          @Override
+          public void mouseDragged(MouseEvent e) {
+              int thisX = getLocation().x;
+              int thisY = getLocation().y;
+  
+              int xMoved = (thisX + e.getX()) - (thisX + initialClick.x);
+              int yMoved = (thisY + e.getY()) - (thisY + initialClick.y);
+  
+              setLocation(thisX + xMoved, thisY + yMoved);
+          }
+      };
+  
+      addMouseListener(mouseAdapter);
+      addMouseMotionListener(mouseAdapter);
+  
+      // Custom title bar
+      JPanel titleBar = new JPanel(new BorderLayout());
+      titleBar.setBackground(new Color(33, 150, 243));
+      JLabel titleLabel = new JLabel("ALPHABET FIGHTING");
+      titleLabel.setForeground(Color.WHITE);
+      titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+      titleLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
+      titleBar.add(titleLabel, BorderLayout.WEST);
+  
+      // Main panel with vertical layout (Y_AXIS)
+      mainPanel = new JPanel();
+      mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+      mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+      mainPanel.setBackground(new Color(240, 240, 240));
+  
+      // User Information Panel
+      JPanel userPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+      userPanel.setOpaque(false);
+  
+      // User label with rounded border
+      userLabel = new JLabel("Xin chào Binh dang", SwingConstants.CENTER);
+      userLabel.setFont(new Font("Arial", Font.BOLD, 14));
+      userLabel.setOpaque(true);
+      userLabel.setBackground(new Color(179, 229, 252));
+      userLabel.setBorder(BorderFactory.createCompoundBorder(
+          new RoundedBorder(15, new Color(33, 150, 243)),
+          BorderFactory.createEmptyBorder(5, 15, 5, 15)
+      ));
+  
+      // Score panel
+      JPanel scorePanel = new JPanel(new BorderLayout());
+      scorePanel.setOpaque(false);
+      JLabel scoreTextLabel = new JLabel("", SwingConstants.RIGHT);
+      scoreTextLabel.setFont(new Font("Arial", Font.BOLD, 14));
+      scoreTextLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+      
+      scoreLabel = new JLabel("0.0", SwingConstants.CENTER);
+      scoreLabel.setFont(new Font("Arial", Font.BOLD, 14));
+      scoreLabel.setOpaque(true);
+      scoreLabel.setBackground(new Color(255, 255, 0));
+      scoreLabel.setBorder(BorderFactory.createCompoundBorder(
+          new RoundedBorder(15, new Color(255, 200, 0)),
+          BorderFactory.createEmptyBorder(5, 15, 5, 15)
+      ));
+  
+      scorePanel.add(scoreTextLabel, BorderLayout.WEST);
+      scorePanel.add(scoreLabel, BorderLayout.CENTER);
+  
+      // Add components to userPanel
+      userPanel.add(userLabel);
+      userPanel.add(scorePanel);
+  
+      // Create buttons
+      rankButton = createStyledButton("ĐÁNH RANK ", new Color(255, 50, 50));
+      friendButton = createStyledButton("CHƠI CÙNG BẠN BÈ ", new Color(85, 167, 247));
+      customButton = createStyledButton("DANH SÁCH NGƯỜI CHƠI ", new Color(0, 204, 102));
+      rankingButton = createStyledButton("XEM BẢNG XẾP HẠNG ", new Color(255, 153, 51));
+      logoutButton = createStyledButton("ĐĂNG XUẤT ", new Color(158, 158, 158));
+  
+      // Footer label
+      JLabel footerLabel = new JLabel("Chọn một mục để bắt đầu chơi!");
+      footerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      footerLabel.setFont(new Font("Arial", Font.BOLD, 14));
+      footerLabel.setForeground(new Color(100, 100, 100));
+  
+      // Button panel with centered alignment
+      JPanel buttonPanel = new JPanel();
+      buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+      buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+      buttonPanel.setOpaque(false);
+  
+      // Add buttons with consistent spacing
+      addButtonWithSpacing(buttonPanel, rankButton);
+      addButtonWithSpacing(buttonPanel, friendButton);
+      addButtonWithSpacing(buttonPanel, customButton);
+      addButtonWithSpacing(buttonPanel, rankingButton);
+      addButtonWithSpacing(buttonPanel, logoutButton);
+  
+      // Center align the buttons
+      rankButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+      friendButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+      customButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+      rankingButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+      logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+  
+      // Footer panel
+      JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      footerPanel.setOpaque(false);
+      footerPanel.add(footerLabel);
+  
+      // Add all components to main panel
+      mainPanel.add(userPanel);
+      mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+      mainPanel.add(buttonPanel);
+      mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+      mainPanel.add(footerPanel);
+  
+      // Add title bar and main panel to frame
+      add(titleBar, BorderLayout.NORTH);
+      add(mainPanel, BorderLayout.CENTER);
+  }
 
     private void addButtonWithSpacing(JPanel panel, JButton button) {
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
