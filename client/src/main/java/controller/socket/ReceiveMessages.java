@@ -123,7 +123,13 @@ public class ReceiveMessages extends Thread{
                         else{
                           return;
                         }
-                      break;
+                        break;
+                    case UPDATE_LIST_FRIEND:
+                        System.out.println("Nhan update list friend tu server: " + objectWrapper.getObject());
+                        if(this.inviteRoomController != null){
+                            this.inviteRoomController.getListFriendHandler((List<PlayerFriend>)objectWrapper.getObject());
+                        }
+                        break;
                     case RECEIVE_INVITE_ROOM:
                       Room invitedRoom = (Room)objectWrapper.getObject();
                       System.out.println("Nhan invite room tu server: " + invitedRoom.getId());

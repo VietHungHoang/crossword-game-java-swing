@@ -34,6 +34,11 @@ public class SocketHandlers extends Thread {
 
         return this.loginController;
     }
+
+    public InviteRoomController getInviteRoomController() {
+        return inviteRoomController;
+    }
+
     public String getRoomID(){
         return this.roomID;
     }
@@ -109,7 +114,9 @@ public void run() {
                     this.listPlayerController.updateListPlayer();
                     break;
                 case INVITE_ROOM:
-                    this.inviteRoomController = new InviteRoomController(view,conn,this);
+                    if(this.getInviteRoomController()==null){
+                        this.inviteRoomController = new InviteRoomController(view,conn,this);
+                    }
                     this.inviteRoomController.createInviteRoom();
                     break;
                 case GET_LIST_FRIEND:
@@ -126,6 +133,12 @@ public void run() {
                     break;
                 case LEAVE_INVITE_ROOM:
                     this.inviteRoomController.leaveInviteRoom();
+                    break;
+                case UPDATE_LIST_FRIEND:
+                    if(this.getInviteRoomController()==null){
+                        this.inviteRoomController = new InviteRoomController(view,conn,this);
+                    }
+                    this.inviteRoomController.updateListFriend();
                     break;
                 default:
                     break;

@@ -85,6 +85,7 @@ public class WaitingForGameController {
         Room room = new Room(randomId, new Date(), socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", true);
         socketHandlers.getLoginController().getPlayerLogin().setStatus("Finding game");
         socketHandlers.getListPlayerController().updateListPlayer();
+        socketHandlers.getInviteRoomController().updateListFriend();
         //TODO: UPDATE STATUS FOR LISt FRIEND
         System.out.println("Người dùng " + socketHandlers.getLoginController().getPlayerLogin().getPlayerName() + " đang tìm trận");
         ServerController.rooms.add(room);
@@ -211,6 +212,7 @@ public class WaitingForGameController {
             System.out.println("Người chơi " + player.getPlayerName() + " đã hủy tìm trận và rời khỏi phòng.");
             socketHandlers.getLoginController().getPlayerLogin().setStatus("Online");
             socketHandlers.getListPlayerController().updateListPlayer();
+            socketHandlers.getInviteRoomController().updateListFriend();
             if (room.getPlayers().isEmpty()) {
                 ServerController.rooms.remove(room);
                 System.out.println("Phòng " + room.getId() + " đã bị xóa vì không còn người chơi nào.");

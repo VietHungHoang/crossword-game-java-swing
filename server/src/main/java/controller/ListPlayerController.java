@@ -32,6 +32,7 @@ public class ListPlayerController {
         if(friendInvite.isStatus()){
             playerDAO.makeFriend(friendInvite.getPlayer().getId(),socketHandlers.getLoginController().getPlayerLogin().getId());
             updateListPlayer();
+            socketHandlers.getInviteRoomController().updateListFriend();
         }
         List<SocketHandlers> clients = ServerController.getSocketHandlers();
         for (SocketHandlers clientHandler : clients) {

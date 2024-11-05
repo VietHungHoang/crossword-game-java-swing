@@ -5,13 +5,12 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import dao.PlayerDAO;
 import dao.UserDAO;
-import models.ObjectWrapper;
-import models.Player;
-import models.PlayerFriend;
-import models.Room;
+import models.*;
 import utils.RandomString;
 import utils.StreamData;
 import views.ServerView;
@@ -35,7 +34,7 @@ public class InviteRoomController {
         List<Player> playersInRoom = new ArrayList<>();
         playersInRoom.add(this.socketHandlers.getLoginController().getPlayerLogin());
         Room room = new Room(randomId, new Date(), this.socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", true);
-        this.socketHandlers.getLoginController().getPlayerLogin().setStatus("In room");
+        this.socketHandlers.getLoginController().getPlayerLogin().setStatus("In Room");
         ServerController.rooms.add(room);
         System.out.println("Khoi tao room vui ve"+room);
         ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.INVITE_ROOM.name(), room);
@@ -43,34 +42,56 @@ public class InviteRoomController {
         socketHandlers.send(objectWrapper);
         getListFriend();
         this.socketHandlers.setRoomID(randomId);
+        socketHandlers.getListPlayerController().updateListPlayer();
+        socketHandlers.getInviteRoomController().updateListFriend();
         System.out.println(socketHandlers.getLoginController().getPlayerLogin().getPlayerName() + " da tao room" + randomId);
     }
     public void getListFriend() {
       List<PlayerFriend> listPlayer = playerDAO.getListFriend(socketHandlers.getLoginController().getPlayerLogin().getId());
-    
-    // Lấy danh sách tất cả các SocketHandler đang kết nối
-    ArrayList<SocketHandlers> allSocketHandlers = ServerController.socketHandlers;
+      ArrayList<SocketHandlers> allSocketHandlers = ServerController.socketHandlers;
     
     // Cập nhật status cho từng người chơi trong danh sách bạn bè
     for (PlayerFriend friend : listPlayer) {
         boolean isOnline = false;
+        Player playerOnline =null;
         for (SocketHandlers handler : allSocketHandlers) {
             if (handler.getLoginController() != null && 
                 handler.getLoginController().getPlayerLogin() != null && 
                 handler.getLoginController().getPlayerLogin().getPlayerName().equals(friend.getPlayerName())) {
                 isOnline = true;
+                playerOnline = handler.getLoginController().getPlayerLogin();
                 break;
             }
         }
-        friend.setStatus(isOnline ? "Online" : "Offline");
+        friend.setStatus(isOnline ? playerOnline.getStatus() : "Offline");
     }
 
-
-    for(PlayerFriend player : listPlayer){
-        System.out.println("List friend : " +player);
-    }
     ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.GET_LIST_FRIEND.name(), listPlayer);
     socketHandlers.send(objectWrapper);
+    }
+
+    public void updateListFriend(){
+        List<SocketHandlers> allSocketHandlers = ServerController.socketHandlers;
+        Map<String, String> listPlayerOnline = listPlayer()
+                .stream()
+                .collect(Collectors.toMap(PlayerStatus::getName, PlayerStatus::getStatus));
+        for(SocketHandlers client : allSocketHandlers){
+            if(client.getLoginController()!=null && client.getLoginController().getPlayerLogin()!=null){
+                System.out.println("Ban be cua "+client.getLoginController().getPlayerLogin().getPlayerName()+": ");
+                List<PlayerFriend> friendClient = playerDAO.getListFriend(client.getLoginController().getPlayerLogin().getId());
+                for (PlayerFriend friend : friendClient) {
+                    System.out.println(listPlayerOnline.get(friend.getPlayerName()));
+                    if(listPlayerOnline.get(friend.getPlayerName())!=null){
+                        friend.setStatus(listPlayerOnline.get(friend.getPlayerName()));
+                    }
+                    else {
+                        friend.setStatus("Offline");
+                    }
+                }
+                ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.UPDATE_LIST_FRIEND.name(), friendClient);
+                client.send(objectWrapper);
+            }
+        }
     }
 
 
@@ -149,7 +170,9 @@ public class InviteRoomController {
           System.out.println("Warning: Player trying to leave room but has no roomID");
           return;
       }
-  
+      socketHandlers.getLoginController().getPlayerLogin().setStatus("Online");
+      socketHandlers.getListPlayerController().updateListPlayer();
+        socketHandlers.getInviteRoomController().updateListFriend();
       // Lấy room từ ServerController.rooms
       Room room = ServerController.rooms.stream()
               .filter(r -> r.getId().equals(currentRoomID))
@@ -190,5 +213,19 @@ public class InviteRoomController {
       }
   }
 
+    public List<PlayerStatus> listPlayer(){
+        List<SocketHandlers> clients = ServerController.getSocketHandlers();
+        List<PlayerStatus> playerStatusList = new ArrayList<>();
+        for(SocketHandlers clientHandler:clients){
+            Player player=null;
+            if(clientHandler.getLoginController()!=null
+                    && clientHandler.getLoginController().getPlayerLogin()!=null){
+                player = clientHandler.getLoginController().getPlayerLogin();
+                    PlayerStatus playerStatus = new PlayerStatus(player.getPlayerName(), false, player.getStatus());
+                    playerStatusList.add(playerStatus);
+            }
+        }
+        return playerStatusList;
+    }
 
 }

@@ -44,8 +44,8 @@ public class StreamData {
         RECEIVE_INVITE_ROOM,
         ACCEPT_INVITE_ROOM,
         UPDATE_INVITE_ROOM,
-        LEAVE_INVITE_ROOM
-        
+        LEAVE_INVITE_ROOM,
+        UPDATE_LIST_FRIEND
     }
 
     public static Message getStreamMessage(String message) {

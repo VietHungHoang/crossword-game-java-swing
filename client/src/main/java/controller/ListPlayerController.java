@@ -95,6 +95,7 @@ public class ListPlayerController {
         else if (msg.equals("yes")){
             try {
                 ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.UPDATE_LIST_PLAYER, null);
+                ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.UPDATE_LIST_FRIEND, null);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
