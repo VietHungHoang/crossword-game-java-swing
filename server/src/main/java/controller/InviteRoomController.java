@@ -111,7 +111,7 @@ public class InviteRoomController {
     }
     public void acceptInviteRoom(String roomId){
       Room roomInServer = ServerController.rooms.stream().filter(r -> r.getId().equals(roomId)).findFirst().orElse(null);
-      this.socketHandlers.getLoginController().getPlayerLogin().setStatus("In room");
+      this.socketHandlers.getLoginController().getPlayerLogin().setStatus("In Room");
       if (roomInServer != null && !roomInServer.isRanking() && roomInServer.getPlayers().size() < 2) {
           // Cập nhật trạng thái phòng
           ServerController.rooms.remove(roomInServer);
@@ -145,6 +145,8 @@ public class InviteRoomController {
                   }
               }
           }
+          socketHandlers.getListPlayerController().updateListPlayer();
+          socketHandlers.getInviteRoomController().updateListFriend();
       }
   }
     public void readyForGame(String roomId, Player player) {
