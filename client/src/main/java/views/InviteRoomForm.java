@@ -7,7 +7,12 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -25,9 +30,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 import controller.ClientController;
 import models.Player;
@@ -62,6 +71,10 @@ public class InviteRoomForm extends JFrame {
     private static final Color STATUS_IN_ROOM = new Color(241, 196, 15);     // Vàng
     private static final Color STATUS_IN_GAME = new Color(231, 76, 60);      // Đỏ
     private static final Color STATUS_FINDING = new Color(52, 152, 219);     // Xanh dương
+
+    private JButton inviteButton;
+    private JPanel friendPanel;
+
     public InviteRoomForm(Room room) {
         this.currentRoom = room;
         initComponents();
@@ -69,33 +82,39 @@ public class InviteRoomForm extends JFrame {
         setFrameProperties();
     }
     public void updateInviteRoom(Room room) {
-      // Update room information
-      currentRoom = room;
-
-      ((JLabel) roomInfoPanel.getComponent(0)).setText("ID Phòng: " + room.getId());
-      ((JLabel) roomInfoPanel.getComponent(1)).setText("Trạng thái: " + room.getStatus());
-      ((JLabel) roomInfoPanel.getComponent(2)).setText(room.isRanking() ? "Xếp hạng" : "Chơi vui vẻ");
-      ((JLabel) roomInfoPanel.getComponent(3)).setText("Tạo bởi: " + room.getCreateBy().getPlayerName());
-      
-      // Update Player 1 information
-      updatePlayerPanel(player1Panel, room.getPlayers().get(0), "Người chơi 1", PLAYER1_COLOR);
-  
-      // Update Player 2 information or set to empty if no player
-      if (room.getPlayers().size() > 1) {
-          System.out.println("update nguoi thu 2");
-          updatePlayerPanel(player2Panel, room.getPlayers().get(1), "Người chơi 2", PLAYER2_COLOR);
-      } else {
-        player2Panel.removeAll();
-        player2Panel.setLayout(new GridLayout(2, 1, 0, 2));
-        player2Panel.setBackground(BACKGROUND_COLOR);
-        player2Panel.add(createEmptyPlayerPanel());
-      }
-  
-      // Refresh the state of the start button and friend list
-      updateButtonStates();
-      revalidate();
-      repaint();
-  }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                this.currentRoom = room;
+                
+                // Cập nhật thông tin phòng
+                if (currentRoom != null) {
+                    // Cập nhật thông tin người chơi 1
+                    if (!currentRoom.getPlayers().isEmpty()) {
+                        updatePlayerPanel(player1Panel, currentRoom.getPlayers().get(0), "Người chơi 1", PLAYER1_COLOR);
+                    }
+                    
+                    // Cập nhật thông tin người chơi 2
+                    if (currentRoom.getPlayers().size() > 1) {
+                        updatePlayerPanel(player2Panel, currentRoom.getPlayers().get(1), "Người chơi 2", PLAYER2_COLOR);
+                    } else {
+                        // Nếu chưa có người chơi 2, hiển thị panel trống
+                        player2Panel.removeAll();
+                        player2Panel.add(createEmptyPlayerPanel());
+                    }
+                }
+                
+                // Cập nhật trạng thái các nút
+                updateButtonStates();
+                
+                // Refresh UI
+                revalidate();
+                repaint();
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
   
   private void updatePlayerPanel(JPanel panel, Player player, String title, Color color) {
     // Xóa tất cả components cũ
@@ -197,6 +216,7 @@ public class InviteRoomForm extends JFrame {
         infoPanel.add(pointsLabel);
         infoPanel.add(gamesLabel);
 
+        panel.setLayout(new GridLayout(2, 1, 0, 2));
         panel.add(titleLabel);
         panel.add(infoPanel);
 
@@ -257,6 +277,10 @@ public class InviteRoomForm extends JFrame {
     }
 
     private void initFriendList() {
+        friendPanel = new JPanel(new BorderLayout());
+        friendPanel.setBackground(BACKGROUND_COLOR);
+        friendPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
         friendTitle = new JLabel("DANH SÁCH BẠN BÈ", JLabel.CENTER);
         friendTitle.setOpaque(true);
         friendTitle.setBackground(FRIEND_LIST_COLOR);
@@ -264,48 +288,92 @@ public class InviteRoomForm extends JFrame {
         friendTitle.setFont(new Font("Arial", Font.BOLD, 14));
         friendTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
      
-        String[] columnNames = {"Tên", "Trạng thái", "Mời"};
+        String[] columnNames = {"Tên", "Trạng thái"};
         friendTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 2; // Only the button column is editable
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return columnIndex == 2 ? JButton.class : Object.class;
+                return false;
             }
         };
+        
         friendTable = new JTable(friendTableModel);
         friendTable.setRowHeight(30);
-        friendTable.setFont(new Font("Arial", Font.PLAIN, 12));
-        friendTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        friendTable.getTableHeader().setBackground(FRIEND_LIST_COLOR);
-        friendTable.getTableHeader().setForeground(Color.WHITE);
+        friendTable.setFont(new Font("Arial", Font.PLAIN, 14));
         friendTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
-        friendTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-        friendTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox()));
-         // Thêm renderer cho cột trạng thái
-        friendTable.getColumnModel().getColumn(1).setCellRenderer(new StatusPanel("", Color.GRAY));
-    
-        // Điều chỉnh kích thước các cột
-        friendTable.getColumnModel().getColumn(0).setPreferredWidth(100); // Tên
-        friendTable.getColumnModel().getColumn(1).setPreferredWidth(100); // Trạng thái
-        friendTable.getColumnModel().getColumn(2).setPreferredWidth(50);  // Nút mời
-        friendTable.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                int column = friendTable.getColumnModel().getColumnIndexAtX(e.getX());
-                int row = e.getY() / friendTable.getRowHeight();
+        // Căn giữa tất cả các cột
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        friendTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        
+        // Custom renderer cho cột status
+        friendTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                String status = value.toString();
+                setHorizontalAlignment(SwingConstants.CENTER);
+                
+                switch (status) {
+                    case "Online":
+                        setForeground(new Color(46, 204, 113));
+                        break;
+                    case "In Room":
+                        setForeground(new Color(52, 152, 219));
+                        break;
+                    case "Finding game":
+                        setForeground(new Color(241, 196, 15));
+                        break;
+                    case "In Game":
+                        setForeground(new Color(231, 76, 60));
+                        break;
+                    default:
+                        setForeground(Color.BLACK);
+                        break;
+                }
+                return cell;
+            }
+        });
 
-                if (row < friendTable.getRowCount() && row >= 0 && column == 2) {
-                    Object value = friendTable.getValueAt(row, column);
-                    if (value instanceof JButton) {
-                        ((JButton) value).doClick();
-                    }
+        // Thêm JScrollPane
+        JScrollPane scrollPane = new JScrollPane(friendTable);
+        
+        // Tạo nút mời
+        JButton inviteButton = createStyledButton("Mời", new Color(52, 152, 219));
+        inviteButton.setEnabled(false); // Mặc định disable
+        
+        // Panel chứa nút
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(BACKGROUND_COLOR);
+        buttonPanel.add(inviteButton);
+        
+        // Thêm vào friendPanel
+        friendListPanel.setLayout(new BorderLayout());
+        friendListPanel.add(friendTitle, BorderLayout.NORTH);
+        friendListPanel.add(scrollPane, BorderLayout.CENTER);
+        friendListPanel.add(buttonPanel, BorderLayout.SOUTH);
+        
+        // Cấu hình độ rộng cột
+        TableColumnModel columnModel = friendTable.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(150); // Tên
+        columnModel.getColumn(1).setPreferredWidth(100); // Trạng thái
+        
+        // Thêm selection listener
+        friendTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = friendTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String status = friendTableModel.getValueAt(selectedRow, 1).toString();
+                    inviteButton.setEnabled("Online".equals(status));
+                } else {
+                    inviteButton.setEnabled(false);
                 }
             }
         });
+        
+        // Lưu nút mời để sử dụng trong controller
+        this.inviteButton = inviteButton;
     }
 
     private void setupLayout() {
@@ -340,127 +408,43 @@ public class InviteRoomForm extends JFrame {
     }
 
     public void updateFriendList(List<PlayerFriend> friends) {
-      friendTableModel.setRowCount(0);
-      for (PlayerFriend friend : friends) {
-          JButton inviteButton = createInviteButton();
-          inviteButton.setName(friend.getPlayerName());
-          
-          String status = friend.getStatus();
-          Color statusColor = getStatusColor(status);
-          boolean canInvite = status.equalsIgnoreCase("Online") && !isButtonOnCooldown(friend.getPlayerName());
-          
-          inviteButton.setEnabled(canInvite);
-          inviteButton.setText(isButtonOnCooldown(friend.getPlayerName()) ? "ĐÃ MỜI" : (canInvite ? "Mời" : ""));
-          inviteButton.setBackground(canInvite ? ONLINE_INVITE_COLOR : BUTTON_DISABLED);
-          
-          Object[] rowData = new Object[]{
-              friend.getPlayerName(),
-              new StatusPanel(status, statusColor),
-              inviteButton
-          };
-          friendTableModel.addRow(rowData);
-      }
-      updateButtonStates();
-  }
-
-    // ... existing code ...
-
-  private void updateButtonStates() {
-    boolean isRoomFull = currentRoom.getStatus().equals("2/2");
-    String loginPlayerName = ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getPlayerName();
-    
-    // Check if player 2 is the logged-in player
-    boolean isPlayer2LoggedIn = currentRoom.getPlayers().size() > 1 && 
-        currentRoom.getPlayers().get(1).getPlayerName().equals(loginPlayerName);
-    
-    if (isPlayer2LoggedIn) {
-        startButton.setText("CHỜ CHỦ PHÒNG BẮT ĐẦU TRÒ CHƠI");
-        startButton.setEnabled(false);
-        startButton.setBackground(HEADER_ORANGE); // Using the orange color defined earlier
-    } else {
-        startButton.setText("BẮT ĐẦU TRÒ CHƠI");
-        startButton.setEnabled(isRoomFull);
-        startButton.setBackground(isRoomFull ? new Color(52, 152, 219) : BUTTON_DISABLED);
-    }
-    
-    if (friendTable != null) {
-        for (int i = 0; i < friendTable.getRowCount(); i++) {
-            updateFriendButtonState(i);
-        }
-        }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                friendTableModel.setRowCount(0);
+                for (PlayerFriend friend : friends) {
+                    friendTableModel.addRow(new Object[]{
+                        friend.getPlayerName(),
+                        friend.getStatus()
+                    });
+                }
+                // Reset selection
+                friendTable.clearSelection();
+                inviteButton.setEnabled(false);
+                
+                // Refresh UI
+                friendTable.revalidate();
+                friendTable.repaint();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
-// ... existing code ...
-private JButton createInviteButton() {
-  JButton button = new JButton("Mời");
-  button.setFont(new Font("Arial", Font.BOLD, 12));
-  button.setForeground(Color.WHITE);
-  button.setBorder(BorderFactory.createCompoundBorder(
-      BorderFactory.createLineBorder(Color.WHITE, 1),
-      BorderFactory.createEmptyBorder(5, 10, 5, 10)
-  ));
-  button.setFocusPainted(false);
-  button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-  return button;
-}
-private class StatusPanel extends JPanel implements TableCellRenderer {
-  private final JLabel label;
-  private final Color bgColor;
-
-  public StatusPanel(String status, Color bgColor) {
-      this.bgColor = bgColor;
-      setLayout(new BorderLayout());
-      label = new JLabel(status, JLabel.CENTER);
-      label.setForeground(Color.WHITE);
-      label.setFont(new Font("Arial", Font.BOLD, 12));
-      label.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
-      add(label, BorderLayout.CENTER);
-  }
-
-  // Thêm getter để lấy status
-  public String getStatus() {
-      return label.getText();
-  }
-
-  @Override
-  public Component getTableCellRendererComponent(JTable table, Object value,
-          boolean isSelected, boolean hasFocus, int row, int column) {
-      if (value instanceof StatusPanel) {
-          StatusPanel panel = (StatusPanel) value;
-          setBackground(panel.bgColor);
-          label.setText(panel.label.getText());
-      }
-      return this;
-  }
-}
-
-// Thêm phương thức xác định màu theo trạng thái
-private Color getStatusColor(String status) {
-  return switch (status.toLowerCase()) {
-      case "online" -> STATUS_ONLINE;
-      case "offline" -> STATUS_OFFLINE;
-      case "in room" -> STATUS_IN_ROOM;
-      case "in game" -> STATUS_IN_GAME;
-      case "finding game" -> STATUS_FINDING;
-      default -> BUTTON_DISABLED;
-    };
-  }
-    private void updateFriendButtonState(int row) {
-      Object statusObj = friendTable.getValueAt(row, 1);
-      String status;
-      if (statusObj instanceof StatusPanel) {
-          status = ((StatusPanel) statusObj).getStatus(); // Thêm phương thức getStatus() vào StatusPanel
-      } else {
-          status = statusObj.toString();
-      }
-      
-      JButton inviteButton = (JButton) friendTable.getValueAt(row, 2);
-      boolean isOnline = status.equalsIgnoreCase("Online");
-      inviteButton.setEnabled(isOnline);
-      inviteButton.setText(isOnline ? "Mời" : "");
-      inviteButton.setBackground(isOnline ? ONLINE_INVITE_COLOR : BUTTON_DISABLED);
-      inviteButton.setForeground(Color.WHITE);
-  }
+    private void updateButtonStates() {
+        if (currentRoom == null) return;
+        
+        boolean isRoomFull = currentRoom.getPlayers().size() == 2;
+        String loginPlayerName = ClientController.getSocketHandler().getReceiveMessages()
+            .getLoginController().getPlayerLogin().getPlayerName();
+        
+        boolean isPlayer2 = currentRoom.getPlayers().size() > 1 && 
+            currentRoom.getPlayers().get(1).getPlayerName().equals(loginPlayerName);
+        
+        startButton.setText(isPlayer2 ? "CHỜ CHỦ PHÒNG BẮT ĐẦU TRÒ CHƠI" : "BẮT ĐẦU TRÒ CHƠI");
+        startButton.setEnabled(!isPlayer2 && isRoomFull);
+        startButton.setBackground(isPlayer2 ? HEADER_ORANGE : 
+            (isRoomFull ? new Color(52, 152, 219) : BUTTON_DISABLED));
+    }
 
     public JTable getFriendTable() {
         return friendTable;
@@ -502,22 +486,22 @@ private boolean isButtonOnCooldown(String playerName) {
   return (currentTime - lastInviteTime) < INVITE_COOLDOWN;
 }
     public void addActionListener(ActionListener act) {
-      for (ActionListener al : startButton.getActionListeners()) {
-        startButton.removeActionListener(al);
-      }
-      for (ActionListener al : leaveButton.getActionListeners()) {
-        leaveButton.removeActionListener(al);
-      }
-      startButton.addActionListener(act);
-      leaveButton.addActionListener(act);
-      // Chỉ thêm action listener cho các nút mời một lần
-      for (int i = 0; i < friendTable.getRowCount(); i++) {
-          JButton inviteButton = (JButton) friendTable.getValueAt(i, 2);
-          if (inviteButton != null) {
-              inviteButton.addActionListener(act);
-          }
-      }
-  }
+        // Xóa tất cả các listeners cũ trước khi thêm listener mới
+        for (ActionListener al : startButton.getActionListeners()) {
+            startButton.removeActionListener(al);
+        }
+        for (ActionListener al : leaveButton.getActionListeners()) {
+            leaveButton.removeActionListener(al);
+        }
+        for (ActionListener al : inviteButton.getActionListeners()) {
+            inviteButton.removeActionListener(al);
+        }
+        
+        // Thêm listeners mới
+        startButton.addActionListener(act);
+        leaveButton.addActionListener(act);
+        inviteButton.addActionListener(act);
+    }
 
     private class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
@@ -571,4 +555,78 @@ private boolean isButtonOnCooldown(String playerName) {
           return super.stopCellEditing();
       }
   }
+
+  private JButton createStyledButton(String text, Color backgroundColor) {
+    JButton button = new JButton(text) {
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(0, 0, 0, 50));
+            g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 20, 20);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth() - 4, getHeight() - 4, 20, 20);
+            FontMetrics fm = g2.getFontMetrics();
+            Rectangle stringBounds = fm.getStringBounds(this.getText(), g2).getBounds();
+            int textX = (getWidth() - stringBounds.width) / 2;
+            int textY = (getHeight() - stringBounds.height) / 2 + fm.getAscent();
+            g2.setColor(getForeground());
+            g2.drawString(getText(), textX, textY);
+            g2.dispose();
+        }
+    };
+    
+    button.setFont(new Font("Arial", Font.BOLD, 14));
+    button.setBackground(backgroundColor);
+    button.setForeground(Color.WHITE);
+    button.setFocusPainted(false);
+    button.setBorderPainted(false);
+    button.setContentAreaFilled(false);
+    button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    button.setPreferredSize(new Dimension(120, 40));
+
+    // Thêm hiệu ứng hover
+    button.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            button.setBackground(brighten(backgroundColor, 0.2f));
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            button.setBackground(backgroundColor);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            button.setBackground(darken(backgroundColor, 0.2f));
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            button.setBackground(backgroundColor);
+        }
+    });
+
+    return button;
+}
+
+// Thêm các phương thức hỗ trợ
+private Color brighten(Color color, float fraction) {
+    int red = Math.min(255, (int)(color.getRed() * (1 + fraction)));
+    int green = Math.min(255, (int)(color.getGreen() * (1 + fraction)));
+    int blue = Math.min(255, (int)(color.getBlue() * (1 + fraction)));
+    return new Color(red, green, blue);
+}
+
+private Color darken(Color color, float fraction) {
+    int red = Math.max(0, (int)(color.getRed() * (1 - fraction)));
+    int green = Math.max(0, (int)(color.getGreen() * (1 - fraction)));
+    int blue = Math.max(0, (int)(color.getBlue() * (1 - fraction)));
+    return new Color(red, green, blue);
+}
+  //Create get and set method for button
+public JButton getInviteButton() {
+  return inviteButton;
+}
 }
