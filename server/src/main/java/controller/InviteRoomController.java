@@ -177,8 +177,7 @@ public class InviteRoomController {
           return;
       }
       socketHandlers.getLoginController().getPlayerLogin().setStatus("Online");
-      socketHandlers.getListPlayerController().updateListPlayer();
-        socketHandlers.getInviteRoomController().updateListFriend();
+
       // Lấy room từ ServerController.rooms
       Room room = ServerController.rooms.stream()
               .filter(r -> r.getId().equals(currentRoomID))
@@ -190,7 +189,7 @@ public class InviteRoomController {
           this.socketHandlers.setRoomID(null);
           return;
       }
-    
+      ServerController.rooms.remove(room);
       System.out.println(room + " Truoc khi xoa on lai trong room");
       Room updatedRoom = new Room(room);
       // System.out.println(updatedRoom.getPlayers() + "Truoc khi xoa on lai trong room");
@@ -217,6 +216,8 @@ public class InviteRoomController {
               }
           }
       }
+      socketHandlers.getListPlayerController().updateListPlayer();
+      socketHandlers.getInviteRoomController().updateListFriend();
   }
 
     public List<PlayerStatus> listPlayer(){
