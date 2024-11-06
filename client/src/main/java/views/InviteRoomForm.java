@@ -11,7 +11,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -23,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
@@ -39,7 +42,8 @@ public class InviteRoomForm extends JFrame {
     private DefaultTableModel friendTableModel;
     private JLabel friendTitle;
     private Room currentRoom;
-
+    private Map<String, Long> inviteButtonCooldowns = new HashMap<>();
+    private static final long INVITE_COOLDOWN = 10000; 
     // Enhanced color scheme
     private static final Color HEADER_DARK = new Color(52, 73, 94);
     private static final Color HEADER_PURPLE = new Color(155, 89, 182);
@@ -52,6 +56,12 @@ public class InviteRoomForm extends JFrame {
     private static final Color FRIEND_LIST_COLOR = new Color(52, 152, 219);
     private static final Color BUTTON_DISABLED = new Color(149, 165, 166);
     private static final Color ONLINE_INVITE_COLOR = new Color(41, 128, 185);
+
+    private static final Color STATUS_ONLINE = new Color(46, 204, 113);      // Xanh lá
+    private static final Color STATUS_OFFLINE = new Color(189, 195, 199);    // Xám
+    private static final Color STATUS_IN_ROOM = new Color(241, 196, 15);     // Vàng
+    private static final Color STATUS_IN_GAME = new Color(231, 76, 60);      // Đỏ
+    private static final Color STATUS_FINDING = new Color(52, 152, 219);     // Xanh dương
     public InviteRoomForm(Room room) {
         this.currentRoom = room;
         initComponents();
@@ -253,8 +263,8 @@ public class InviteRoomForm extends JFrame {
         friendTitle.setForeground(Color.WHITE);
         friendTitle.setFont(new Font("Arial", Font.BOLD, 14));
         friendTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-
-        String[] columnNames = {"Tên", "Trạng thái", ""};
+     
+        String[] columnNames = {"Tên", "Trạng thái", "Mời"};
         friendTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -276,7 +286,13 @@ public class InviteRoomForm extends JFrame {
         
         friendTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
         friendTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox()));
-
+         // Thêm renderer cho cột trạng thái
+        friendTable.getColumnModel().getColumn(1).setCellRenderer(new StatusPanel("", Color.GRAY));
+    
+        // Điều chỉnh kích thước các cột
+        friendTable.getColumnModel().getColumn(0).setPreferredWidth(100); // Tên
+        friendTable.getColumnModel().getColumn(1).setPreferredWidth(100); // Trạng thái
+        friendTable.getColumnModel().getColumn(2).setPreferredWidth(50);  // Nút mời
         friendTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 int column = friendTable.getColumnModel().getColumnIndexAtX(e.getX());
@@ -326,15 +342,23 @@ public class InviteRoomForm extends JFrame {
     public void updateFriendList(List<PlayerFriend> friends) {
       friendTableModel.setRowCount(0);
       for (PlayerFriend friend : friends) {
-          JButton inviteButton = new JButton("Mời");
+          JButton inviteButton = createInviteButton();
           inviteButton.setName(friend.getPlayerName());
-          boolean isOnline = friend.getStatus().equalsIgnoreCase("Online");
-          inviteButton.setEnabled(isOnline);
-          inviteButton.setText(isOnline ? "Mời" : "");
-          // Sử dụng màu đậm hơn cho nút mời khi online
-          inviteButton.setBackground(isOnline ? ONLINE_INVITE_COLOR : BUTTON_DISABLED);
-          inviteButton.setForeground(Color.WHITE);
-          friendTableModel.addRow(new Object[]{friend.getPlayerName(), friend.getStatus(), inviteButton});
+          
+          String status = friend.getStatus();
+          Color statusColor = getStatusColor(status);
+          boolean canInvite = status.equalsIgnoreCase("Online") && !isButtonOnCooldown(friend.getPlayerName());
+          
+          inviteButton.setEnabled(canInvite);
+          inviteButton.setText(isButtonOnCooldown(friend.getPlayerName()) ? "ĐÃ MỜI" : (canInvite ? "Mời" : ""));
+          inviteButton.setBackground(canInvite ? ONLINE_INVITE_COLOR : BUTTON_DISABLED);
+          
+          Object[] rowData = new Object[]{
+              friend.getPlayerName(),
+              new StatusPanel(status, statusColor),
+              inviteButton
+          };
+          friendTableModel.addRow(rowData);
       }
       updateButtonStates();
   }
@@ -367,14 +391,73 @@ public class InviteRoomForm extends JFrame {
     }
 
 // ... existing code ...
+private JButton createInviteButton() {
+  JButton button = new JButton("Mời");
+  button.setFont(new Font("Arial", Font.BOLD, 12));
+  button.setForeground(Color.WHITE);
+  button.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createLineBorder(Color.WHITE, 1),
+      BorderFactory.createEmptyBorder(5, 10, 5, 10)
+  ));
+  button.setFocusPainted(false);
+  button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+  return button;
+}
+private class StatusPanel extends JPanel implements TableCellRenderer {
+  private final JLabel label;
+  private final Color bgColor;
 
+  public StatusPanel(String status, Color bgColor) {
+      this.bgColor = bgColor;
+      setLayout(new BorderLayout());
+      label = new JLabel(status, JLabel.CENTER);
+      label.setForeground(Color.WHITE);
+      label.setFont(new Font("Arial", Font.BOLD, 12));
+      label.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+      add(label, BorderLayout.CENTER);
+  }
+
+  // Thêm getter để lấy status
+  public String getStatus() {
+      return label.getText();
+  }
+
+  @Override
+  public Component getTableCellRendererComponent(JTable table, Object value,
+          boolean isSelected, boolean hasFocus, int row, int column) {
+      if (value instanceof StatusPanel) {
+          StatusPanel panel = (StatusPanel) value;
+          setBackground(panel.bgColor);
+          label.setText(panel.label.getText());
+      }
+      return this;
+  }
+}
+
+// Thêm phương thức xác định màu theo trạng thái
+private Color getStatusColor(String status) {
+  return switch (status.toLowerCase()) {
+      case "online" -> STATUS_ONLINE;
+      case "offline" -> STATUS_OFFLINE;
+      case "in room" -> STATUS_IN_ROOM;
+      case "in game" -> STATUS_IN_GAME;
+      case "finding game" -> STATUS_FINDING;
+      default -> BUTTON_DISABLED;
+    };
+  }
     private void updateFriendButtonState(int row) {
-      String status = (String) friendTable.getValueAt(row, 1);
+      Object statusObj = friendTable.getValueAt(row, 1);
+      String status;
+      if (statusObj instanceof StatusPanel) {
+          status = ((StatusPanel) statusObj).getStatus(); // Thêm phương thức getStatus() vào StatusPanel
+      } else {
+          status = statusObj.toString();
+      }
+      
       JButton inviteButton = (JButton) friendTable.getValueAt(row, 2);
       boolean isOnline = status.equalsIgnoreCase("Online");
       inviteButton.setEnabled(isOnline);
       inviteButton.setText(isOnline ? "Mời" : "");
-      // Sử dụng màu đậm hơn cho nút mời khi online
       inviteButton.setBackground(isOnline ? ONLINE_INVITE_COLOR : BUTTON_DISABLED);
       inviteButton.setForeground(Color.WHITE);
   }
@@ -395,9 +478,29 @@ public class InviteRoomForm extends JFrame {
           button.setText("ĐÃ MỜI");
           button.setEnabled(false);
           button.setBackground(BUTTON_DISABLED);
+          
+          // Lưu thời điểm bấm nút
+          inviteButtonCooldowns.put(button.getName(), System.currentTimeMillis());
+          
+          // Tạo timer để reset nút sau 10 giây
+          Timer timer = new Timer(10000, e -> {
+              button.setText("Mời");
+              button.setEnabled(true);
+              button.setBackground(ONLINE_INVITE_COLOR);
+              inviteButtonCooldowns.remove(button.getName());
+          });
+          timer.setRepeats(false);
+          timer.start();
       }
   }
-
+  // Thêm phương thức để kiểm tra cooldown
+private boolean isButtonOnCooldown(String playerName) {
+  Long lastInviteTime = inviteButtonCooldowns.get(playerName);
+  if (lastInviteTime == null) return false;
+  
+  long currentTime = System.currentTimeMillis();
+  return (currentTime - lastInviteTime) < INVITE_COOLDOWN;
+}
     public void addActionListener(ActionListener act) {
       for (ActionListener al : startButton.getActionListeners()) {
         startButton.removeActionListener(al);

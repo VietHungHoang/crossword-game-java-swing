@@ -18,7 +18,7 @@ public class ServerController {
     private static final String hostName = "127.0.0.1";
     private static final String dbName = "game_db";
     private static final String username = "root";
-    private static final String password = "dangbinh1770";
+    private static final String password = "";
     private static Connection conn;
     private static ServerSocket myServer; 
     public static ArrayList<SocketHandlers> socketHandlers;

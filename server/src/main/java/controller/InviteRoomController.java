@@ -10,7 +10,11 @@ import java.util.stream.Collectors;
 
 import dao.PlayerDAO;
 import dao.UserDAO;
-import models.*;
+import models.ObjectWrapper;
+import models.Player;
+import models.PlayerFriend;
+import models.PlayerStatus;
+import models.Room;
 import utils.RandomString;
 import utils.StreamData;
 import views.ServerView;
@@ -33,7 +37,7 @@ public class InviteRoomController {
         String randomId = randomString.nextString();
         List<Player> playersInRoom = new ArrayList<>();
         playersInRoom.add(this.socketHandlers.getLoginController().getPlayerLogin());
-        Room room = new Room(randomId, new Date(), this.socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", true);
+        Room room = new Room(randomId, new Date(), this.socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", false);
         this.socketHandlers.getLoginController().getPlayerLogin().setStatus("In Room");
         ServerController.rooms.add(room);
         System.out.println("Khoi tao room vui ve"+room);
@@ -99,7 +103,7 @@ public class InviteRoomController {
         SocketHandlers clientHandler = ServerController.socketHandlers.stream().filter(h -> h.getLoginController().getPlayerLogin().getPlayerName().equals(playerName)).findFirst().orElse(null);
         Player player =  clientHandler.getLoginController().getPlayerLogin();
         Room room = ServerController.rooms.stream().filter(r -> r.getId().equals(this.socketHandlers.getRoomID())).findFirst().orElse(null);
-        if (room != null && !room.getPlayers().contains(player) && room.getPlayers().size() < 2 && player.getStatus().equals("Online"))  {
+        if (room != null && !room.getPlayers().contains(player) && room.getPlayers().size() < 2 && player.getStatus().equals("Online") && !room.isRanking())  {
             ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.RECEIVE_INVITE_ROOM.name(), room);
             clientHandler.send(objectWrapper);
             System.out.println("Sent invite room " + room.getId() + " to " + player.getPlayerName());
@@ -108,7 +112,7 @@ public class InviteRoomController {
     public void acceptInviteRoom(String roomId){
       Room roomInServer = ServerController.rooms.stream().filter(r -> r.getId().equals(roomId)).findFirst().orElse(null);
       this.socketHandlers.getLoginController().getPlayerLogin().setStatus("In room");
-      if (roomInServer != null) {
+      if (roomInServer != null && !roomInServer.isRanking() && roomInServer.getPlayers().size() < 2) {
           // Cập nhật trạng thái phòng
           ServerController.rooms.remove(roomInServer);
           roomInServer = new Room(roomInServer);
