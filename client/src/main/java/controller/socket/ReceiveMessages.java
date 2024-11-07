@@ -20,6 +20,7 @@ public class ReceiveMessages extends Thread {
     private RankingController rankingController;
     private GameController gameController;
     private ListPlayerController listPlayerController;
+    private HomeController homeController;
 
     private EndGameController endGameController;
 
@@ -61,17 +62,12 @@ public class ReceiveMessages extends Thread {
                             this.waitingForGameController.waitingForGameHandler(objectWrapper);
                         break;
                     case START_GAME:
-//                        System.out.println("Mo game ne");
-//                        Game game = (Game) objectWrapper.getObject();
-////                        this.waitingForGameControllper.closeConfirmationForm();
-////                        // TODO: Chỗ này fix lại là phải lấy lại là khởi tạo GAME hải từ Object Game
-//                        // trả về nên nếu trả về ROOM thì ko đúng
-//                        // TODO: Tức là chỗ này phải gọi lên server để lấy lại Object Game
-//                        this.gameController = new GameController(new GameForm(game.player1.getPlayerName(),
-//                                game.player2.getPlayerName(), "KEYWORD", 0, 0));
-                        // this.gameController.startGameHandler(objectWrapper);
                         this.confirmController = new ConfirmController(new ConfirmationForm());
                         this.confirmController.handleStartGame((Game) objectWrapper.getObject());
+                        break;
+                    case START_GAME_FRIEND:
+                        this.confirmController = new ConfirmController(new ConfirmationForm());
+                        this.confirmController.handleStartGameWithFriend((Game) objectWrapper.getObject());
                         break;
                     case RANKING:
                         this.rankingController = new RankingController(new RankingForm());
@@ -112,6 +108,7 @@ public class ReceiveMessages extends Thread {
                     case INVITE_ROOM:
                     // Khi nhan duoc loi moi phong tu server khong can goi toi OPENFRAME vi da setVisible(true) trong InviteRoomController
                         System.out.println("Khoi tao Invite Room tu Room get tu tren server: " + objectWrapper.getObject());
+                        ClientController.setRoom((Room)objectWrapper.getObject());
                         this.inviteRoomController = new InviteRoomController(new InviteRoomForm((Room)objectWrapper.getObject()));
                         break;
                     case GET_LIST_FRIEND:
@@ -157,7 +154,7 @@ public class ReceiveMessages extends Thread {
                         this.inviteRoomController.updateInviteRoomHandler((Room)objectWrapper.getObject());
                         break;
                     case DRAW_GAME:
-                        this.gameController = new GameController(new GameForm());
+                        this.gameController = new GameController();
                         this.gameController.handleDrawGame();
                  
                     case LEAVE_INVITE_ROOM:

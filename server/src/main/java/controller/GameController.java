@@ -1,7 +1,10 @@
 package controller;
 
 import java.sql.Connection;
+import java.util.List;
+import java.util.Random;
 
+import dao.KeywordDAO;
 import dao.PlayerDAO;
 import dao.UserDAO;
 import models.Game;
@@ -16,12 +19,14 @@ public class GameController {
     private UserDAO userDAO;
     private PlayerDAO playerDAO;
     private SocketHandlers socketHandlers;
+    private KeywordDAO keywordDAO;
 
     public GameController(ServerView view, Connection conn, SocketHandlers socketHandlers) {
         this.view = view;
         this.userDAO = new UserDAO(conn);
         this.playerDAO = new PlayerDAO(conn);
         this.socketHandlers = socketHandlers;
+        this.keywordDAO = new KeywordDAO(conn);
     }
 
     public Game getGameByRoom(Room room) {
@@ -79,11 +84,34 @@ public class GameController {
                  socketHandlers.send(new ObjectWrapper(StreamData.Message.DRAW_GAME.name(), null));
                  for(SocketHandlers y : ServerController.getSocketHandlers()){
                      if(y.getLoginController().getPlayerLogin().getId() == x.getPlayer2().getId()){
-                         socketHandlers.send(new ObjectWrapper(StreamData.Message.DRAW_GAME.name(), null));
+                         y.send(new ObjectWrapper(StreamData.Message.DRAW_GAME.name(), null));
                          break;
                      }
                  }
              }
+        }
+    }
+
+    public void handleStartGameWithFriend(){
+        Player currentPlayer = socketHandlers.getLoginController().getPlayerLogin();
+        for(Room x : ServerController.rooms){
+            if(x.getPlayers().get(0).getId() == currentPlayer.getId() || x.getPlayers().get(1).getId() == currentPlayer.getId()){
+                    Game game = new Game(x);
+                    Random random = new Random();
+                    Long z = random.nextInt(this.keywordDAO.countAll())*1L;
+                    game.setKeyword(this.keywordDAO.findById(z));
+                    System.out.println("Da tao phong cho ca 2 nguoi choi trong phong");
+                    ServerController.games.add(game);
+                    System.out.println("Da them phong vao danh sach game");
+                    ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME_FRIEND.name(), game);
+                    System.out.println("Game object Wrapper" + game.toString());
+                    for(SocketHandlers socketHandler : ServerController.socketHandlers ){
+                        if(socketHandler.getLoginController().getPlayerLogin().equals(x.getPlayers().get(0)) || socketHandler.getLoginController().getPlayerLogin().equals(x.getPlayers().get(1))){
+                            socketHandler.send(objectWrapper);
+                        }
+                    }
+                    break;
+                }
         }
     }
 }

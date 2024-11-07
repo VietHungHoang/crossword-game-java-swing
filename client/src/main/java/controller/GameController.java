@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.swing.*;
 
+import controller.ClientController.FrameName;
 import models.ObjectWrapper;
 import models.Player;
 import models.User;
@@ -44,17 +45,23 @@ class SubmitAnswerListener implements ActionListener{
                 for(JButton x : gameForm.getListKeywordBtns()){
                     sb.append(x.getText());
                 }
+                System.out.println(sb.toString());
+                System.out.println(gameForm.getKeyword());
                 if(sb.toString().equalsIgnoreCase(gameForm.getKeyword())){
                     try {
-                        gameForm.getCountdownTimer().stop();
+                        // gameForm.getCountdownTimer().stop();
                         for(JButton x : gameForm.getKeyboardButtons()){
                             x.setEnabled(false);
                         }
                         for(JButton x : gameForm.getListKeywordBtns()){
                             x.setEnabled(false);
                         }
+                        System.out.println("send to serrver");
                         ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.WIN_GAME, null);
+                        stopCountDown();
+                        
                     } catch (Exception ex) {
+                      System.out.println(ex);
                     }
                 }
                 else{
@@ -68,28 +75,39 @@ class SubmitAnswerListener implements ActionListener{
   public GameController(GameForm gameForm){
     this.gameForm = gameForm;
     this.gameForm.addActionListener(new SubmitAnswerListener());
-    this.startCountDown();
+
+    countDownTimer = new Timer(1000, new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        if (timeLeft > 0) {
+          timeLeft--;
+          System.out.println(gameForm.getLblCountdown());
+          gameForm.getLblCountdown().setText(String.valueOf(timeLeft));
+        } else {
+              countDownTimer.stop();
+              try{
+                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.DRAW_GAME, null);
+              }
+              catch (Exception ex){
+    
+                }
+            }
+        }
+    });
+  this.startCountDown();
+  }
+
+
+
+  public GameController(){
   }
 
   public void startCountDown(){
-      countDownTimer = new Timer(1000, new ActionListener() {
-          public void actionPerformed(ActionEvent evt) {
-              if (timeLeft > 0) {
-                  timeLeft--;
-                  gameForm.getLblCountdown().setText(String.valueOf(timeLeft));
-              } else {
-                  countDownTimer.stop();
-                  try{
-                      ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.DRAW_GAME, null);
-                  }
-                  catch (Exception ex){
-
-                  }
-              }
-          }
-      });
       countDownTimer.start();
   }
+
+  public void stopCountDown(){
+    countDownTimer.stop();
+}
 
   public void showMessage(String msg){
     JOptionPane.showMessageDialog(gameForm, msg);
@@ -120,6 +138,9 @@ class SubmitAnswerListener implements ActionListener{
 
   public void handleDrawGame(){
     JOptionPane.showMessageDialog(gameForm, "Draw", "Khong co gi", JOptionPane.PLAIN_MESSAGE);
+    ClientController.openFrame(FrameName.HOME);
+    ClientController.closeFrame(FrameName.GAME);
+
   }
   class BackHomeListener implements ActionListener{
     @Override

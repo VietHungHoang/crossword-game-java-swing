@@ -149,6 +149,10 @@ public void run() {
                     }
                     this.inviteRoomController.updateListFriend();
                     break;
+                case START_GAME:
+                        this.gameController = new GameController(view, conn, this);
+                        this.gameController.handleStartGameWithFriend();
+                    break;
                 default:
                     break;
             }

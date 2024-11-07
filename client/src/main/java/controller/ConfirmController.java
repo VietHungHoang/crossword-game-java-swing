@@ -24,6 +24,12 @@ public class ConfirmController {
         ClientController.openFrame(ClientController.FrameName.GAME);
     }
 
+    public void handleStartGameWithFriend(Game game){
+        ClientController.getListGame().add(game);
+        ClientController.closeFrame(ClientController.FrameName.INVITE_ROOM);
+        ClientController.openFrame(ClientController.FrameName.GAME);
+    }
+
     class ConfirmationListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == confirmationForm.getBtnConfirm()) {

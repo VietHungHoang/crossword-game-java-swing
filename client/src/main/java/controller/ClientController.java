@@ -11,6 +11,7 @@ import controller.socket.SocketHandlers;
 import models.Game;
 import models.Player;
 import models.PlayerStatus;
+import models.Room;
 import views.*;
 import views.EndGameForm;
 
@@ -33,7 +34,15 @@ public class ClientController {
     private static GameController gameController;
     private static RankingController rankingController;
     private static RankingForm rankingForm;
+    private static Room room;
     public static List<PlayerStatus> players = new ArrayList<>();
+
+
+
+    
+    public static void setRoom(Room room) {
+        ClientController.room = room;
+    }
 
     public static ListPlayerForm getListPlayerForm() {
         return listPlayerForm;
@@ -109,9 +118,9 @@ public class ClientController {
                 homeForm.setVisible(true);
                 break;
             case INVITE_ROOM:
-                // inviteRoomForm = new InviteRoomForm();
-                // inviteRoomController = new InviteRoomController(inviteRoomForm);
-//                inviteRoomForm.setVisible(true);
+                inviteRoomForm = new InviteRoomForm(room);
+                inviteRoomController = new InviteRoomController(inviteRoomForm);
+                inviteRoomForm.setVisible(true);
                 break;
             case SIGNUP:
                 signUpForm = new SignUpForm();
@@ -220,7 +229,8 @@ public class ClientController {
                 endGameForm.dispose();
                 break;
             case CONFIRM:
-                confirmationForm.dispose();
+                if(confirmationForm != null)
+                    confirmationForm.dispose();
                 break;
             default:
                 break;

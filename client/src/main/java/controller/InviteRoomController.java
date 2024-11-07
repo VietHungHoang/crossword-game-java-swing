@@ -21,6 +21,9 @@ public class InviteRoomController {
         this.inviteRoomForm = inviteRoomForm;
         this.inviteRoomForm.addActionListener(new InviteRoomListener());
     } 
+
+    public InviteRoomController(){
+  } 
     
     public void getListFriendHandler(List<PlayerFriend> listFriend){
       try {
@@ -42,42 +45,49 @@ public class InviteRoomController {
    class InviteRoomListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
+        // Xử lý các button cố định trước
         if (e.getSource() == inviteRoomForm.getLeaveButton()) {
+            System.out.println("Roi khoi phong");
+            // Xử lý rời phòng
             try {
-                ClientController.getSocketHandler().getSendMessages()
-                    .send(StreamData.Message.LEAVE_INVITE_ROOM, null);
+              ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.LEAVE_INVITE_ROOM, null);
             } catch (IOException ex) {
-                ex.printStackTrace();
+              ex.printStackTrace();
             }
             return;
         }
         
         if (e.getSource() == inviteRoomForm.getStartButton()) {
+            System.out.println("Bat dau game");
+            // Xử lý bắt đầu game
             try {
-                ClientController.getSocketHandler().getSendMessages()
-                    .send(StreamData.Message.START_GAME, null);
+                ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.START_GAME, null);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
             return;
         }
 
-        if (e.getSource() == inviteRoomForm.getInviteButton()) {
-            JTable friendTable = inviteRoomForm.getFriendTable();
-            int selectedRow = friendTable.getSelectedRow();
-            if (selectedRow != -1) {
-                String playerName = (String) friendTable.getValueAt(selectedRow, 0);
-                String status = (String) friendTable.getValueAt(selectedRow, 1);
-                
-                if (status.equals("Online")) {
-                    try {
-                        ClientController.getSocketHandler().getSendMessages()
-                            .send(StreamData.Message.INVITE_FRIEND_TO_ROOM, playerName);
-                        inviteRoomForm.getInviteButton().setEnabled(false);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
+        // Xử lý các invite button trong bảng
+        JTable friendTable = inviteRoomForm.getFriendTable();
+        JButton clickedButton = (JButton)e.getSource();
+        
+        for (int i = 0; i < friendTable.getRowCount(); i++) {
+            JButton inviteBtn = inviteRoomForm.getInviteButtonAt(i);
+            if (e.getSource() == inviteBtn) {
+                String playerName = (String) friendTable.getValueAt(i, 0);
+                System.out.println("Invite " + playerName + " to room");
+                try {
+                    ClientController.getSocketHandler().getSendMessages().send(
+                        StreamData.Message.INVITE_FRIEND_TO_ROOM, 
+                        playerName
+                    );
+                    // Optionally disable the button after clicking to prevent multiple invites
+                    inviteBtn.setEnabled(false);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
+                break;
             }
         }
     }

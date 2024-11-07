@@ -80,6 +80,7 @@ public class InviteRoomForm extends JFrame {
         initComponents();
         setupLayout();
         setFrameProperties();
+        setVisible(true);
     }
     public void updateInviteRoom(Room room) {
         SwingUtilities.invokeLater(() -> {
@@ -404,7 +405,6 @@ public class InviteRoomForm extends JFrame {
         setSize(800, 600);
         setLocationRelativeTo(null);
         getContentPane().setBackground(BACKGROUND_COLOR);
-        setVisible(true);
     }
 
     public void updateFriendList(List<PlayerFriend> friends) {
