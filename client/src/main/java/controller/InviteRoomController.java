@@ -8,8 +8,8 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JTable;
 
-import models.ObjectWrapper;
 import models.PlayerFriend;
+import models.Room;
 import utils.StreamData;
 import views.InviteRoomForm;
 
@@ -21,40 +21,41 @@ public class InviteRoomController {
         this.inviteRoomForm = inviteRoomForm;
         this.inviteRoomForm.addActionListener(new InviteRoomListener());
     } 
-
-
-    public void inviteRoomHandler(ObjectWrapper objectWrapper){
-        
-    }
-    public void getListFriendHandler(ObjectWrapper objectWrapper){
-      @SuppressWarnings("unchecked")
-      List<PlayerFriend> listFriend = (List<PlayerFriend>) objectWrapper.getObject();
-      JTable friendTable = inviteRoomForm.getFriendTable();
-      
-      // Tạo model mới với số rows bằng số lượng friend
-      javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) friendTable.getModel();
-      model.setRowCount(listFriend.size());  // Set số lượng rows
-      
-      // Set giá trị cho từng row
-      for (int i = 0; i < listFriend.size(); i++) {
-          PlayerFriend playerFriend = listFriend.get(i);
-          friendTable.setValueAt(playerFriend.getPlayerName(), i, 0);
-          friendTable.setValueAt(playerFriend.getStatus(), i, 1);  
+    
+    public void getListFriendHandler(List<PlayerFriend> listFriend){
+      try {
+        this.inviteRoomForm.updateFriendList(listFriend);
+      } catch (Exception e) {
+        e.printStackTrace();
       }
+      // this.inviteRoomForm.updateFriendList(listFriend);
+      this.inviteRoomForm.addActionListener(new InviteRoomListener());
     }
 
+    public void updateInviteRoomHandler(Room room){
+      this.inviteRoomForm.updateInviteRoom(room);
+    }
+    public void leaveInviteRoomHandler(){
+      this.inviteRoomForm.dispose();
+      ClientController.openFrame(ClientController.FrameName.HOME);
+    }
    class InviteRoomListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // Xử lý các button cố định trước
         if (e.getSource() == inviteRoomForm.getLeaveButton()) {
+            System.out.println("Roi khoi phong");
             // Xử lý rời phòng
-            // ClientController.closeFrame(ClientController.FrameName.INVITE_ROOM);
-            // ClientController.openFrame(ClientController.FrameName.HOME);
+            try {
+              ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.LEAVE_INVITE_ROOM, null);
+            } catch (IOException ex) {
+              ex.printStackTrace();
+            }
             return;
         }
         
         if (e.getSource() == inviteRoomForm.getStartButton()) {
+            System.out.println("Bat dau game");
             // Xử lý bắt đầu game
             try {
                 ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.START_GAME, null);
@@ -66,17 +67,20 @@ public class InviteRoomController {
 
         // Xử lý các invite button trong bảng
         JTable friendTable = inviteRoomForm.getFriendTable();
+        JButton clickedButton = (JButton)e.getSource();
+        
         for (int i = 0; i < friendTable.getRowCount(); i++) {
             JButton inviteBtn = inviteRoomForm.getInviteButtonAt(i);
             if (e.getSource() == inviteBtn) {
-                // Lấy thông tin người chơi từ bảng
                 String playerName = (String) friendTable.getValueAt(i, 0);
+                System.out.println("Invite " + playerName + " to room");
                 try {
-                    // Gửi lời mời cho server
                     ClientController.getSocketHandler().getSendMessages().send(
                         StreamData.Message.INVITE_FRIEND_TO_ROOM, 
                         playerName
                     );
+                    // Optionally disable the button after clicking to prevent multiple invites
+                    inviteBtn.setEnabled(false);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

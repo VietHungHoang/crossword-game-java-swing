@@ -27,7 +27,7 @@ public class SocketHandlers extends Thread {
     private String roomID;
     private boolean IsReadyForGame = false;
     private GameController gameController;
-    private  RankingController rankingController;
+    private RankingController rankingController;
     private ListPlayerController listPlayerController;
     private InviteRoomController inviteRoomController;
     public LoginController getLoginController() {
@@ -35,6 +35,16 @@ public class SocketHandlers extends Thread {
         return this.loginController;
     }
 
+    public InviteRoomController getInviteRoomController() {
+        return inviteRoomController;
+    }
+
+    public String getRoomID(){
+        return this.roomID;
+    }
+    public void setRoomID(String roomID){
+        this.roomID = roomID;
+    }
     public ListPlayerController getListPlayerController() {
         return listPlayerController;
     }
@@ -45,6 +55,7 @@ public class SocketHandlers extends Thread {
         this.ois = new ObjectInputStream(this.socketClient.getInputStream());
         this.conn = conn;
         this.view = new ServerView();
+        this.roomID = null;
     }
 
     @Override
@@ -108,14 +119,36 @@ public void run() {
                         this.gameController.handleEndGame();
                     break;
                 case INVITE_ROOM:
-                    this.inviteRoomController = new InviteRoomController(view,conn,this);
+                    if(this.getInviteRoomController()==null){
+                        this.inviteRoomController = new InviteRoomController(view,conn,this);
+                    }
                     this.inviteRoomController.createInviteRoom();
                     break;
                 case GET_LIST_FRIEND:
                     this.inviteRoomController.getListFriend();
                     break;
                 case DRAW_GAME:
+                    this.gameController = new GameController(view, conn, this);
                     this.gameController.handleDraw();
+                    break;
+                case INVITE_FRIEND_TO_ROOM: 
+                    this.inviteRoomController.invitePlayer((String) objectWrapper.getObject());
+                    break;
+                case ACCEPT_INVITE_ROOM:
+                    if(this.inviteRoomController == null){
+                        this.inviteRoomController = new InviteRoomController(view,conn,this);
+                    }
+                    this.inviteRoomController.acceptInviteRoom((String) objectWrapper.getObject());
+                    break;
+                case LEAVE_INVITE_ROOM:
+                    this.inviteRoomController.leaveInviteRoom();
+                    break;
+                case UPDATE_LIST_FRIEND:
+                    if(this.getInviteRoomController()==null){
+                        this.inviteRoomController = new InviteRoomController(view,conn,this);
+                    }
+                    this.inviteRoomController.updateListFriend();
+                    break;
                 default:
                     break;
             }

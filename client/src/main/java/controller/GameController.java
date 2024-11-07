@@ -21,7 +21,7 @@ public class GameController {
 
   private Timer countDownTimer;
 
-  private Integer timeLeft = 30;
+  private Integer timeLeft = 10;
 
 class SubmitAnswerListener implements ActionListener{
         @Override
@@ -116,6 +116,10 @@ class SubmitAnswerListener implements ActionListener{
     else
         ClientController.openFrame(ClientController.FrameName.LOST_GAME);
 
+  }
+
+  public void handleDrawGame(){
+    JOptionPane.showMessageDialog(gameForm, "Draw", "Khong co gi", JOptionPane.PLAIN_MESSAGE);
   }
   class BackHomeListener implements ActionListener{
     @Override

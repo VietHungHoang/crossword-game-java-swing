@@ -16,7 +16,7 @@ public class HomeController {
     public HomeController(HomeForm homeForm) {
         this.homeForm = homeForm;
         this.homeForm.addActionListener(new HomeListener());
-        homeForm.getUserLabel().setText("Xin chào, " + ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getPlayerName());
+        homeForm.getUserLabel().setText("Xin chào " + ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getPlayerName());
         homeForm.getScoreLabel().setText("Điểm: " + ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getTotalPoint());
     }
 

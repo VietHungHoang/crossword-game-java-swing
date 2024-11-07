@@ -26,7 +26,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import controller.ClientController;
 import models.Player;
+import models.PlayerFriend;
 import models.Room;
 
 public class InviteRoomForm extends JFrame {
@@ -49,16 +51,75 @@ public class InviteRoomForm extends JFrame {
     private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
     private static final Color FRIEND_LIST_COLOR = new Color(52, 152, 219);
     private static final Color BUTTON_DISABLED = new Color(149, 165, 166);
-
-
-    
+    private static final Color ONLINE_INVITE_COLOR = new Color(41, 128, 185);
     public InviteRoomForm(Room room) {
         this.currentRoom = room;
         initComponents();
         setupLayout();
         setFrameProperties();
     }
+    public void updateInviteRoom(Room room) {
+      // Update room information
+      currentRoom = room;
 
+      ((JLabel) roomInfoPanel.getComponent(0)).setText("ID Phòng: " + room.getId());
+      ((JLabel) roomInfoPanel.getComponent(1)).setText("Trạng thái: " + room.getStatus());
+      ((JLabel) roomInfoPanel.getComponent(2)).setText(room.isRanking() ? "Xếp hạng" : "Chơi vui vẻ");
+      ((JLabel) roomInfoPanel.getComponent(3)).setText("Tạo bởi: " + room.getCreateBy().getPlayerName());
+      
+      // Update Player 1 information
+      updatePlayerPanel(player1Panel, room.getPlayers().get(0), "Người chơi 1", PLAYER1_COLOR);
+  
+      // Update Player 2 information or set to empty if no player
+      if (room.getPlayers().size() > 1) {
+          System.out.println("update nguoi thu 2");
+          updatePlayerPanel(player2Panel, room.getPlayers().get(1), "Người chơi 2", PLAYER2_COLOR);
+      } else {
+        player2Panel.removeAll();
+        player2Panel.setLayout(new GridLayout(2, 1, 0, 2));
+        player2Panel.setBackground(BACKGROUND_COLOR);
+        player2Panel.add(createEmptyPlayerPanel());
+      }
+  
+      // Refresh the state of the start button and friend list
+      updateButtonStates();
+      revalidate();
+      repaint();
+  }
+  
+  private void updatePlayerPanel(JPanel panel, Player player, String title, Color color) {
+    // Xóa tất cả components cũ
+    panel.removeAll();
+    
+    // Tạo lại panel với thông tin mới
+    JLabel titleLabel = new JLabel(title, JLabel.CENTER);
+    titleLabel.setOpaque(true);
+    titleLabel.setBackground(color);
+    titleLabel.setForeground(Color.WHITE);
+    titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+    titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+    JPanel infoPanel = new JPanel(new GridLayout(3, 1, 0, 2));
+    infoPanel.setBackground(color);
+    infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+    JLabel nameLabel = new JLabel("Tên: " + player.getPlayerName(), JLabel.LEFT);
+    JLabel pointsLabel = new JLabel("Điểm: " + player.getTotalPoint(), JLabel.LEFT);
+    JLabel gamesLabel = new JLabel("Số trận thắng: " + player.getTotalGameWon(), JLabel.LEFT);
+
+    nameLabel.setForeground(Color.WHITE);
+    pointsLabel.setForeground(Color.WHITE);
+    gamesLabel.setForeground(Color.WHITE);
+
+    infoPanel.add(nameLabel);
+    infoPanel.add(pointsLabel);
+    infoPanel.add(gamesLabel);
+
+    panel.setLayout(new GridLayout(2, 1, 0, 2));
+    panel.add(titleLabel);
+    panel.add(infoPanel);
+}
+  
     private void initComponents() {
         initPanels();
         initButtons();
@@ -168,8 +229,7 @@ public class InviteRoomForm extends JFrame {
 
     private void initButtons() {
         startButton = createButton("BẮT ĐẦU TRÒ CHƠI", new Color(52, 152, 219));
-        leaveButton = createButton("RỜI", new Color(231, 76, 60));
-        
+        leaveButton = createButton("RỜI PHÒNG", new Color(231, 76, 60));
         updateButtonStates();
     }
 
@@ -263,63 +323,98 @@ public class InviteRoomForm extends JFrame {
         setVisible(true);
     }
 
-    public void updateFriendList(List<Player> friends) {
-        friendTableModel.setRowCount(0);
-        for (Player friend : friends) {
-            JButton inviteButton = new JButton("Mời");
-            inviteButton.setName(friend.getPlayerName()); // Set the name of the button to the friend's name
-            friendTableModel.addRow(new Object[]{friend.getPlayerName(), friend.getStatus(), inviteButton});
-        }
-        updateButtonStates();
-    }
+    public void updateFriendList(List<PlayerFriend> friends) {
+      friendTableModel.setRowCount(0);
+      for (PlayerFriend friend : friends) {
+          JButton inviteButton = new JButton("Mời");
+          inviteButton.setName(friend.getPlayerName());
+          boolean isOnline = friend.getStatus().equalsIgnoreCase("Online");
+          inviteButton.setEnabled(isOnline);
+          inviteButton.setText(isOnline ? "Mời" : "");
+          // Sử dụng màu đậm hơn cho nút mời khi online
+          inviteButton.setBackground(isOnline ? ONLINE_INVITE_COLOR : BUTTON_DISABLED);
+          inviteButton.setForeground(Color.WHITE);
+          friendTableModel.addRow(new Object[]{friend.getPlayerName(), friend.getStatus(), inviteButton});
+      }
+      updateButtonStates();
+  }
 
     // ... existing code ...
 
   private void updateButtonStates() {
     boolean isRoomFull = currentRoom.getStatus().equals("2/2");
-    startButton.setEnabled(isRoomFull);
-    startButton.setBackground(isRoomFull ? new Color(52, 152, 219) : BUTTON_DISABLED);
-  
-  // Thêm kiểm tra null để tránh NullPointerException
+    String loginPlayerName = ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getPlayerName();
+    
+    // Check if player 2 is the logged-in player
+    boolean isPlayer2LoggedIn = currentRoom.getPlayers().size() > 1 && 
+        currentRoom.getPlayers().get(1).getPlayerName().equals(loginPlayerName);
+    
+    if (isPlayer2LoggedIn) {
+        startButton.setText("CHỜ CHỦ PHÒNG BẮT ĐẦU TRÒ CHƠI");
+        startButton.setEnabled(false);
+        startButton.setBackground(HEADER_ORANGE); // Using the orange color defined earlier
+    } else {
+        startButton.setText("BẮT ĐẦU TRÒ CHƠI");
+        startButton.setEnabled(isRoomFull);
+        startButton.setBackground(isRoomFull ? new Color(52, 152, 219) : BUTTON_DISABLED);
+    }
+    
     if (friendTable != null) {
+        for (int i = 0; i < friendTable.getRowCount(); i++) {
+            updateFriendButtonState(i);
+        }
+        }
+    }
+
+// ... existing code ...
+
+    private void updateFriendButtonState(int row) {
+      String status = (String) friendTable.getValueAt(row, 1);
+      JButton inviteButton = (JButton) friendTable.getValueAt(row, 2);
+      boolean isOnline = status.equalsIgnoreCase("Online");
+      inviteButton.setEnabled(isOnline);
+      inviteButton.setText(isOnline ? "Mời" : "");
+      // Sử dụng màu đậm hơn cho nút mời khi online
+      inviteButton.setBackground(isOnline ? ONLINE_INVITE_COLOR : BUTTON_DISABLED);
+      inviteButton.setForeground(Color.WHITE);
+  }
+
+    public JTable getFriendTable() {
+        return friendTable;
+    }
+
+    public JButton getInviteButtonAt(int row) {
+        if (row >= 0 && row < friendTable.getRowCount()) {
+            return (JButton) friendTable.getValueAt(row, 2);
+        }
+        return null;
+    }
+
+    private void handleInviteButtonClick(JButton button) {
+      if (!button.getText().equals("ĐÃ MỜI")) {
+          button.setText("ĐÃ MỜI");
+          button.setEnabled(false);
+          button.setBackground(BUTTON_DISABLED);
+      }
+  }
+
+    public void addActionListener(ActionListener act) {
+      for (ActionListener al : startButton.getActionListeners()) {
+        startButton.removeActionListener(al);
+      }
+      for (ActionListener al : leaveButton.getActionListeners()) {
+        leaveButton.removeActionListener(al);
+      }
+      startButton.addActionListener(act);
+      leaveButton.addActionListener(act);
+      // Chỉ thêm action listener cho các nút mời một lần
       for (int i = 0; i < friendTable.getRowCount(); i++) {
           JButton inviteButton = (JButton) friendTable.getValueAt(i, 2);
           if (inviteButton != null) {
-              inviteButton.setEnabled(!isRoomFull);
-              inviteButton.setBackground(!isRoomFull ? FRIEND_LIST_COLOR : BUTTON_DISABLED);
+              inviteButton.addActionListener(act);
           }
       }
-    }
   }
-
-
-    //Tao ra conStructor lay ra cac button nhe
-    public JButton getStartButton() {
-        return startButton;
-    }
-    public JButton getLeaveButton() {
-        return leaveButton;
-    }
-    public JTable getFriendTable() {
-      return friendTable;
-    }
-    public JButton getInviteButtonAt(int row) {
-      if (row >= 0 && row < friendTable.getRowCount()) {
-          return (JButton) friendTable.getValueAt(row, 2);
-      }
-      return null;
-  }
-    public void addActionListener(ActionListener act) {
-        startButton.addActionListener(act);
-        leaveButton.addActionListener(act);
-        
-        for (int i = 0; i < friendTable.getRowCount(); i++) {
-            JButton inviteButton = (JButton) friendTable.getValueAt(i, 2);
-            if (inviteButton != null) {
-                inviteButton.addActionListener(act);
-            }
-        }
-    }
 
     private class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
@@ -334,42 +429,43 @@ public class InviteRoomForm extends JFrame {
             return this;
         }
     }
-
-    private class ButtonEditor extends DefaultCellEditor {
-        private JButton button;
-        private String label;
-        private boolean isPushed;
-
-        public ButtonEditor(JCheckBox checkBox) {
-            super(checkBox);
-            button = new JButton();
-            button.setOpaque(true);
-            button.addActionListener(e -> fireEditingStopped());
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            if (value instanceof JButton) {
-                button = (JButton) value;
-            }
-            isPushed = true;
-            return button;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            if (isPushed) {
-                // Perform the button click action
-                button.doClick();
-            }
-            isPushed = false;
-            return button;
-        }
-
-        @Override
-        public boolean stopCellEditing() {
-            isPushed = false;
-            return super.stopCellEditing();
-        }
+    public JButton getStartButton() {
+      return startButton;
     }
+    public JButton getLeaveButton() {
+      return leaveButton;
+    }
+    private class ButtonEditor extends DefaultCellEditor {
+      private JButton button;
+      private boolean isPushed;
+  
+      public ButtonEditor(JCheckBox checkBox) {
+          super(checkBox);
+          button = new JButton();
+          button.setOpaque(true);
+          // Đơn giản hóa xử lý sự kiện button
+          button.addActionListener(e -> fireEditingStopped());
+      }
+  
+      @Override
+      public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+          if (value instanceof JButton) {
+              button = (JButton) value;
+          }
+          isPushed = true;
+          return button;
+      }
+  
+      @Override
+      public Object getCellEditorValue() {
+          isPushed = false;
+          return button;
+      }
+  
+      @Override
+      public boolean stopCellEditing() {
+          isPushed = false;
+          return super.stopCellEditing();
+      }
+  }
 }

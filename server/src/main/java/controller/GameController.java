@@ -8,6 +8,7 @@ import models.Game;
 import models.ObjectWrapper;
 import models.Player;
 import models.Room;
+import utils.StreamData;
 import views.ServerView;
 public class GameController {
     private ServerView view;
@@ -72,9 +73,17 @@ public class GameController {
     }
 
     public void handleDraw(){
-        socketHandlers.getLoginController().getPlayerLogin();
+        Player currentPlayer = socketHandlers.getLoginController().getPlayerLogin();
         for(Game x : ServerController.games){
-            if(x.)
+             if(x.getPlayer1().getId() == currentPlayer.getId()){
+                 socketHandlers.send(new ObjectWrapper(StreamData.Message.DRAW_GAME.name(), null));
+                 for(SocketHandlers y : ServerController.getSocketHandlers()){
+                     if(y.getLoginController().getPlayerLogin().getId() == x.getPlayer2().getId()){
+                         socketHandlers.send(new ObjectWrapper(StreamData.Message.DRAW_GAME.name(), null));
+                         break;
+                     }
+                 }
+             }
         }
     }
 }

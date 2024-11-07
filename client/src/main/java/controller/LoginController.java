@@ -54,6 +54,7 @@ public class LoginController {
             System.out.println(playerLogin.toString());
             try {
                 ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.UPDATE_LIST_PLAYER, null);
+                ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.UPDATE_LIST_FRIEND, null);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -77,6 +78,7 @@ public class LoginController {
         this.playerLogin = null;
         try {
             ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.UPDATE_LIST_PLAYER, null);
+            ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.UPDATE_LIST_FRIEND, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
