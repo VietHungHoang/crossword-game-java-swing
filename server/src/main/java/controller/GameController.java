@@ -8,6 +8,7 @@ import dao.KeywordDAO;
 import dao.PlayerDAO;
 import dao.UserDAO;
 import models.Game;
+import models.Keyword;
 import models.ObjectWrapper;
 import models.Player;
 import models.Room;
@@ -98,8 +99,8 @@ public class GameController {
             if(x.getPlayers().get(0).getId() == currentPlayer.getId() || x.getPlayers().get(1).getId() == currentPlayer.getId()){
                     Game game = new Game(x);
                     Random random = new Random();
-                    Long z = random.nextInt(this.keywordDAO.countAll())*1L;
-                    game.setKeyword(this.keywordDAO.findById(z));
+                    Long z = random.nextInt(2)*1L;
+                    game.setKeyword(new Keyword(1L,  "APPLE"));
                     System.out.println("Da tao phong cho ca 2 nguoi choi trong phong");
                     ServerController.games.add(game);
                     System.out.println("Da them phong vao danh sach game");

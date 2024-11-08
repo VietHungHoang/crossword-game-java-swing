@@ -24,6 +24,8 @@ public class GameController {
 
   private Integer timeLeft = 10;
 
+  private Boolean isWin = false;
+
 class SubmitAnswerListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e){
@@ -48,7 +50,10 @@ class SubmitAnswerListener implements ActionListener{
                 System.out.println(sb.toString());
                 System.out.println(gameForm.getKeyword());
                 if(sb.toString().equalsIgnoreCase(gameForm.getKeyword())){
+                    
                     try {
+                      stopCountDown();
+                      isWin = true;
                         // gameForm.getCountdownTimer().stop();
                         for(JButton x : gameForm.getKeyboardButtons()){
                             x.setEnabled(false);
@@ -58,7 +63,7 @@ class SubmitAnswerListener implements ActionListener{
                         }
                         System.out.println("send to serrver");
                         ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.WIN_GAME, null);
-                        stopCountDown();
+
                         
                     } catch (Exception ex) {
                       System.out.println(ex);
@@ -80,12 +85,12 @@ class SubmitAnswerListener implements ActionListener{
       public void actionPerformed(ActionEvent evt) {
         if (timeLeft > 0) {
           timeLeft--;
-          System.out.println(gameForm.getLblCountdown());
           gameForm.getLblCountdown().setText(String.valueOf(timeLeft));
         } else {
               countDownTimer.stop();
               try{
-                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.DRAW_GAME, null);
+                    if(!isWin)
+                      ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.DRAW_GAME, null);
               }
               catch (Exception ex){
     
@@ -138,7 +143,7 @@ class SubmitAnswerListener implements ActionListener{
 
   public void handleDrawGame(){
     JOptionPane.showMessageDialog(gameForm, "Draw", "Khong co gi", JOptionPane.PLAIN_MESSAGE);
-    ClientController.openFrame(FrameName.HOME);
+//    ClientController.openFrame(FrameName.HOME);
     ClientController.closeFrame(FrameName.GAME);
 
   }
