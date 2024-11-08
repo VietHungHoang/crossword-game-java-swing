@@ -16,6 +16,7 @@ import models.ObjectWrapper;
 import models.Player;
 import models.Room;
 import utils.RandomString;
+import utils.StatusPlayer;
 import utils.StreamData;
 import views.ServerView;
 public class WaitingForGameController {
@@ -58,7 +59,7 @@ public class WaitingForGameController {
         List<Player> playersInRoom = new ArrayList<>();
         playersInRoom.add(socketHandlers.getLoginController().getPlayerLogin());
         Room room = new Room(randomId, new Date(), socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", true);
-        socketHandlers.getLoginController().getPlayerLogin().setStatus("Finding game");
+        socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.FINDING_GAME.value);
         socketHandlers.getListPlayerController().updateListPlayer();
         socketHandlers.getInviteRoomController().updateListFriend();
         //TODO: UPDATE STATUS FOR LISt FRIEND
@@ -189,7 +190,7 @@ public class WaitingForGameController {
         if (room != null) {
             room.getPlayers().remove(player);
             System.out.println("Người chơi " + player.getPlayerName() + " đã hủy tìm trận và rời khỏi phòng.");
-            socketHandlers.getLoginController().getPlayerLogin().setStatus("Online");
+            socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
             socketHandlers.getListPlayerController().updateListPlayer();
             socketHandlers.getInviteRoomController().updateListFriend();
             if (room.getPlayers().isEmpty()) {

@@ -61,6 +61,8 @@ public class ClientController {
 
     private static ArrayList<Game> listGame = new ArrayList<>();
 
+    private  static MatchHistoryForm matchHistoryForm;
+    private  static MatchHistoryController matchHistoryController;
     public enum FrameName{
         LOGIN,
         SIGNUP,
@@ -72,7 +74,8 @@ public class ClientController {
         LIST_PLAYER,
         WIN_GAME,
         LOST_GAME,
-        CONFIRM
+        CONFIRM,
+        MATCH_HISTORY
     }
 
     public ClientController(){
@@ -171,6 +174,11 @@ public class ClientController {
                 confirmController = new ConfirmController(confirmationForm);
                 confirmationForm.setVisible(true);
                 break;
+            case MATCH_HISTORY:
+                matchHistoryForm = new MatchHistoryForm();
+                matchHistoryController = new MatchHistoryController(matchHistoryForm);
+                matchHistoryForm.setVisible(true);
+                break;
             default:
                 break;
         }
@@ -222,6 +230,9 @@ public class ClientController {
             case CONFIRM:
                 confirmationForm.dispose();
                 break;
+            case MATCH_HISTORY:
+                matchHistoryForm.dispose();
+                break;
             default:
                 break;
         }
@@ -231,5 +242,7 @@ public class ClientController {
         return socketHandlers;
     }
 
-
+    public static MatchHistoryController getMatchHistoryController() {
+        return matchHistoryController;
+    }
 }

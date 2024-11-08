@@ -55,6 +55,16 @@ public class HomeController {
                     e1.printStackTrace();
                 }
             }
+            if(e.getSource() == homeForm.getHistoryButton()){
+                try {
+                    ClientController.openFrame(ClientController.FrameName.MATCH_HISTORY);
+                    ClientController.closeFrame(ClientController.FrameName.HOME);
+                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.MATCH_HISTORY, null);
+                }
+                catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
 
             if (e.getSource() == homeForm.getCustomButton()) {
                 try {

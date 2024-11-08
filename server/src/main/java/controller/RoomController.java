@@ -10,6 +10,7 @@ import models.ObjectWrapper;
 import models.Player;
 import models.Room;
 import utils.RandomString;
+import utils.StatusPlayer;
 import utils.StreamData;
 import views.ServerView;
 
@@ -31,7 +32,7 @@ public class RoomController {
         List<Player> playersInRoom = new ArrayList<>();
         playersInRoom.add(this.socketHandlers.getLoginController().getPlayerLogin());
         Room room = new Room(randomId, new Date(), this.socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", true);
-        this.socketHandlers.getLoginController().getPlayerLogin().setStatus("In Room");
+        this.socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.IN_ROOM.value);
         ServerController.rooms.add(room);
         // this.idRoom = randomId;
         ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.CREATE_ROOM.name(), room);

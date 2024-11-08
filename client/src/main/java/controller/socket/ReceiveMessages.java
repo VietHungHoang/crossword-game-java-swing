@@ -4,11 +4,7 @@ import java.io.ObjectInputStream;
 import java.util.List;
 
 import controller.*;
-import models.Game;
-import models.ObjectWrapper;
-import models.PlayerFriend;
-import models.PlayerStatus;
-import models.Room;
+import models.*;
 import utils.StreamData;
 import views.*;
 
@@ -20,6 +16,7 @@ public class ReceiveMessages extends Thread {
     private RankingController rankingController;
     private GameController gameController;
     private ListPlayerController listPlayerController;
+    private MatchHistoryController matchHistoryController;
 
     private EndGameController endGameController;
 
@@ -168,6 +165,9 @@ public class ReceiveMessages extends Thread {
                         else {
                           System.out.println();
                         }
+                        break;
+                    case MATCH_HISTORY:
+                        ClientController.getMatchHistoryController().updateMatchHistory((List<MatchHistory>) objectWrapper.getObject());
                         break;
                     default:
                         break;

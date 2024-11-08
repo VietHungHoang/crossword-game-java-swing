@@ -15,7 +15,7 @@ import static javax.swing.SwingUtilities.invokeLater;
 public class HomeForm extends JFrame {
     private JPanel mainPanel;
     private JLabel userLabel, scoreLabel;
-    private JButton rankButton, friendButton, customButton, rankingButton, logoutButton;
+    private JButton rankButton, friendButton, customButton, rankingButton, logoutButton, historyButton;
     private Point initialClick;
     public HomeForm() {
         initComponents();
@@ -110,8 +110,9 @@ public class HomeForm extends JFrame {
       friendButton = createStyledButton("CHƠI CÙNG BẠN BÈ ", new Color(85, 167, 247));
       customButton = createStyledButton("DANH SÁCH NGƯỜI CHƠI ", new Color(0, 204, 102));
       rankingButton = createStyledButton("XEM BẢNG XẾP HẠNG ", new Color(255, 153, 51));
+        historyButton = createStyledButton("LỊCH SỬ ĐẤU ", new Color(241, 209, 93));
       logoutButton = createStyledButton("ĐĂNG XUẤT ", new Color(158, 158, 158));
-  
+
       // Footer label
       JLabel footerLabel = new JLabel("Chọn một mục để bắt đầu chơi!");
       footerLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -129,6 +130,7 @@ public class HomeForm extends JFrame {
       addButtonWithSpacing(buttonPanel, friendButton);
       addButtonWithSpacing(buttonPanel, customButton);
       addButtonWithSpacing(buttonPanel, rankingButton);
+        addButtonWithSpacing(buttonPanel, historyButton);
       addButtonWithSpacing(buttonPanel, logoutButton);
   
       // Center align the buttons
@@ -137,6 +139,7 @@ public class HomeForm extends JFrame {
       customButton.setAlignmentX(Component.CENTER_ALIGNMENT);
       rankingButton.setAlignmentX(Component.CENTER_ALIGNMENT);
       logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        historyButton.setAlignmentX(Component.CENTER_ALIGNMENT);
   
       // Footer panel
       JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -296,5 +299,10 @@ public class HomeForm extends JFrame {
         customButton.addActionListener(act);
         rankingButton.addActionListener(act);
         logoutButton.addActionListener(act);
+        historyButton.addActionListener(act);
+    }
+
+    public JButton getHistoryButton() {
+        return historyButton;
     }
 }

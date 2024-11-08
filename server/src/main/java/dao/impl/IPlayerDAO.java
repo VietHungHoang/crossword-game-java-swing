@@ -1,9 +1,6 @@
 package dao.impl;
 
-import models.Player;
-import models.PlayerFriend;
-import models.PlayerRanking;
-import models.User;
+import models.*;
 
 import java.sql.Connection;
 import java.util.List;
@@ -15,5 +12,5 @@ public interface IPlayerDAO {
     public List<PlayerRanking > getRanking();
     public void makeFriend(Long id, Long friendId);
     public boolean isFriend(Long id, Long friendId);
-
+    public List<MatchHistory> getMatchHistory(Long id);
 }

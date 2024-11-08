@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.impl.IPlayerDAO;
-import models.Player;
-import models.PlayerFriend;
-import models.PlayerRanking;
-import models.User;
+import models.*;
 
 public class PlayerDAO extends DAO implements IPlayerDAO {
     public PlayerDAO(Connection conn){
@@ -20,6 +17,48 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
             System.out.println(e);
         }
     }
+
+    @Override
+    public List<MatchHistory> getMatchHistory(Long id) {
+        String sql = "SELECT  " +
+                "    p_opponent.player_name AS opponent, " +
+                "    g.start_date AS start_date, " +
+                "    g.end_date AS end_date, " +
+                "    g.type AS type, " +
+                "    IFNULL(p_winner.player_name, '0') AS winner   " +
+                "FROM  " +
+                "    join_playing jp " +
+                "JOIN  " +
+                "    join_playing jp_opponent ON jp.game_id = jp_opponent.game_id " +
+                "JOIN  " +
+                "    player p_opponent ON jp_opponent.player_id = p_opponent.id " +
+                "JOIN  " +
+                "    game g ON jp.game_id = g.id " +
+                "LEFT JOIN  " +
+                "    player p_winner ON g.winner = p_winner.id " +
+                "WHERE  " +
+                "    jp.player_id = ? AND jp_opponent.player_id != ?;  ";
+        try {
+            this.preStatement = this.conn.prepareStatement(sql);
+            this.preStatement.setLong(1, id);
+            this.preStatement.setLong(2, id);
+            this.rs = this.preStatement.executeQuery();
+            List<MatchHistory> matchHistories = new ArrayList<>();
+            while (rs.next()) {  // change from if to while to handle multiple rows
+                MatchHistory matchHistory = new MatchHistory();
+                matchHistory.setOpponent(rs.getString("opponent"));
+                matchHistory.setStartDate(rs.getDate("start_date"));
+                matchHistory.setEndDate(rs.getDate("end_date"));
+                matchHistory.setType(rs.getString("type"));
+                matchHistory.setStatusS(rs.getString("winner"));
+                matchHistories.add(matchHistory);
+            }
+            return matchHistories;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public Player findPlayerByUserId(Long id) {
