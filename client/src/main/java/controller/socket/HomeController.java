@@ -17,7 +17,7 @@ public class HomeController {
         this.homeForm = homeForm;
         this.homeForm.addActionListener(new HomeListener());
         homeForm.getUserLabel().setText("Xin chào " + ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getPlayerName());
-        homeForm.getScoreLabel().setText("Điểm: " + ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getTotalPoint());
+        homeForm.getScoreLabel().setText("Điểm: " + ClientController.getSocketHandler().getReceiveMessages().getLoginController().getPlayerLogin().getTotalGameWon() * 5);
     }
 
     class HomeListener implements ActionListener {
@@ -51,6 +51,16 @@ public class HomeController {
                     ClientController.closeFrame(ClientController.FrameName.HOME);
                     ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.WAITING_FOR_GAME, null);
                 } 
+                catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            if(e.getSource() == homeForm.getHistoryButton()){
+                try {
+                    ClientController.openFrame(ClientController.FrameName.MATCH_HISTORY);
+                    ClientController.closeFrame(ClientController.FrameName.HOME);
+                    ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.MATCH_HISTORY, null);
+                }
                 catch (IOException e1) {
                     e1.printStackTrace();
                 }

@@ -30,6 +30,7 @@ public class SocketHandlers extends Thread {
     private RankingController rankingController;
     private ListPlayerController listPlayerController;
     private InviteRoomController inviteRoomController;
+    private  MatchHistoryController matchHistoryController;
     public LoginController getLoginController() {
 
         return this.loginController;
@@ -152,6 +153,9 @@ public void run() {
                 case START_GAME:
                         this.gameController = new GameController(view, conn, this);
                         this.gameController.handleStartGameWithFriend();
+                case MATCH_HISTORY:
+                    this.matchHistoryController=new MatchHistoryController(view,conn,this);
+                    this.matchHistoryController.matchHistory();
                     break;
                 default:
                     break;

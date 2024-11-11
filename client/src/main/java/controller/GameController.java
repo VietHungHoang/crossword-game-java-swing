@@ -26,13 +26,16 @@ public class GameController {
 
   private Boolean isWin = false;
 
+/**
+ * Xử lý sự kiện điền từ của người chơi
+ */
 class SubmitAnswerListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e){
             JButton button = (JButton)e.getSource();
-            boolean done = false;
-            int cnt = 0;
-            button.setEnabled(false);
+            boolean done = false; // Hoàn thành game
+            int cnt = 0; // Đếm số kí tự đã nhập
+            button.setEnabled(false); // Nút nào nhấn rồi thì không được nhấn nữa
             for (JButton x : gameForm.getListKeywordBtns())
                 if (x.getText().equals("")) {
                     if(!done){
@@ -52,25 +55,21 @@ class SubmitAnswerListener implements ActionListener{
                 if(sb.toString().equalsIgnoreCase(gameForm.getKeyword())){
                     
                     try {
-                      stopCountDown();
+                        timeLeft = 0;
+                      countDownTimer.stop();
                       isWin = true;
-                        // gameForm.getCountdownTimer().stop();
                         for(JButton x : gameForm.getKeyboardButtons()){
                             x.setEnabled(false);
                         }
                         for(JButton x : gameForm.getListKeywordBtns()){
                             x.setEnabled(false);
                         }
-                        System.out.println("send to serrver");
                         ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.WIN_GAME, null);
-
-                        
                     } catch (Exception ex) {
                       System.out.println(ex);
                     }
                 }
                 else{
-
                     JOptionPane.showMessageDialog(gameForm, "Chưa đúng", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -84,13 +83,17 @@ class SubmitAnswerListener implements ActionListener{
     countDownTimer = new Timer(1000, new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         if (timeLeft > 0) {
+          System.out.println("Timemer đang chay" + isWin);
           timeLeft--;
           gameForm.getLblCountdown().setText(String.valueOf(timeLeft));
         } else {
               countDownTimer.stop();
               try{
-                    if(!isWin)
+          System.out.println("Timemer da dung" + isWin);
+
+                    if(!isWin){
                       ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.DRAW_GAME, null);
+                    }
               }
               catch (Exception ex){
     
@@ -101,18 +104,12 @@ class SubmitAnswerListener implements ActionListener{
   this.startCountDown();
   }
 
-
-
   public GameController(){
   }
 
   public void startCountDown(){
       countDownTimer.start();
   }
-
-  public void stopCountDown(){
-    countDownTimer.stop();
-}
 
   public void showMessage(String msg){
     JOptionPane.showMessageDialog(gameForm, msg);
@@ -132,18 +129,22 @@ class SubmitAnswerListener implements ActionListener{
   }
 
   public void handleEndGame(String results){
+      countDownTimer.stop();
+      isWin = true;
     System.out.println("Xu ly end game");
     ClientController.closeFrame(ClientController.FrameName.GAME);
     if(results.equals("Win"))
         ClientController.openFrame(ClientController.FrameName.WIN_GAME);
-    else
-        ClientController.openFrame(ClientController.FrameName.LOST_GAME);
+    else{
+      ClientController.openFrame(ClientController.FrameName.LOST_GAME);
+
+    }
 
   }
 
   public void handleDrawGame(){
     JOptionPane.showMessageDialog(gameForm, "Draw", "Khong co gi", JOptionPane.PLAIN_MESSAGE);
-//    ClientController.openFrame(FrameName.HOME);
+   ClientController.openFrame(FrameName.HOME);
     ClientController.closeFrame(FrameName.GAME);
 
   }

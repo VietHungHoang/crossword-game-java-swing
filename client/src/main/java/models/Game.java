@@ -19,7 +19,7 @@ public class Game implements Serializable{
     private List<WordInGame> wordInGameList; // Danh sách từ trong game
 
     private Keyword keyword;
-    private List<GameRound> gameRoundList; // Danh sách các round
+    // private List<GameRound> gameRoundList; // Danh sách các round
     private Room room; // Phòng chơi game
     public Player player1; // Người chơi 1
     public Player player2; // Người chơi 2
@@ -96,7 +96,7 @@ public class Game implements Serializable{
         
         // Khởi tạo danh sách từ ngẫu nhiên cho WordInGame và danh sách GameRound rỗng
         this.wordInGameList = WordInGame.generateSampleData();
-        this.gameRoundList = new ArrayList<>();
+        // this.gameRoundList = new ArrayList<>();
 
         // Thêm GameRound đầu tiên
         addNewRound();
@@ -115,11 +115,11 @@ public class Game implements Serializable{
         }
 
         WordInGame newWord = getUniqueKeyword(); // Lấy từ khóa ngẫu nhiên chưa được sử dụng
-        if (newWord != null) {
-            // Tạo GameRound mới với gameId và WordInGame
-            GameRound newRound = new GameRound(this.id, newWord);
-            gameRoundList.add(newRound); // Thêm round mới vào danh sách
-        }
+        // if (newWord != null) {
+        //     // Tạo GameRound mới với gameId và WordInGame
+        //     GameRound newRound = new GameRound(this.id, newWord);
+        //     gameRoundList.add(newRound); // Thêm round mới vào danh sách
+        // }
     }
 
     // Lấy từ khóa ngẫu nhiên chưa tồn tại trong game
@@ -127,23 +127,23 @@ public class Game implements Serializable{
         List<WordInGame> shuffledWords = new ArrayList<>(wordInGameList);
         Collections.shuffle(shuffledWords); // Xáo trộn danh sách từ
 
-        for (WordInGame word : shuffledWords) {
-            if (isUniqueKeyword(word)) {
-                return word; // Trả về từ khóa duy nhất
-            }
-        }
+        // for (WordInGame word : shuffledWords) {
+        //     if (isUniqueKeyword(word)) {
+        //         return word; // Trả về từ khóa duy nhất
+        //     }
+        // }
         return null; // Không tìm thấy từ khóa duy nhất
     }
 
     // Kiểm tra xem từ khóa có duy nhất không
-    private boolean isUniqueKeyword(WordInGame newWord) {
-        for (GameRound existingRound : gameRoundList) {
-            if (existingRound.getWordInGame().getKeyword().equalsIgnoreCase(newWord.getKeyword())) {
-                return false; // Từ khóa đã tồn tại trong game
-            }
-        }
-        return true; // Từ khóa là duy nhất
-    }
+    // private boolean isUniqueKeyword(WordInGame newWord) {
+    //     for (GameRound existingRound : gameRoundList) {
+    //         if (existingRound.getWordInGame().getKeyword().equalsIgnoreCase(newWord.getKeyword())) {
+    //             return false; // Từ khóa đã tồn tại trong game
+    //         }
+    //     }
+    //     return true; // Từ khóa là duy nhất
+    // }
 
     // Cộng điểm cho người chơi dựa trên ID
     public void addPoint(String playerId) {
@@ -160,10 +160,10 @@ public class Game implements Serializable{
     }
 
     // Kết thúc round và cập nhật điểm cho người thắng
-    public void endRound(GameRound round, Player winner) {
-        addPoint(winner.getId().toString()); // Cộng điểm cho người thắng
-        addNewRound(); // Thêm round mới nếu chưa có người thắng
-    }
+    // public void endRound(GameRound round, Player winner) {
+    //     addPoint(winner.getId().toString()); // Cộng điểm cho người thắng
+    //     addNewRound(); // Thêm round mới nếu chưa có người thắng
+    // }
 
     // Kết thúc game và cập nhật thông tin người thắng
     private void endGame(Player winner) {
@@ -174,9 +174,9 @@ public class Game implements Serializable{
     }
 
     // Getter cho danh sách các round
-    public List<GameRound> getGameRoundList() {
-        return gameRoundList;
-    }
+    // public List<GameRound> getGameRoundList() {
+    //     return gameRoundList;
+    // }
     public String getRoomId() {
         return roomId;
     }

@@ -16,6 +16,7 @@ import models.PlayerFriend;
 import models.PlayerStatus;
 import models.Room;
 import utils.RandomString;
+import utils.StatusPlayer;
 import utils.StreamData;
 import views.ServerView;
 
@@ -38,7 +39,7 @@ public class InviteRoomController {
         List<Player> playersInRoom = new ArrayList<>();
         playersInRoom.add(this.socketHandlers.getLoginController().getPlayerLogin());
         Room room = new Room(randomId, new Date(), this.socketHandlers.getLoginController().getPlayerLogin(), playersInRoom, "1/2", false);
-        this.socketHandlers.getLoginController().getPlayerLogin().setStatus("In Room");
+        this.socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.IN_ROOM.value);
         ServerController.rooms.add(room);
         System.out.println("Khoi tao room vui ve"+room);
         ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.INVITE_ROOM.name(), room);
@@ -67,7 +68,7 @@ public class InviteRoomController {
                 break;
             }
         }
-        friend.setStatus(isOnline ? playerOnline.getStatus() : "Offline");
+        friend.setStatus(isOnline ? playerOnline.getStatus() : StatusPlayer.OFFLINE.value);
     }
 
     ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.GET_LIST_FRIEND.name(), listPlayer);
@@ -81,15 +82,14 @@ public class InviteRoomController {
                 .collect(Collectors.toMap(PlayerStatus::getName, PlayerStatus::getStatus));
         for(SocketHandlers client : allSocketHandlers){
             if(client.getLoginController()!=null && client.getLoginController().getPlayerLogin()!=null){
-                System.out.println("Ban be cua "+client.getLoginController().getPlayerLogin().getPlayerName()+": ");
+
                 List<PlayerFriend> friendClient = playerDAO.getListFriend(client.getLoginController().getPlayerLogin().getId());
                 for (PlayerFriend friend : friendClient) {
-                    System.out.println(listPlayerOnline.get(friend.getPlayerName()));
                     if(listPlayerOnline.get(friend.getPlayerName())!=null){
                         friend.setStatus(listPlayerOnline.get(friend.getPlayerName()));
                     }
                     else {
-                        friend.setStatus("Offline");
+                        friend.setStatus(StatusPlayer.OFFLINE.value);
                     }
                 }
                 ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.UPDATE_LIST_FRIEND.name(), friendClient);
@@ -103,7 +103,7 @@ public class InviteRoomController {
         SocketHandlers clientHandler = ServerController.socketHandlers.stream().filter(h -> h.getLoginController().getPlayerLogin().getPlayerName().equals(playerName)).findFirst().orElse(null);
         Player player =  clientHandler.getLoginController().getPlayerLogin();
         Room room = ServerController.rooms.stream().filter(r -> r.getId().equals(this.socketHandlers.getRoomID())).findFirst().orElse(null);
-        if (room != null && !room.getPlayers().contains(player) && room.getPlayers().size() < 2 && player.getStatus().equals("Online") && !room.isRanking())  {
+        if (room != null && !room.getPlayers().contains(player) && room.getPlayers().size() < 2 && player.getStatus().equals(StatusPlayer.ONLINE.value) && !room.isRanking())  {
             ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.RECEIVE_INVITE_ROOM.name(), room);
             clientHandler.send(objectWrapper);
             System.out.println("Sent invite room " + room.getId() + " to " + player.getPlayerName());
@@ -111,7 +111,7 @@ public class InviteRoomController {
     }
     public void acceptInviteRoom(String roomId){
       Room roomInServer = ServerController.rooms.stream().filter(r -> r.getId().equals(roomId)).findFirst().orElse(null);
-      this.socketHandlers.getLoginController().getPlayerLogin().setStatus("In Room");
+      this.socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.IN_ROOM.value);
       if (roomInServer != null && !roomInServer.isRanking() && roomInServer.getPlayers().size() < 2) {
           // Cập nhật trạng thái phòng
           ServerController.rooms.remove(roomInServer);
@@ -176,7 +176,7 @@ public class InviteRoomController {
           System.out.println("Warning: Player trying to leave room but has no roomID");
           return;
       }
-      socketHandlers.getLoginController().getPlayerLogin().setStatus("Online");
+      socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
 
       // Lấy room từ ServerController.rooms
       Room room = ServerController.rooms.stream()
@@ -197,7 +197,7 @@ public class InviteRoomController {
       updatedRoom.setStatus("1/2");
       ServerController.rooms.add(updatedRoom);
       this.socketHandlers.setRoomID(null);
-      this.socketHandlers.getLoginController().getPlayerLogin().setStatus("Online");
+      this.socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
       //Truyền ObjectWrapper xuống
       ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.LEAVE_INVITE_ROOM.name(), updatedRoom);
       socketHandlers.send(objectWrapper);

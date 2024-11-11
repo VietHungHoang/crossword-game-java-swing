@@ -4,11 +4,7 @@ import java.io.ObjectInputStream;
 import java.util.List;
 
 import controller.*;
-import models.Game;
-import models.ObjectWrapper;
-import models.PlayerFriend;
-import models.PlayerStatus;
-import models.Room;
+import models.*;
 import utils.StreamData;
 import views.*;
 
@@ -21,6 +17,7 @@ public class ReceiveMessages extends Thread {
     private GameController gameController;
     private ListPlayerController listPlayerController;
     private HomeController homeController;
+    private MatchHistoryController matchHistoryController;
 
     private EndGameController endGameController;
 
@@ -75,7 +72,7 @@ public class ReceiveMessages extends Thread {
                         this.rankingController = new RankingController(new RankingForm());
                         this.rankingController.rankingHandler(objectWrapper.getObject());
                         break;
-                        case LIST_PLAYER:
+                    case LIST_PLAYER:
                         this.listPlayerController = new ListPlayerController(new ListPlayerForm());
                         ClientController.players = (List<PlayerStatus>) objectWrapper.getObject();
                         this.listPlayerController.updatePlayerList(ClientController.players);
@@ -157,7 +154,7 @@ public class ReceiveMessages extends Thread {
                     case DRAW_GAME:
                         this.gameController = new GameController();
                         this.gameController.handleDrawGame();
-                 
+                          break;
                     case LEAVE_INVITE_ROOM:
                         System.out.println("Nhan leave room tu server: " + objectWrapper.getObject());
                         if (this.inviteRoomController != null ) {
@@ -166,6 +163,9 @@ public class ReceiveMessages extends Thread {
                         else {
                           System.out.println();
                         }
+                        break;
+                    case MATCH_HISTORY:
+                        ClientController.getMatchHistoryController().updateMatchHistory((List<MatchHistory>) objectWrapper.getObject());
                         break;
                     default:
                         break;

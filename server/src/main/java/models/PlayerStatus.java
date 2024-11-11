@@ -7,7 +7,7 @@ public class PlayerStatus implements Serializable {
     private String name;
     private boolean isFriend;
     private String status;
-
+// nguoi choi
     public PlayerStatus(String name, boolean isFriend, String status) {
         this.name = name;
         this.isFriend = isFriend;

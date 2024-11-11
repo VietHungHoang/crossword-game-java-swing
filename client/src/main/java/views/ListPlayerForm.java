@@ -292,7 +292,7 @@ public class ListPlayerForm extends JFrame {
                     case "In Room":
                         cell.setForeground(new Color(52, 152, 219));
                         break;
-                    case "Finding game":
+                    case "Finding Game":
                         cell.setForeground(new Color(241, 196, 15));
                         break;
                     case "In Game":

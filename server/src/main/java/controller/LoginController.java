@@ -8,6 +8,7 @@ import dao.UserDAO;
 import models.ObjectWrapper;
 import models.Player;
 import models.User;
+import utils.StatusPlayer;
 import utils.StreamData;
 import views.ServerView;
 
@@ -32,7 +33,7 @@ public class LoginController {
         String message = StreamData.Message.LOGIN.name();
         message += (user2.getId() != null && user2.getPassword().equals(user.getPassword())) ? ";success" : ";failed";
         Player player = playerDAO.findPlayerByUserId(user2.getId());
-        player.setStatus("Online");
+        player.setStatus(StatusPlayer.ONLINE.value);
         ObjectWrapper objectWrapper;
         // already login
         if (user2.getId() != null) {

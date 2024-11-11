@@ -84,6 +84,62 @@ public class Game implements Serializable{
         this.keyword = keyword;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setWinner(Long winner) {
+        this.winner = winner;
+    }
+
+    public void setWordInGameList(List<WordInGame> wordInGameList) {
+        this.wordInGameList = wordInGameList;
+    }
+
+    public void setGameRoundList(List<GameRound> gameRoundList) {
+        this.gameRoundList = gameRoundList;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public void setPlayer1(Player player1) {
+        this.player1 = player1;
+    }
+
+    public void setPlayer2(Player player2) {
+        this.player2 = player2;
+    }
+
+    public void setPlayer1Score(int player1Score) {
+        this.player1Score = player1Score;
+    }
+
+    public void setPlayer2Score(int player2Score) {
+        this.player2Score = player2Score;
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
+    }
+
     public Game(Room room) {
         RandomString randomString = new RandomString(9, new SecureRandom(), RandomString.DIGITS);
         this.id = randomString.nextString(); // Tạo ID game ngẫu nhiên

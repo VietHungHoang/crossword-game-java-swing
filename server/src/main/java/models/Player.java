@@ -61,7 +61,15 @@ public class Player implements Serializable {
         this.playerName = playerName;
     }
 
+    
 
+    
+
+
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
 
     public Long getId() {
         return id;
@@ -74,6 +82,8 @@ public class Player implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
+
+
 
 
     @Override

@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Random;
 
+import dao.GameDAO;
 import dao.KeywordDAO;
 import dao.PlayerDAO;
 import dao.UserDAO;
+import dao.impl.IPlayerDAO;
 import models.Game;
 import models.Keyword;
 import models.ObjectWrapper;
@@ -21,6 +23,7 @@ public class GameController {
     private PlayerDAO playerDAO;
     private SocketHandlers socketHandlers;
     private KeywordDAO keywordDAO;
+    private GameDAO gameDAO;
 
     public GameController(ServerView view, Connection conn, SocketHandlers socketHandlers) {
         this.view = view;
@@ -28,6 +31,7 @@ public class GameController {
         this.playerDAO = new PlayerDAO(conn);
         this.socketHandlers = socketHandlers;
         this.keywordDAO = new KeywordDAO(conn);
+        this.gameDAO = new GameDAO(conn);
     }
 
     public Game getGameByRoom(Room room) {
@@ -52,10 +56,26 @@ public class GameController {
         player.setTotalGame(player.getTotalGame() + 1);
         player.setTotalGameWon(player.getTotalGameWon() + 1);
         player.setTotalPoint(player.getTotalPoint() + 5);
+        playerDAO.updatePlayer(player);
+
         // Lay ra nguoi thua va xu ly
         Player reamainingPlayer = getRemainingPlayer(player);
         reamainingPlayer.setTotalGame(reamainingPlayer.getTotalGame() + 1);
-        this.view.showMessage(player.getPlayerName() + "is win and " + reamainingPlayer.getPlayerName() + "is lost");
+        System.out.println("Update remainning player");
+        playerDAO.updatePlayer(reamainingPlayer);
+        this.view.showMessage(player.getPlayerName() + " is win and " + reamainingPlayer.getPlayerName() + " is lost");
+
+        int i = 0;
+
+        for(i = 0; i < ServerController.games.size(); i++)
+            if(ServerController.games.get(i).getPlayer1().getId().equals(player.getId())){
+                break;
+            }
+        Game gamew = ServerController.games.get(i);
+        gamew.setWinner(player.getId());
+        gameDAO.insert(gamew);
+        ServerController.rooms.remove(gamew.getRoom());
+        ServerController.games.remove(i);
 
         // send to nguoi thang
         socketHandlers.send(new ObjectWrapper("WIN_GAME", player));
@@ -80,16 +100,27 @@ public class GameController {
 
     public void handleDraw(){
         Player currentPlayer = socketHandlers.getLoginController().getPlayerLogin();
+        currentPlayer.setTotalGame(currentPlayer.getTotalGame() + 1);
+        Game t = null;
         for(Game x : ServerController.games){
-             if(x.getPlayer1().getId() == currentPlayer.getId()){
+             if(x.getPlayer1().getId() == currentPlayer.getId() && x.getWinner() != null){
+                t = x;
                  socketHandlers.send(new ObjectWrapper(StreamData.Message.DRAW_GAME.name(), null));
                  for(SocketHandlers y : ServerController.getSocketHandlers()){
                      if(y.getLoginController().getPlayerLogin().getId() == x.getPlayer2().getId()){
+                        Player remainingPlayer = x.getPlayer2();
+                        remainingPlayer.setTotalGame(remainingPlayer.getTotalGame() + 1);
+                         playerDAO.updatePlayer(currentPlayer);
+                        playerDAO.updatePlayer(remainingPlayer);
                          y.send(new ObjectWrapper(StreamData.Message.DRAW_GAME.name(), null));
                          break;
                      }
                  }
              }
+        }
+        if(t != null){
+            t.setWinner(0L);
+            gameDAO.insert(t);
         }
     }
 

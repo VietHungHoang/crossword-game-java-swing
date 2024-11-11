@@ -28,17 +28,17 @@ public class EndGameForm extends JFrame {
         backButton = new JButton("Quay lại");
 
         // Nút "Mời đấu lại"
-        JButton replayButton = new JButton("Mời đấu lại");
-        replayButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Xử lý sự kiện khi bấm nút "Mời đấu lại"
-                // Thực hiện hành động mời đấu lại
-            }
-        });
+        // JButton replayButton = new JButton("Mời đấu lại");
+        // replayButton.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         // Xử lý sự kiện khi bấm nút "Mời đấu lại"
+        //         // Thực hiện hành động mời đấu lại
+        //     }
+        // });
         
         buttonPanel.add(backButton);
-        buttonPanel.add(replayButton);
+        // buttonPanel.add(replayButton);
         
         add(buttonPanel, BorderLayout.SOUTH);
         
