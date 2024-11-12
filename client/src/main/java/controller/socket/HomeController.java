@@ -50,6 +50,7 @@ public class HomeController {
                     ClientController.openFrame(ClientController.FrameName.WAITING_FOR_GAME);
                     ClientController.closeFrame(ClientController.FrameName.HOME);
                     ClientController.getSocketHandler().getSendMessages().send(StreamData.Message.WAITING_FOR_GAME, null);
+                    System.out.println("Da gui WAITING FOR GAME");
                 } 
                 catch (IOException e1) {
                     e1.printStackTrace();

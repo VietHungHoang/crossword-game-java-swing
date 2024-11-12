@@ -81,6 +81,7 @@ public void run() {
                     this.loginController.logOut();
                     break;
                 case WAITING_FOR_GAME:
+                    System.out.println("Received WAITING_FOR_GAME");
                     this.waitingForGameController = new WaitingForGameController(view, conn, this);
                     this.waitingForGameController.handleFindingRoom();
                     break;
