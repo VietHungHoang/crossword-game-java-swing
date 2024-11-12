@@ -6,6 +6,11 @@ import java.security.Key;
 public class Keyword implements  Serializable{
     private Long id;
 
+    public Keyword(Keyword keyword) {
+        this.id= keyword.id;
+        this.value= new String(keyword.value);
+    }
+
     @Override
     public String toString() {
         return "Keyword{" +

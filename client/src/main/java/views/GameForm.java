@@ -1,6 +1,7 @@
 package views;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
@@ -10,13 +11,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
 public class GameForm extends JFrame {
 
@@ -182,26 +178,67 @@ public class GameForm extends JFrame {
             x.addActionListener(act);
     }
 
-    public String[] getKeyboard(String keyword) {
-        String[] res = new String[24];
-        HashMap<Character, Integer> map = new HashMap<>();
-        for (char x : keyword.toCharArray())
-            map.put(x, map.containsKey(x) ? map.get(x) + 1 : 1);
-        Random random = new Random();
-        int i;
-        for (i = 0; i < 24 - map.size(); i++)
-            res[i] = Character.toString(65 + random.nextInt(26));
-        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
-            int n = entry.getValue();
-            while (n-- > 0) {
-                res[i] = entry.getKey().toString();
-                i++;
-                n--;
-            }
+//    public String[] getKeyboard(String keyword) {
+//        String[] res = new String[24];
+//        HashMap<Character, Integer> map = new HashMap<>();
+//        for (char x : keyword.toCharArray())
+//            map.put(x, map.containsKey(x) ? map.get(x) + 1 : 1);
+//        Random random = new Random();
+//        int i;
+//        for (i = 0; i < 24 - map.size(); i++)
+//            res[i] = Character.toString(65 + random.nextInt(26));
+//        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+//            int n = entry.getValue();
+//            while (n-- > 0) {
+//                res[i] = entry.getKey().toString();
+//                i++;
+//                n--;
+//            }
+//        }
+//        return res;
+//    }
+public String[] getKeyboard(String keyword) {
+    String[] res = new String[24];
+    HashSet<Character> uniqueChars = new HashSet<>();
+    int i = 0;
+
+    // Add characters from the keyword to `res` in their original order
+    for (char c : keyword.toCharArray()) {
+        if (i >= 24) break;  // Stop if `res` is already full
+        if (!uniqueChars.contains(c)) {  // Add only unique characters
+            res[i] = Character.toString(c);
+            uniqueChars.add(c);
+            i++;
         }
-        return res;
     }
 
+    // Fill remaining slots with random uppercase letters, ensuring no repeats
+    Random random = new Random();
+    while (i < 24) {
+        char randomChar = (char) (65 + random.nextInt(26)); // Generate random 'A' to 'Z'
+
+        // Ensure the random character is not already in `res`
+        if (!uniqueChars.contains(randomChar)) {
+            res[i] = Character.toString(randomChar);
+            uniqueChars.add(randomChar);
+            i++;
+        }
+    }
+
+    return randomizeArray(res);
+}
+
+
+    public static String[] randomizeArray(String[] array) {
+        // Chuyển mảng thành List để dễ xáo trộn
+        List<String> list = Arrays.asList(array);
+
+        // Xáo trộn ngẫu nhiên các phần tử trong danh sách
+        Collections.shuffle(list);
+
+        // Chuyển danh sách về lại mảng
+        return list.toArray(array);
+    }
     
     public JLabel getLblPlayer1Name() {
         return lblPlayer1Name;

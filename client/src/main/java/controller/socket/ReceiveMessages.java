@@ -18,7 +18,7 @@ public class ReceiveMessages extends Thread {
     private ListPlayerController listPlayerController;
     private HomeController homeController;
     private MatchHistoryController matchHistoryController;
-
+    private Game currentGame;
     private EndGameController endGameController;
 
     // private EndGameController endGameController;
@@ -60,10 +60,13 @@ public class ReceiveMessages extends Thread {
                         break;
                     case START_GAME:
                         this.confirmController = new ConfirmController(new ConfirmationForm());
+                        this.currentGame=(Game) objectWrapper.getObject();
                         this.confirmController.handleStartGame((Game) objectWrapper.getObject());
                         break;
                     case START_GAME_FRIEND:
                         if(this.inviteRoomController != null){
+                            System.out.println("Choi Game: "+ (Game) objectWrapper.getObject());
+                            this.currentGame=(Game) objectWrapper.getObject();
                             this.inviteRoomController.handleStartGameWithFriend((Game) objectWrapper.getObject());
                         }
                         break;
@@ -195,5 +198,13 @@ public class ReceiveMessages extends Thread {
 
     public void setLoginController(LoginController loginController) {
         this.loginController = loginController;
+    }
+
+    public Game getCurrentGame() {
+        return currentGame;
+    }
+
+    public void setCurrentGame(Game currentGame) {
+        this.currentGame = currentGame;
     }
 }

@@ -17,6 +17,7 @@ import models.Keyword;
 import models.ObjectWrapper;
 import models.Player;
 import models.Room;
+import utils.RandomString;
 import utils.StatusPlayer;
 import utils.StreamData;
 import utils.TypeGame;
@@ -63,25 +64,20 @@ public class GameController {
         socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
         player.setTotalGame(player.getTotalGame() + 1);
         player.setTotalGameWon(player.getTotalGameWon() + 1);
-//        player.setTotalPoint(player.getTotalPoint() + 5);
-//        playerDAO.updatePlayer(player);
 
         // Lay ra nguoi thua va xu ly
         Player reamainingPlayer = getRemainingPlayer(player);
         reamainingPlayer.setTotalGame(reamainingPlayer.getTotalGame() + 1);
-//        System.out.println("Update remainning player");
-//        playerDAO.updatePlayer(reamainingPlayer);
-//        this.view.showMessage(player.getPlayerName() + " is win and " + reamainingPlayer.getPlayerName() + " is lost");
 
         int i = 0;
 
-        for(i = 0; i < ServerController.games.size(); i++)
-            if(ServerController.games.get(i).getPlayer1().getId().equals(player.getId()) ||
-            ServerController.games.get(i).getPlayer2().getId().equals(player.getId())
-            ){
+        for(i = 0; i < ServerController.games.size(); i++) {
+            if (ServerController.games.get(i).getPlayer1().getId().equals(player.getId()) ||
+                    ServerController.games.get(i).getPlayer2().getId().equals(player.getId())
+            ) {
                 break;
             }
-        // if(i == ServerController.games.size()) i--;
+        }
         Game gamew = ServerController.games.get(i);
 
 
@@ -145,8 +141,6 @@ public class GameController {
                      if(y.getLoginController().getPlayerLogin().getId() == x.getPlayer2().getId()){
                         remainingPlayer = x.getPlayer2();
                         remainingPlayer.setTotalGame(remainingPlayer.getTotalGame() + 1);
-                         playerDAO.updatePlayer(currentPlayer);
-                        playerDAO.updatePlayer(remainingPlayer);
                         // set status player
                         y.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
                          y.send(new ObjectWrapper(StreamData.Message.DRAW_GAME.name(), null));
@@ -157,13 +151,14 @@ public class GameController {
         }
 
 
-
         socketHandlers.getListPlayerController().updateListPlayer();
         socketHandlers.getInviteRoomController().updateListFriend();
         if(t != null){
             t.setWinner(0L);
             gameDAO.insert(t);
             Long gameId = gameDAO.getLatestGameId();
+            playerDAO.updatePlayer(currentPlayer);
+            playerDAO.updatePlayer(remainingPlayer);
             System.out.println("Insert game Id: "+ gameId);
             joinPlaying.insert(gameId, currentPlayer.getId());
             joinPlaying.insert(gameId, remainingPlayer.getId());
@@ -179,11 +174,12 @@ public class GameController {
                     Game game = new Game(x);
                     Random random = new Random();
                     Long z = random.nextInt(2)*1L;
-                    game.setKeyword(new Keyword(1L,  "APPLE"));
+                    String key = new String(RandomString.generateRandomString());
+                    game.setKeyword(new Keyword(1L, key));
                     System.out.println("Da tao phong cho ca 2 nguoi choi trong phong");
                     ServerController.games.add(game);
                     System.out.println("Da them phong vao danh sach game");
-                    ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME_FRIEND.name(), game);
+                    ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME_FRIEND.name(), new Game(game));
                     System.out.println("Game object Wrapper" + game.toString());
                     for(SocketHandlers socketHandler : ServerController.socketHandlers ){
                         if(socketHandler.getLoginController().getPlayerLogin().equals(x.getPlayers().get(0)) || socketHandler.getLoginController().getPlayerLogin().equals(x.getPlayers().get(1))){

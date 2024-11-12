@@ -177,11 +177,12 @@ public class WaitingForGameController {
                 Random random = new Random();
                 socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.IN_GAME.value);
                 Long x = random.nextInt(this.keywordDAO.countAll()) * 1L;
-                game.setKeyword(new Keyword(10L, "A"));
+                String key = new String(RandomString.generateRandomString());
+                game.setKeyword(new Keyword(10L, key));
                 System.out.println("Da tao phong cho ca 2 nguoi choi trong phong");
                 ServerController.games.add(game);
                 System.out.println("Da them phong vao danh sach game");
-                ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME.name(), game);
+                ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME.name(), new Game(game));
                 System.out.println("Game object Wrapper" + game.toString());
                 List<SocketHandlers> socketHandlersList = ServerController.socketHandlers;
                 for (SocketHandlers socketHandler : socketHandlersList) {

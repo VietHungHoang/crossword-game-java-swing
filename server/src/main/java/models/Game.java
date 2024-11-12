@@ -163,6 +163,23 @@ public class Game implements Serializable{
         addNewRound();
 
     }
+    public Game(Game game){
+        this.id = game.id;
+        this.room = new Room(game.room);
+        this.startDate = game.getStartDate();
+        this.status = game.getStatus();
+        this.type = game.getType();
+        this.roomId = game.getRoomId();
+        this.keyword= new Keyword(game.keyword);
+        // Lấy hai người chơi từ Room
+        this.player1 = game.player1;
+        this.player2 = game.player2;
+        this.winner = game.winner;
+
+        // Khởi tạo danh sách từ ngẫu nhiên cho WordInGame và danh sách GameRound rỗng
+        this.wordInGameList = WordInGame.generateSampleData();
+        this.gameRoundList = new ArrayList<>();
+    }
 
     // Kiểm tra xem có người chơi nào thắng chưa
     public boolean checkWinner() {

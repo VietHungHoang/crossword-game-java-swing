@@ -15,7 +15,7 @@ public class EndGameForm extends JFrame {
         
         // Tạo label thông báo
         JLabel victoryLabel = new JLabel();
-        if(notice.equals("Win")) victoryLabel.setText("Chúc mừng! Bạn đã thắng!");
+        if(notice.equals("Chiến thắng")) victoryLabel.setText("Chúc mừng! Bạn đã thắng!");
         else victoryLabel.setText("Bạn đã thua!");
         victoryLabel.setFont(new Font("Arial", Font.BOLD, 16));
         add(victoryLabel, BorderLayout.CENTER);

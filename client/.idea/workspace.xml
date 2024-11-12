@@ -4,40 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="132babae-ccc8-4bd2-848e-5e5eaf974fe7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/GameRound.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/main/java/dao/JoinPlayingDAO.java" afterDir="false" />
+    <list default="true" id="132babae-ccc8-4bd2-848e-5e5eaf974fe7" name="Changes" comment="add MatchHistory, enum StatusPlayer, TypeGame">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controller/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/ClientController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/socket/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/socket/HomeController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controller/socket/ReceiveMessages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/socket/ReceiveMessages.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/models/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/views/MatchHistoryForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/views/MatchHistoryForm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controller/ClientController$FrameName.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/ClientController$FrameName.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controller/ClientController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/ClientController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/models/Keyword.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/Keyword.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/views/EndGameForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/views/EndGameForm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/views/GameForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/views/GameForm.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/controller/LoginController$LoginListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/LoginController$LoginListener.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/controller/LoginController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/LoginController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controller/socket/HomeController$HomeListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/socket/HomeController$HomeListener.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controller/socket/HomeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/socket/HomeController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/controller/socket/ReceiveMessages.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/socket/ReceiveMessages.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/models/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/models/Game.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/models/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/models/Player.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/main/java/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/controller/GameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/controller/SocketHandlers.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/controller/SocketHandlers.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/main/java/controller/WaitingForGameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/controller/WaitingForGameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/dao/GameDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/dao/GameDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/dao/PlayerDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/dao/PlayerDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/main/java/models/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/models/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/models/GameRound.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/models/GameRound.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/models/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/models/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/target/classes/controller/GameController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/target/classes/controller/SocketHandlers.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/target/classes/controller/WaitingForGameController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/target/classes/dao/PlayerDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/dao/PlayerDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/target/classes/models/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/models/Game.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/target/classes/models/GameRound.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/models/GameRound.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/target/classes/models/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/models/Player.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/main/java/models/Keyword.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/models/Keyword.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/main/java/utils/RandomString.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/utils/RandomString.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/target/classes/utils/RandomString.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/utils/RandomString.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,29 +47,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.ClientRun.executor": "Run",
-    "Application.EndGameForm.executor": "Run",
-    "Application.HomeForm.executor": "Run",
-    "Application.MatchHistoryForm.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "Merging binhdq",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/IT/Java/crossword-game-java-swing/server",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editing.templates",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ClientRun.executor&quot;: &quot;Run&quot;,
+    &quot;Application.EndGameForm.executor&quot;: &quot;Run&quot;,
+    &quot;Application.HomeForm.executor&quot;: &quot;Run&quot;,
+    &quot;Application.MatchHistoryForm.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;binhdq&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/IT/Java/crossword-game-java-swing/server&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editing.templates&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\IT\Java\crossword-game-java-swing\client\src\main\resources\assets\img" />
@@ -184,6 +168,8 @@
       <workItem from="1730741225391" duration="20979000" />
       <workItem from="1731022486705" duration="4113000" />
       <workItem from="1731056729096" duration="13742000" />
+      <workItem from="1731389437208" duration="522000" />
+      <workItem from="1731390185867" duration="7131000" />
     </task>
     <servers />
   </component>

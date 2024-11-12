@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Game implements Serializable{
+    private static final long serialVersionUID = 1L;
     private int id; // ID của game
     private Date endDate; // Thời gian kết thúc game
     private Date startDate; // Thời gian bắt đầu game
@@ -27,7 +28,6 @@ public class Game implements Serializable{
     private int player1Score = 0; // Điểm của người chơi 1
     private int player2Score = 0; // Điểm của người chơi 2
     private String roomId; // ID của phòng
-    private static final long serialVersionUID = 1L;
 
     public int getId() {
         return id;

@@ -26,5 +26,13 @@ public class Keyword implements  Serializable{
         this.id = id;
         this.value = value;
     }
+    @Override
+    public String toString() {
+        return "Keyword{" +
+                "id=" + id +
+                ", value='" + value + '\'' +
+                '}';
+    }
+
 }
 

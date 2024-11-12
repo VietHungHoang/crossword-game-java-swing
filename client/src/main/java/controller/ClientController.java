@@ -139,24 +139,25 @@ public class ClientController {
                 for(Game x : listGame){
                     Player currentPlayer = getCurrentPlayer();
                     Player remainingPlayer = null;
-                    if(Objects.equals(x.getPlayer1().getId(), currentPlayer.getId()))
-                        remainingPlayer = x.getPlayer2();
-                    else if(Objects.equals(x.getPlayer2().getId(), currentPlayer.getId()))
-                        remainingPlayer = x.getPlayer1();
-                    if(remainingPlayer != null)
-                        System.out.println("Da tim thay nguoi choi de tao game");
-                    gameForm = new GameForm(
-                            currentPlayer.getPlayerName(),
-                            remainingPlayer.getPlayerName(),
-                            x.getKeyword().getValue(),
-                            currentPlayer.getTotalPoint(),
-                            remainingPlayer.getTotalPoint()
-                            );
-                    gameController = new GameController(gameForm);
-                    gameForm.setVisible(true);
-                    break;
+                    if (x.getId()== socketHandlers.getReceiveMessages().getCurrentGame().getId()) {
+                        if (Objects.equals(x.getPlayer1().getId(), currentPlayer.getId()))
+                            remainingPlayer = x.getPlayer2();
+                        else if (Objects.equals(x.getPlayer2().getId(), currentPlayer.getId()))
+                            remainingPlayer = x.getPlayer1();
+                        if (remainingPlayer != null)
+                            System.out.println("Da tim thay nguoi choi de tao game");
+                        gameForm = new GameForm(
+                                currentPlayer.getPlayerName(),
+                                remainingPlayer.getPlayerName(),
+                                x.getKeyword().getValue(),
+                                currentPlayer.getTotalPoint(),
+                                remainingPlayer.getTotalPoint()
+                        );
+                        gameController = new GameController(gameForm);
+                        gameForm.setVisible(true);
+                        break;
                     }
-
+                }
                 break;
             case RANKING:
                 rankingForm = new RankingForm();
