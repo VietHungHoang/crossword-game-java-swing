@@ -145,6 +145,9 @@ public class ReceiveMessages extends Thread {
                         case ACCEPT_INVITE_ROOM: 
                           System.out.println("Nhan accept invite room tu server: " + objectWrapper.getObject());
                           ClientController.closeFrame(ClientController.FrameName.HOME);
+                            ClientController.closeFrame(ClientController.FrameName.RANKING);
+                            ClientController.closeFrame(ClientController.FrameName.LIST_PLAYER);
+                            ClientController.closeFrame(ClientController.FrameName.MATCH_HISTORY);
                           // Luôn tạo mới controller và form khi accept invite
                           this.inviteRoomController = new InviteRoomController(new InviteRoomForm((Room)objectWrapper.getObject()));
                           break;

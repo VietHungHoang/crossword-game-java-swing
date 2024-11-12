@@ -76,7 +76,6 @@ public class InviteRoomController {
             if (selectedRow != -1) {
                 String playerName = (String) friendTable.getValueAt(selectedRow, 0);
                 String status = (String) friendTable.getValueAt(selectedRow, 1);
-                
                 if (status.equals("Online")) {
                     try {
                         ClientController.getSocketHandler().getSendMessages()

@@ -14,6 +14,7 @@ import models.Keyword;
 import models.ObjectWrapper;
 import models.Player;
 import models.Room;
+import utils.StatusPlayer;
 import utils.StreamData;
 import views.ServerView;
 public class GameController {
@@ -53,6 +54,7 @@ public class GameController {
     public void handleEndGame(){
         // Lấy ra người chơi chiến thang va xu ly
         Player player = socketHandlers.getLoginController().getPlayerLogin();
+        socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
         player.setTotalGame(player.getTotalGame() + 1);
         player.setTotalGameWon(player.getTotalGameWon() + 1);
         player.setTotalPoint(player.getTotalPoint() + 5);
@@ -83,10 +85,13 @@ public class GameController {
         // send to nguoi thua
         for(SocketHandlers x : ServerController.getSocketHandlers()){
             if(x.getLoginController().getPlayerLogin().getId().equals(reamainingPlayer.getId())){
+                x.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
                 x.send(new ObjectWrapper("LOST_GAME", reamainingPlayer));
                 return;
             }
         }
+        socketHandlers.getListPlayerController().updateListPlayer();
+        socketHandlers.getInviteRoomController().updateListFriend();
     }
 
     public Player getRemainingPlayer(Player player){
@@ -100,6 +105,8 @@ public class GameController {
 
     public void handleDraw(){
         Player currentPlayer = socketHandlers.getLoginController().getPlayerLogin();
+        // set status player
+        socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
         currentPlayer.setTotalGame(currentPlayer.getTotalGame() + 1);
         Game t = null;
         for(Game x : ServerController.games){
@@ -112,12 +119,16 @@ public class GameController {
                         remainingPlayer.setTotalGame(remainingPlayer.getTotalGame() + 1);
                          playerDAO.updatePlayer(currentPlayer);
                         playerDAO.updatePlayer(remainingPlayer);
+                        // set status player
+                        y.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
                          y.send(new ObjectWrapper(StreamData.Message.DRAW_GAME.name(), null));
                          break;
                      }
                  }
              }
         }
+        socketHandlers.getListPlayerController().updateListPlayer();
+        socketHandlers.getInviteRoomController().updateListFriend();
         if(t != null){
             t.setWinner(0L);
             gameDAO.insert(t);
@@ -126,6 +137,8 @@ public class GameController {
 
     public void handleStartGameWithFriend(){
         Player currentPlayer = socketHandlers.getLoginController().getPlayerLogin();
+        // set status player
+        socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.IN_GAME.value);
         for(Room x : ServerController.rooms){
             if(x.getPlayers().get(0).getId() == currentPlayer.getId() || x.getPlayers().get(1).getId() == currentPlayer.getId()){
                     Game game = new Game(x);
@@ -139,11 +152,14 @@ public class GameController {
                     System.out.println("Game object Wrapper" + game.toString());
                     for(SocketHandlers socketHandler : ServerController.socketHandlers ){
                         if(socketHandler.getLoginController().getPlayerLogin().equals(x.getPlayers().get(0)) || socketHandler.getLoginController().getPlayerLogin().equals(x.getPlayers().get(1))){
+                            socketHandler.getLoginController().getPlayerLogin().setStatus(StatusPlayer.IN_GAME.value);
                             socketHandler.send(objectWrapper);
                         }
                     }
                     break;
                 }
         }
+        socketHandlers.getListPlayerController().updateListPlayer();
+        socketHandlers.getInviteRoomController().updateListFriend();
     }
 }

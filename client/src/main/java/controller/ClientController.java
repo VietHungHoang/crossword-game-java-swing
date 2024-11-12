@@ -223,11 +223,19 @@ public class ClientController {
                 break;
 
             case RANKING:
-                socketHandlers.getReceiveMessages().getRankingController().getRankingForm().dispose();
+                if(socketHandlers.getReceiveMessages().getRankingController()!=null && socketHandlers.getReceiveMessages().getRankingController().getRankingForm()!=null) {
+                    socketHandlers.getReceiveMessages().getRankingController().getRankingForm().dispose();
+                }
+                else if(rankingForm!=null){
+                    rankingForm.dispose();
+                }
                 break;
             case LIST_PLAYER:
-                if( socketHandlers.getReceiveMessages().getListPlayerController().getListPlayerForm()!=null) {
+                if(socketHandlers.getReceiveMessages().getListPlayerController()!=null && socketHandlers.getReceiveMessages().getListPlayerController().getListPlayerForm()!=null) {
                     socketHandlers.getReceiveMessages().getListPlayerController().getListPlayerForm().dispose();
+                }
+                else if(listPlayerForm!=null) {
+                    listPlayerForm.dispose();
                 }
                 break;
             case WIN_GAME:
@@ -246,6 +254,18 @@ public class ClientController {
             default:
                 break;
         }
+    }
+
+    public static HomeForm getHomeForm() {
+        return homeForm;
+    }
+
+    public static RankingForm getRankingForm() {
+        return rankingForm;
+    }
+
+    public static MatchHistoryForm getMatchHistoryForm() {
+        return matchHistoryForm;
     }
 
     public static SocketHandlers getSocketHandler() {

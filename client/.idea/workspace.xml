@@ -5,65 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="132babae-ccc8-4bd2-848e-5e5eaf974fe7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/controller/MatchHistoryController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/MatchHistory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/utils/StatusPlayer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/utils/TypeGame.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/views/MatchHistoryForm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/main/java/controller/MatchHistoryController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/main/java/models/MatchHistory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/main/java/utils/StatusPlayer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/main/java/utils/TypeGame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controller/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/ClientController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/GameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/socket/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/socket/HomeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/InviteRoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/InviteRoomController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/ListPlayerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/ListPlayerController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controller/socket/ReceiveMessages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/socket/ReceiveMessages.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/FriendInvite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/FriendInvite.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/GameRound.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/JoinPlaying.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/PlayerAnswerInGame.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/Word.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/utils/StreamData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/StreamData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/views/HomeForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/views/HomeForm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/views/ListPlayerForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/views/ListPlayerForm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controller/ClientController$FrameName.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/ClientController$FrameName.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/controller/ClientController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/ClientController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controller/GameController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/GameController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controller/socket/HomeController$HomeListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/socket/HomeController$HomeListener.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/controller/socket/HomeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/socket/HomeController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/controller/socket/ReceiveMessages.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/controller/socket/ReceiveMessages.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/models/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/models/Game.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/models/GameRound.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/models/JoinPlaying.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/models/PlayerAnswerInGame.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/models/Word.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/utils/StreamData$Message.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/utils/StreamData$Message.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/utils/StreamData.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/utils/StreamData.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/views/HomeForm$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/views/HomeForm$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/views/HomeForm.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/views/HomeForm.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/views/InviteRoomForm.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/views/InviteRoomForm.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/main/java/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/controller/GameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/controller/InviteRoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/controller/InviteRoomController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/controller/RoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/controller/RoomController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/controller/SocketHandlers.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/controller/SocketHandlers.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/main/java/controller/ServerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/controller/ServerController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/main/java/controller/WaitingForGameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/controller/WaitingForGameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/dao/PlayerDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/dao/PlayerDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/dao/impl/IPlayerDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/dao/impl/IPlayerDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/models/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/models/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/models/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/models/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/models/PlayerStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/models/PlayerStatus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/main/java/utils/StreamData.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/main/java/utils/StreamData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/target/classes/controller/GameController.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/controller/GameController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/target/classes/controller/LoginController.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/controller/LoginController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/target/classes/controller/RoomController.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/controller/RoomController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/target/classes/controller/ServerController.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/controller/ServerController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/target/classes/controller/SocketHandlers.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/controller/SocketHandlers.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/target/classes/controller/WaitingForGameController.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/controller/WaitingForGameController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/target/classes/dao/PlayerDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/dao/PlayerDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/target/classes/dao/impl/IPlayerDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/dao/impl/IPlayerDAO.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/target/classes/models/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/models/Game.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/target/classes/models/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/models/Player.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/target/classes/utils/StreamData$Message.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/target/classes/utils/StreamData$Message.class" afterDir="false" />
@@ -103,7 +60,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "Merging main",
+    "git-widget-placeholder": "binhdq",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/IT/Java/crossword-game-java-swing/server",

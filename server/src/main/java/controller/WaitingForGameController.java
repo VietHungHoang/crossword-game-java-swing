@@ -100,7 +100,7 @@ public class WaitingForGameController {
 
         Player newPlayer = socketHandlers.getLoginController().getPlayerLogin();
         room.getPlayers().add(newPlayer);
-        newPlayer.setStatus("Trong phòng");
+        newPlayer.setStatus(StatusPlayer.IN_ROOM.value);
         room.setStatus("2/2");
         System.out.println("Người chơi mới đã tham gia phòng: " + newPlayer.getPlayerName());
         monitorRoomStatus(roomId);
@@ -170,6 +170,7 @@ public class WaitingForGameController {
                 System.out.println("Dang tao phong cho ca 2 nguoi choi trong phong");
                 Game game = new Game(room);
                 Random random = new Random();
+                socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.IN_GAME.value);
                 Long x = random.nextInt(this.keywordDAO.countAll()) * 1L;
                 game.setKeyword(new Keyword(10L, "A"));
                 System.out.println("Da tao phong cho ca 2 nguoi choi trong phong");
@@ -177,13 +178,17 @@ public class WaitingForGameController {
                 System.out.println("Da them phong vao danh sach game");
                 ObjectWrapper objectWrapper = new ObjectWrapper(StreamData.Message.START_GAME.name(), game);
                 System.out.println("Game object Wrapper" + game.toString());
-                List<SocketHandlers> socketHandlers = ServerController.socketHandlers;
-                for (SocketHandlers socketHandler : socketHandlers) {
+                List<SocketHandlers> socketHandlersList = ServerController.socketHandlers;
+                for (SocketHandlers socketHandler : socketHandlersList) {
                     if (socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(0))
                             || socketHandler.getLoginController().getPlayerLogin().equals(room.getPlayers().get(1))) {
+                        socketHandler.getLoginController().getPlayerLogin().setStatus(StatusPlayer.IN_GAME.value);
                         socketHandler.send(objectWrapper);
+
                     }
                 }
+                socketHandlers.getListPlayerController().updateListPlayer();
+                socketHandlers.getInviteRoomController().updateListFriend();
             } else {
                 System.out.println("Chờ đối thủ sẵn sàng...");
             }

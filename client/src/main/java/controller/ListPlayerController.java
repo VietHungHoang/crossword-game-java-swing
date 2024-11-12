@@ -1,6 +1,7 @@
 package controller;
 
 import models.*;
+import utils.StatusPlayer;
 import utils.StreamData;
 import views.ListPlayerForm;
 import views.SignUpForm;
@@ -53,7 +54,7 @@ public class ListPlayerController {
                         JOptionPane.showMessageDialog(listPlayerForm, "Đã là bạn bè với " + selectedPlayerName);
                         return;
                     }
-                    if(selectedStatus.equals("Trong trận")){
+                    if(selectedStatus.equals(StatusPlayer.IN_GAME.value)){
                         JOptionPane.showMessageDialog(listPlayerForm, selectedPlayerName + " đang trong trận");
                         return;
                     }
