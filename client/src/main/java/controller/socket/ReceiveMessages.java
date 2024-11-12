@@ -38,7 +38,7 @@ public class ReceiveMessages extends Thread {
                 objectWrapper = (ObjectWrapper) ois.readObject();
                 String received = objectWrapper.getIdentifier();
                 StreamData.Message message = StreamData.getMessageFromData(received);
-                System.out.println("Khong co si dsfsd" + message);
+                System.out.println("Nhận được message: " + message);
                 switch (message) {
                     case LOGIN:
                         this.loginController = new LoginController(new LoginForm());
@@ -64,7 +64,6 @@ public class ReceiveMessages extends Thread {
                         break;
                     case START_GAME_FRIEND:
                         if(this.inviteRoomController != null){
-                            System.out.println("Nhan list friend tu server: " + objectWrapper.getObject());
                             this.inviteRoomController.handleStartGameWithFriend((Game) objectWrapper.getObject());
                         }
                         break;
@@ -111,7 +110,6 @@ public class ReceiveMessages extends Thread {
                             break;
                         case GET_LIST_FRIEND:
                             if(this.inviteRoomController != null){
-                                System.out.println("Nhan list friend tu server: " + objectWrapper.getObject());
                                 this.inviteRoomController.getListFriendHandler((List<PlayerFriend>)objectWrapper.getObject());
                             }
                             else{
@@ -119,7 +117,6 @@ public class ReceiveMessages extends Thread {
                             }
                             break;
                         case UPDATE_LIST_FRIEND:
-                            System.out.println("Nhan update list friend tu server: " + objectWrapper.getObject());
                             if(this.inviteRoomController != null){
                                 this.inviteRoomController.getListFriendHandler((List<PlayerFriend>)objectWrapper.getObject());
                             }
@@ -169,6 +166,11 @@ public class ReceiveMessages extends Thread {
                         break;
                     case MATCH_HISTORY:
                         ClientController.getMatchHistoryController().updateMatchHistory((List<MatchHistory>) objectWrapper.getObject());
+                        break;
+                    case PLAYER_STAT:
+                        if(this.loginController.getPlayerLogin()!=null ){
+                            this.loginController.setPlayerLogin(new Player((Player) objectWrapper.getObject()));
+                        }
                         break;
                     default:
                         break;

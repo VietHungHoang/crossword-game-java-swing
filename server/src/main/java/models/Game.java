@@ -8,13 +8,14 @@ import java.util.Date;
 import java.util.List;
 
 import utils.RandomString;
+import utils.TypeGame;
 
 public class Game implements Serializable{
-    private String id; // ID của game
+    private int id; // ID của game
     private Date endDate; // Thời gian kết thúc game
     private Date startDate; // Thời gian bắt đầu game
     private String status; // Trạng thái game (Pending, Completed, ...)
-    private String type; // Loại game (BO3)
+    private String type;
     private Long winner; // ID của người thắng
     private List<WordInGame> wordInGameList; // Danh sách từ trong game
 
@@ -28,7 +29,7 @@ public class Game implements Serializable{
     private String roomId; // ID của phòng
     private static final long serialVersionUID = 1L;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -84,7 +85,7 @@ public class Game implements Serializable{
         this.keyword = keyword;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -142,11 +143,11 @@ public class Game implements Serializable{
 
     public Game(Room room) {
         RandomString randomString = new RandomString(9, new SecureRandom(), RandomString.DIGITS);
-        this.id = randomString.nextString(); // Tạo ID game ngẫu nhiên
+        this.id = Integer.parseInt(randomString.nextString()); // Tạo ID game ngẫu nhiên
         this.room = room; // Lưu thông tin phòng
         this.startDate = new Date(); // Ghi nhận thời gian bắt đầu
-        this.status = "Pending"; // Trạng thái ban đầu là Pending
-        this.type = "BO3"; // Loại game BO3
+        this.status = "Complete";
+        this.type = (room.isRanking())? TypeGame.RANKED_MATCH.value : TypeGame.FRIEND_MATCH.value;
         this.roomId = room.getId();
 
         // Lấy hai người chơi từ Room

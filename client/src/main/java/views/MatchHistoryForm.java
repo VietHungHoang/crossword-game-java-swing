@@ -81,7 +81,7 @@ public class MatchHistoryForm extends JFrame {
         });
 
         // Table setup
-        String[] columnNames = {"STT", "Đối thủ", "Thời Gian Bắt Đầu", "Thời Gian Kết Thúc", "Loại Trận", "Winner"};
+        String[] columnNames = {"STT", "Đối thủ", "Thời Gian Bắt Đầu", "Thời Gian Kết Thúc", "Loại Trận", " "};
         model = new DefaultTableModel(columnNames, 0);
 
         updateMatchHistorys(MatchHistory.generateMockData());

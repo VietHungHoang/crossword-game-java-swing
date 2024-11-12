@@ -16,6 +16,9 @@ public class LoginController {
     private LoginForm loginForm;
     public Player playerLogin = null;
 
+    public void setPlayerLogin(Player playerLogin) {
+        this.playerLogin = playerLogin;
+    }
 
     public LoginController(LoginForm loginForm) {
         this.loginForm = loginForm;

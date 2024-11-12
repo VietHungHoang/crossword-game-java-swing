@@ -43,8 +43,12 @@ public class WaitingForGameController {
      * - Không có thì tạo phòng mới
      */
     public void handleFindingRoom() {
-        if (ServerController.rooms.isEmpty())
+        System.out.println(ServerController.rooms.size());
+        if (ServerController.rooms.isEmpty()){
             createWaitingRoom();
+            return;
+        }
+            
         else {
             for (Room room : ServerController.rooms) {
                 if (room.getPlayers().size() == 1 && room.isRanking()) {
@@ -73,6 +77,7 @@ public class WaitingForGameController {
             playersInRoom,
             "1/2",
             true);
+        System.out.println("da tao phong" + room.toString());
         socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.FINDING_GAME.value);
         socketHandlers.getListPlayerController().updateListPlayer(); // Cập nhật trạng thái của người chơi với tất cả
                                                                      // người chơi kaác
@@ -92,7 +97,7 @@ public class WaitingForGameController {
                 .filter(r -> r.getId().equals(roomId))
                 .findFirst()
                 .orElse(null);
-
+        System.out.println("Da join vao phong" + room.toString());
         if (room == null) {
             System.out.println("Phòng không tồn tại.");
             return;

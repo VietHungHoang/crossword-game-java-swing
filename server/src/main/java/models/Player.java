@@ -24,6 +24,16 @@ public class Player implements Serializable {
         this.totalPoint = 0;
         this.status = status;
     }
+
+    public Player(Player player) {
+        this.playerName=player.getPlayerName();
+        this.id=player.getId();
+        this.totalGame = player.getTotalGame();
+        this.totalGameWon = player.getTotalGameWon();
+        this.totalPoint = player.getTotalPoint();
+        this.status=player.getStatus();
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

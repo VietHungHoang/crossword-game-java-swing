@@ -249,7 +249,8 @@ public class ClientController {
                     confirmationForm.dispose();
                 break;
             case MATCH_HISTORY:
-                matchHistoryForm.dispose();
+                if(matchHistoryForm!=null)
+                    matchHistoryForm.dispose();
                 break;
             default:
                 break;

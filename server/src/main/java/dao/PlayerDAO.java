@@ -20,16 +20,17 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
 
     @Override
     public boolean updatePlayer(Player player){
-        System.out.println(player.getId());
-        System.out.println(player.getTotalGame());
-        System.out.println(player.getTotalGameWon());
-
-            String sql = "UPDATE player SET total_game = ?, total_game_won = ? WHERE id = ?";
+        System.out.println("Update player có id: " + player.getId());
+        System.out.println("Update player total game: " + player.getTotalGame());
+        System.out.println("Update player total game won: " + player.getTotalGameWon());
+        System.out.println("Update player total point: " + player.getTotalPoint());
+            String sql = "UPDATE player SET total_game = ?, total_game_won = ?,total_point=? WHERE id = ?";
             try {
                 this.preStatement = this.conn.prepareStatement(sql);
                 this.preStatement.setLong(1, player.getTotalGame());
                 this.preStatement.setLong(2, player.getTotalGameWon());
-                this.preStatement.setLong(3, player.getId());
+                this.preStatement.setLong(3, player.getTotalPoint());
+                this.preStatement.setLong(4, player.getId());
     
                 int rowsUpdated = this.preStatement.executeUpdate();
                 System.out.println(rowsUpdated);
@@ -69,8 +70,8 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
             while (rs.next()) {  // change from if to while to handle multiple rows
                 MatchHistory matchHistory = new MatchHistory();
                 matchHistory.setOpponent(rs.getString("opponent"));
-                matchHistory.setStartDate(rs.getDate("start_date"));
-                matchHistory.setEndDate(rs.getDate("end_date"));
+                matchHistory.setStartDate(rs.getTimestamp("start_date"));
+                matchHistory.setEndDate(rs.getTimestamp("end_date"));
                 matchHistory.setType(rs.getString("type"));
                 matchHistory.setStatusS(rs.getString("winner"));
                 matchHistories.add(matchHistory);
@@ -148,7 +149,7 @@ public class PlayerDAO extends DAO implements IPlayerDAO {
         String sql = "SELECT player_name, (total_game_won * 100 / total_game) AS percent_win, " +
                 "total_game_won, total_game, total_point FROM player " +
                 "WHERE total_game != 0 " +
-                "ORDER BY total_game DESC, total_game_won DESC, total_point DESC";
+                "ORDER BY total_point DESC, total_game DESC, total_game_won DESC";
         List<PlayerRanking> playerRankingList = new ArrayList<>();
 
         try {

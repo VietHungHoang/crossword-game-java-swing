@@ -1,21 +1,25 @@
 package controller;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import dao.GameDAO;
+import dao.JoinPlayingDAO;
 import dao.KeywordDAO;
 import dao.PlayerDAO;
 import dao.UserDAO;
 import dao.impl.IPlayerDAO;
 import models.Game;
+import models.JoinPlaying;
 import models.Keyword;
 import models.ObjectWrapper;
 import models.Player;
 import models.Room;
 import utils.StatusPlayer;
 import utils.StreamData;
+import utils.TypeGame;
 import views.ServerView;
 public class GameController {
     private ServerView view;
@@ -25,6 +29,7 @@ public class GameController {
     private SocketHandlers socketHandlers;
     private KeywordDAO keywordDAO;
     private GameDAO gameDAO;
+    private JoinPlayingDAO joinPlaying;
 
     public GameController(ServerView view, Connection conn, SocketHandlers socketHandlers) {
         this.view = view;
@@ -33,6 +38,7 @@ public class GameController {
         this.socketHandlers = socketHandlers;
         this.keywordDAO = new KeywordDAO(conn);
         this.gameDAO = new GameDAO(conn);
+        this.joinPlaying = new JoinPlayingDAO(conn);
     }
 
     public Game getGameByRoom(Room room) {
@@ -57,25 +63,42 @@ public class GameController {
         socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
         player.setTotalGame(player.getTotalGame() + 1);
         player.setTotalGameWon(player.getTotalGameWon() + 1);
-        player.setTotalPoint(player.getTotalPoint() + 5);
-        playerDAO.updatePlayer(player);
+//        player.setTotalPoint(player.getTotalPoint() + 5);
+//        playerDAO.updatePlayer(player);
 
         // Lay ra nguoi thua va xu ly
         Player reamainingPlayer = getRemainingPlayer(player);
         reamainingPlayer.setTotalGame(reamainingPlayer.getTotalGame() + 1);
-        System.out.println("Update remainning player");
-        playerDAO.updatePlayer(reamainingPlayer);
-        this.view.showMessage(player.getPlayerName() + " is win and " + reamainingPlayer.getPlayerName() + " is lost");
+//        System.out.println("Update remainning player");
+//        playerDAO.updatePlayer(reamainingPlayer);
+//        this.view.showMessage(player.getPlayerName() + " is win and " + reamainingPlayer.getPlayerName() + " is lost");
 
         int i = 0;
 
         for(i = 0; i < ServerController.games.size(); i++)
-            if(ServerController.games.get(i).getPlayer1().getId().equals(player.getId())){
+            if(ServerController.games.get(i).getPlayer1().getId().equals(player.getId()) ||
+            ServerController.games.get(i).getPlayer2().getId().equals(player.getId())
+            ){
                 break;
             }
+        // if(i == ServerController.games.size()) i--;
         Game gamew = ServerController.games.get(i);
+
+
+        player.setTotalPoint((gamew.getType().equals(TypeGame.RANKED_MATCH.value)) ? player.getTotalPoint() + 5 : player.getTotalPoint());
+        playerDAO.updatePlayer(player);
+
+        System.out.println("Update remainning player");
+        playerDAO.updatePlayer(reamainingPlayer);
+        this.view.showMessage(player.getPlayerName() + " is win and " + reamainingPlayer.getPlayerName() + " is lost");
+
         gamew.setWinner(player.getId());
         gameDAO.insert(gamew);
+        Long gameId = this.gameDAO.getLatestGameId();
+        System.out.println("Insert Game ID 2: "+ gameId);
+        this.joinPlaying.insert(gameId, player.getId());
+        this.joinPlaying.insert(gameId, reamainingPlayer.getId());
+
         ServerController.rooms.remove(gamew.getRoom());
         ServerController.games.remove(i);
 
@@ -87,6 +110,9 @@ public class GameController {
             if(x.getLoginController().getPlayerLogin().getId().equals(reamainingPlayer.getId())){
                 x.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
                 x.send(new ObjectWrapper("LOST_GAME", reamainingPlayer));
+                // update PLAYER_STAT
+                socketHandlers.send(new ObjectWrapper(StreamData.Message.PLAYER_STAT.name(), new Player(player)));
+                x.send(new ObjectWrapper(StreamData.Message.PLAYER_STAT.name(), new Player(reamainingPlayer)));
                 return;
             }
         }
@@ -107,15 +133,17 @@ public class GameController {
         Player currentPlayer = socketHandlers.getLoginController().getPlayerLogin();
         // set status player
         socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.ONLINE.value);
+        Player remainingPlayer = null;
         currentPlayer.setTotalGame(currentPlayer.getTotalGame() + 1);
         Game t = null;
         for(Game x : ServerController.games){
-             if(x.getPlayer1().getId() == currentPlayer.getId() && x.getWinner() != null){
+             if(x.getPlayer1().getId() == currentPlayer.getId() && x.getWinner() == null){
+                System.out.println(x.getWinner());
                 t = x;
                  socketHandlers.send(new ObjectWrapper(StreamData.Message.DRAW_GAME.name(), null));
                  for(SocketHandlers y : ServerController.getSocketHandlers()){
                      if(y.getLoginController().getPlayerLogin().getId() == x.getPlayer2().getId()){
-                        Player remainingPlayer = x.getPlayer2();
+                        remainingPlayer = x.getPlayer2();
                         remainingPlayer.setTotalGame(remainingPlayer.getTotalGame() + 1);
                          playerDAO.updatePlayer(currentPlayer);
                         playerDAO.updatePlayer(remainingPlayer);
@@ -127,11 +155,18 @@ public class GameController {
                  }
              }
         }
+
+
+
         socketHandlers.getListPlayerController().updateListPlayer();
         socketHandlers.getInviteRoomController().updateListFriend();
         if(t != null){
             t.setWinner(0L);
             gameDAO.insert(t);
+            Long gameId = gameDAO.getLatestGameId();
+            System.out.println("Insert game Id: "+ gameId);
+            joinPlaying.insert(gameId, currentPlayer.getId());
+            joinPlaying.insert(gameId, remainingPlayer.getId());
         }
     }
 
