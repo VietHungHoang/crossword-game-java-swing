@@ -152,7 +152,8 @@ public class GameForm extends JFrame {
         imgPlayer2.setBounds(390, 10, 60, 60);
         lblPlayer2Name.setBounds(390, 70, 100, 20);
         lblPlayer2Name.setFont(new Font("Arial", Font.BOLD, 14));
-
+// Set background gradient
+pnlGameInfo.setBackground(new Color(240, 248, 255)); 
         // Time display with styled rectangle
         JLabel timeLabel = getLblCountdown();
         timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -165,6 +166,8 @@ public class GameForm extends JFrame {
         ));
         timeLabel.setBounds(150, 10, 200, 40);
         pnlGameInfo.add(timeLabel);
+        // Add gradient background to main panel
+
 
         // Add to panel
         pnlGameInfo.add(imgPlayer1);
