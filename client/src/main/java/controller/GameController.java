@@ -22,7 +22,7 @@ public class GameController {
 
   private Timer countDownTimer;
 
-  private Integer timeLeft = 10;
+  private Integer timeLeft = 50;
 
   private Boolean isWin = false;
 
