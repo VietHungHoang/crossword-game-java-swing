@@ -12,8 +12,17 @@ import models.Game;
 import models.Player;
 import models.PlayerStatus;
 import models.Room;
-import views.*;
+import views.ConfirmationForm;
 import views.EndGameForm;
+import views.GameForm;
+import views.HomeForm;
+import views.InviteRoomForm;
+import views.ListPlayerForm;
+import views.LoginForm;
+import views.MatchHistoryForm;
+import views.RankingForm;
+import views.SignUpForm;
+import views.WaitingForGameForm;
 
 public class ClientController {
 
@@ -36,7 +45,6 @@ public class ClientController {
     private static RankingForm rankingForm;
     private static Room room;
     public static List<PlayerStatus> players = new ArrayList<>();
-
 
 
     
