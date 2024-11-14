@@ -17,11 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -278,12 +274,13 @@ pnlGameInfo.setBackground(new Color(240, 248, 255));
             while (n-- > 0) {
                 res[i] = entry.getKey().toString();
                 i++;
-                n--;
             }
         }
+        // Shuffle the array
+        Collections.shuffle(Arrays.asList(res));
+        System.out.println(Arrays.toString(res));
         return res;
     }
-
     
     public JLabel getLblPlayer1Name() {
         return lblPlayer1Name;

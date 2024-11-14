@@ -144,9 +144,8 @@ class SubmitAnswerListener implements ActionListener{
 
   public void handleDrawGame(){
     JOptionPane.showMessageDialog(gameForm, "Draw", "Khong co gi", JOptionPane.PLAIN_MESSAGE);
-   ClientController.openFrame(FrameName.HOME);
+    ClientController.openFrame(FrameName.HOME);
     ClientController.closeFrame(FrameName.GAME);
-
   }
   class BackHomeListener implements ActionListener{
     @Override

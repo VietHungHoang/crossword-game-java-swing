@@ -18,7 +18,7 @@ import views.EndGameForm;
 public class ClientController {
 
     public static SocketHandlers socketHandlers;
-    private static String severAddress = "localhost";
+    private static String severAddress = "26.232.12.226";
     private static int port = 12345;
     private static LoginForm loginForm;
     private static SignUpForm signUpForm;
@@ -72,6 +72,11 @@ public class ClientController {
 
     private  static MatchHistoryForm matchHistoryForm;
     private  static MatchHistoryController matchHistoryController;
+
+    public static GameController getGameController() {
+        return gameController;
+    }
+
     public enum FrameName{
         LOGIN,
         SIGNUP,

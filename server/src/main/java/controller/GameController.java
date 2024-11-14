@@ -173,9 +173,9 @@ public class GameController {
             if(x.getPlayers().get(0).getId() == currentPlayer.getId() || x.getPlayers().get(1).getId() == currentPlayer.getId()){
                     Game game = new Game(x);
                     Random random = new Random();
-                    Long z = random.nextInt(2)*1L;
-                    String key = new String(RandomString.generateRandomString());
-                    game.setKeyword(new Keyword(1L, key));
+                    Long z = random.nextInt(this.keywordDAO.countAll()) * 1L;
+//                    String key = new String(RandomString.generateRandomString())
+                    game.setKeyword(keywordDAO.findById(z));
                     System.out.println("Da tao phong cho ca 2 nguoi choi trong phong");
                     ServerController.games.add(game);
                     System.out.println("Da them phong vao danh sach game");

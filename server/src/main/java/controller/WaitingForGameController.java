@@ -177,8 +177,7 @@ public class WaitingForGameController {
                 Random random = new Random();
                 socketHandlers.getLoginController().getPlayerLogin().setStatus(StatusPlayer.IN_GAME.value);
                 Long x = random.nextInt(this.keywordDAO.countAll()) * 1L;
-                String key = new String(RandomString.generateRandomString());
-                game.setKeyword(new Keyword(10L, key));
+                game.setKeyword( keywordDAO.findById(x));
                 System.out.println("Da tao phong cho ca 2 nguoi choi trong phong");
                 ServerController.games.add(game);
                 System.out.println("Da them phong vao danh sach game");
