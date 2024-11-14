@@ -154,7 +154,8 @@ public class GameForm extends JFrame {
         lblPlayer2Name.setFont(new Font("Arial", Font.BOLD, 14));
 
         // Time display with styled rectangle
-        JLabel timeLabel = new JLabel("TIME: 00:00", SwingConstants.CENTER);
+        JLabel timeLabel = getLblCountdown();
+        timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
         timeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         timeLabel.setOpaque(true);
         timeLabel.setBackground(new Color(255, 255, 255));
