@@ -1,22 +1,40 @@
 package views;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
-
-import utils.GetImage;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
+import utils.GetImage;
+import utils.RoundedBorder;
 
 public class GameForm extends JFrame {
 
@@ -43,6 +61,7 @@ public class GameForm extends JFrame {
     private String keyword;
     private List<JButton> keyboardButtons = new ArrayList<>();
     private List<JButton> listKeywordBtns = new ArrayList<>();
+    private Point initialClick;
 
     public Timer getCountdownTimer() {
         return countdownTimer;
@@ -69,6 +88,48 @@ public class GameForm extends JFrame {
         setLayout(null);
         setIconImage(new ImageIcon(getClass().getResource("/assets/img/logo.png")).getImage());
 
+        // Set up JFrame with custom design
+        setUndecorated(true);
+        setShape(new RoundRectangle2D.Double(0, 0, 500, 700, 20, 20));
+
+        setContentPane(new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                int w = getWidth();
+                int h = getHeight();
+                Color color1 = new Color(240, 248, 255);
+                Color color2 = new Color(230, 230, 250);
+                GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, w, h);
+            }
+        });
+
+        // Add mouse listeners for dragging the window
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                initialClick = e.getPoint();
+            }
+        });
+
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                int thisX = getLocation().x;
+                int thisY = getLocation().y;
+                int xMoved = (thisX + e.getX()) - (thisX + initialClick.x);
+                int yMoved = (thisY + e.getY()) - (thisY + initialClick.y);
+                setLocation(thisX + xMoved, thisY + yMoved);
+            }
+        });
+
+        // Maintain original layout
+        setLayout(null);
+
         // PANEL1: Game info
         pnlGameInfo = new JPanel();
         pnlGameInfo.setLayout(null);
@@ -82,29 +143,27 @@ public class GameForm extends JFrame {
         lblPlayer2Score = new JLabel("Điểm: " + player2Score);
         lblCountdown = new JLabel("60");
 
-        // Player1 image
-        imgPlayer1.setBounds(25, 30, 60, 60);
+        // Player1 image and name
+        imgPlayer1.setBounds(50, 10, 60, 60);
+        lblPlayer1Name.setBounds(50, 70, 100, 20);
+        lblPlayer1Name.setFont(new Font("Arial", Font.BOLD, 14));
 
-        // Player2 image
-        imgPlayer2.setBounds(410, 30, 60, 60);
+        // Player2 image and name
+        imgPlayer2.setBounds(390, 10, 60, 60);
+        lblPlayer2Name.setBounds(390, 70, 100, 20);
+        lblPlayer2Name.setFont(new Font("Arial", Font.BOLD, 14));
 
-        // Player1 info
-        lblPlayer1Name.setFont(lblFont);
-        lblPlayer1Name.setBounds(85, 50, 110, 20);
-
-        // Player2 info
-        lblPlayer2Name.setFont(lblFont);
-        lblPlayer2Name.setBounds(300, 50, 110, 20);
-
-        // Player1 score
-
-        // Player2 score
-
-        // Countdown
-        lblCountdown.setFont(lblFont);
-        lblCountdown.setFont(timeFont);
-        lblCountdown.setHorizontalAlignment(SwingConstants.CENTER);
-        lblCountdown.setBounds(220, 20, 60, 60);
+        // Time display with styled rectangle
+        JLabel timeLabel = new JLabel("TIME: 00:00", SwingConstants.CENTER);
+        timeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        timeLabel.setOpaque(true);
+        timeLabel.setBackground(new Color(255, 255, 255));
+        timeLabel.setBorder(BorderFactory.createCompoundBorder(
+            new RoundedBorder(10, new Color(200, 200, 200)),
+            BorderFactory.createEmptyBorder(5, 15, 5, 15)
+        ));
+        timeLabel.setBounds(150, 10, 200, 40);
+        pnlGameInfo.add(timeLabel);
 
         // Add to panel
         pnlGameInfo.add(imgPlayer1);
@@ -123,7 +182,6 @@ public class GameForm extends JFrame {
         // init component
         lblKeyword = new JLabel(keyword);
         lblKeyword.setBounds(50, 50, 400, 100);
-        lblKeyword.setBorder(new LineBorder(Color.BLACK, 2));
         lblKeyword.setHorizontalAlignment(SwingConstants.CENTER);
         lblKeyword.setFont(keywFont);
 
@@ -131,7 +189,7 @@ public class GameForm extends JFrame {
 
         // PANEL3: Textbox panel
         pnlTextbox = new JPanel(new FlowLayout());
-        pnlTextbox.setBounds(25, 270, 440, 100);
+        pnlTextbox.setBounds(25, 300, 440, 100);
         for (int i = 0; i < keyword.length(); i++) {
             JButton x = new JButton();
             x.setFont(keywBtnFont);
@@ -141,9 +199,9 @@ public class GameForm extends JFrame {
             pnlTextbox.add(x);
         }
 
-        // PANEL4: Bàn phím
-        pnlKeyboard = new JPanel(new GridLayout(3, 8, 10, 10));
-        pnlKeyboard.setBounds(25, 440, 440, 180);
+        // PANEL4: Keyboard panel
+        pnlKeyboard = new JPanel(new GridLayout(3, 8, 5, 5));
+        pnlKeyboard.setBounds(25, 450, 440, 180);
         String[] key = getKeyboard(keyword);
         for (String c : key) {
             JButton button = new JButton(c);
@@ -159,6 +217,11 @@ public class GameForm extends JFrame {
         add(pnlKeyword);
         add(pnlTextbox);
         add(pnlKeyboard);
+
+        // Style buttons similarly to other forms
+        for (JButton button : keyboardButtons) {
+            styleButton(button, new Color(70, 130, 180));
+        }
     }
 
     private class KeywordListener implements ActionListener {
@@ -246,6 +309,59 @@ public class GameForm extends JFrame {
             GameForm gameForm = new GameForm("Người chơi 1", "Người chơi 2", "KEYWORD", 0, 0);
             gameForm.setVisible(true);
         });
+    }
+
+    private void styleButton(JButton button, Color backgroundColor) {
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setBackground(backgroundColor);
+        button.setForeground(Color.BLACK);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setMargin(new Insets(5, 5, 5, 5));
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(brighten(backgroundColor, 0.2f));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(backgroundColor);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button.setBackground(darken(backgroundColor, 0.2f));
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button.setBackground(backgroundColor);
+            }
+        });
+
+        // Add shadow effect
+        button.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createEmptyBorder(2, 2, 2, 2),
+            BorderFactory.createLineBorder(new Color(0, 0, 0, 50))
+        ));
+    }
+
+    private Color brighten(Color color, float fraction) {
+        int red = Math.min(255, (int)(color.getRed() * (1 + fraction)));
+        int green = Math.min(255, (int)(color.getGreen() * (1 + fraction)));
+        int blue = Math.min(255, (int)(color.getBlue() * (1 + fraction)));
+        return new Color(red, green, blue);
+    }
+
+    private Color darken(Color color, float fraction) {
+        int red = Math.max(0, (int)(color.getRed() * (1 - fraction)));
+        int green = Math.max(0, (int)(color.getGreen() * (1 - fraction)));
+        int blue = Math.max(0, (int)(color.getBlue() * (1 - fraction)));
+        return new Color(red, green, blue);
     }
 
 }
