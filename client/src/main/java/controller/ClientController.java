@@ -12,13 +12,22 @@ import models.Game;
 import models.Player;
 import models.PlayerStatus;
 import models.Room;
-import views.*;
+import views.ConfirmationForm;
 import views.EndGameForm;
+import views.GameForm;
+import views.HomeForm;
+import views.InviteRoomForm;
+import views.ListPlayerForm;
+import views.LoginForm;
+import views.MatchHistoryForm;
+import views.RankingForm;
+import views.SignUpForm;
+import views.WaitingForGameForm;
 
 public class ClientController {
 
     public static SocketHandlers socketHandlers;
-    private static String severAddress = "localhost";
+    private static String severAddress = "26.232.12.226";
     private static int port = 12345;
     private static LoginForm loginForm;
     private static SignUpForm signUpForm;

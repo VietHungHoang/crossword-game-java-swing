@@ -18,6 +18,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -281,6 +283,8 @@ pnlGameInfo.setBackground(new Color(240, 248, 255));
                 n--;
             }
         }
+        // Xáo trộn mảng
+        Collections.shuffle(Arrays.asList(res));
         return res;
     }
 
