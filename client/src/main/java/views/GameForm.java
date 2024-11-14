@@ -280,11 +280,11 @@ pnlGameInfo.setBackground(new Color(240, 248, 255));
             while (n-- > 0) {
                 res[i] = entry.getKey().toString();
                 i++;
-                n--;
             }
         }
-        // Xáo trộn mảng
+        // Shuffle the array
         Collections.shuffle(Arrays.asList(res));
+        System.out.println(Arrays.toString(res)); 
         return res;
     }
 

@@ -45,7 +45,9 @@ public class ClientController {
     private static RankingForm rankingForm;
     private static Room room;
     public static List<PlayerStatus> players = new ArrayList<>();
-
+    public static GameController getGameController() {
+      return gameController;
+  }
 
 
     

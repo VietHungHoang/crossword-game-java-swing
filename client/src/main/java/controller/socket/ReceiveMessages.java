@@ -99,12 +99,10 @@ public class ReceiveMessages extends Thread {
                         }
                         break;
                     case WIN_GAME:
-                         this.gameController = new GameController(new GameForm());
-                        this.gameController.handleEndGame("Win");
+                       ClientController.getGameController().handleEndGame("Win");
                         break;
                     case LOST_GAME:
-                        this.gameController = new GameController(new GameForm());
-                        this.gameController.handleEndGame("Lost");
+                        ClientController.getGameController().handleEndGame("Lost");
                         break;
                         case INVITE_ROOM:
                         // Khi nhan duoc loi moi phong tu server khong can goi toi OPENFRAME vi da setVisible(true) trong InviteRoomController
@@ -155,9 +153,8 @@ public class ReceiveMessages extends Thread {
                             this.inviteRoomController.updateInviteRoomHandler((Room)objectWrapper.getObject());
                             break;
                     case DRAW_GAME:
-                        this.gameController = new GameController();
-                        this.gameController.handleDrawGame();
-                          break;
+                        ClientController.getGameController().handleDrawGame();
+                        break;
                     case LEAVE_INVITE_ROOM:
                         System.out.println("Nhan leave room tu server: " + objectWrapper.getObject());
                         if (this.inviteRoomController != null ) {
